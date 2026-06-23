@@ -3,8 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath } from 'node:url'
 
-// Псевдоним '@' → папка src (удобные импорты, см. docs/03-architecture.md).
-export default defineConfig({
+// На GitHub Pages сайт живёт по под-пути /<repo>/. В dev — корень '/'.
+const BASE = '/tijorat-rushd-crm/'
+
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? BASE : '/',
   plugins: [
     react(),
     // PWA: устанавливаемое приложение (manifest + service worker, авто-обновление).
@@ -24,8 +27,8 @@ export default defineConfig({
         theme_color: '#0b0c0e',
         background_color: '#0b0c0e',
         display: 'standalone',
-        start_url: '/',
-        scope: '/',
+        start_url: BASE,
+        scope: BASE,
         icons: [
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -40,7 +43,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
-        navigateFallback: '/index.html',
+        navigateFallback: `${BASE}index.html`,
         cleanupOutdatedCaches: true,
       },
       // В dev service worker выключен — чтобы не кэшировать во время разработки.
@@ -65,4 +68,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

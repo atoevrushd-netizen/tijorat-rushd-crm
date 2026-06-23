@@ -47,7 +47,11 @@ export function AppShell({
       <div className="sticky top-0 hidden h-screen md:block">
         <aside className="flex h-full w-[216px] flex-none flex-col overflow-y-auto border-r border-line bg-[#0c0d0f] px-4 pb-[max(22px,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pt-[max(22px,env(safe-area-inset-top))] lg:w-[248px]">
           <div className="flex items-center gap-[11px] px-2.5 pb-[22px]">
-            <img src="/logo/logo-light.svg" alt="Tijorat & Rushd" className="h-7 w-auto" />
+            <img
+              src={`${import.meta.env.BASE_URL}logo/logo-light.svg`}
+              alt="Tijorat & Rushd"
+              className="h-7 w-auto"
+            />
             <div>
               <div className="text-[14.5px] font-extrabold leading-tight text-ink">
                 Tijorat &amp; Rushd

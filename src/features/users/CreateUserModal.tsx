@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { UserStatus } from '@/types'
+import { normalizeLogin } from '@/lib/loginEmail'
 import { useCreateUser } from './useCreateUser'
 
 const EMPTY = {
@@ -24,6 +25,7 @@ export function CreateUserModal({
 }) {
   const createUser = useCreateUser()
   const [form, setForm] = useState(EMPTY)
+  const [clientError, setClientError] = useState<string | null>(null)
 
   const field =
     (key: keyof typeof EMPTY) =>
@@ -33,12 +35,24 @@ export function CreateUserModal({
   function close() {
     createUser.reset()
     setForm(EMPTY)
+    setClientError(null)
     onClose()
   }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    setClientError(null)
     if (!form.full_name.trim()) return
+    if (form.login.length < 3) {
+      setClientError(
+        'Логин — латиницей (буквы a-z, цифры), минимум 3 символа. Например: malik99',
+      )
+      return
+    }
+    if (form.password.length < 6) {
+      setClientError('Пароль — не короче 6 символов')
+      return
+    }
     createUser.mutate(
       {
         full_name: form.full_name.trim(),
@@ -69,11 +83,17 @@ export function CreateUserModal({
         <Labeled label="Логин (для входа) *">
           <Input
             value={form.login}
-            onChange={field('login')}
+            onChange={(e) => {
+              setClientError(null)
+              setForm((f) => ({ ...f, login: normalizeLogin(e.target.value) }))
+            }}
             required
-            placeholder="например, max99"
+            placeholder="например, malik99"
             autoComplete="off"
           />
+          <p className="text-[11px] text-ink-3">
+            Латиницей: a-z, цифры, точка, дефис (кириллица не подойдёт)
+          </p>
         </Labeled>
         <Labeled label="Пароль *">
           <Input type="text" value={form.password} onChange={field('password')} required placeholder="не короче 6 символов" />
@@ -89,9 +109,12 @@ export function CreateUserModal({
           </Select>
         </Labeled>
 
-        {createUser.isError && (
+        {(clientError || createUser.isError) && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {createUser.error instanceof Error ? createUser.error.message : 'Не удалось создать пользователя'}
+            {clientError ??
+              (createUser.error instanceof Error
+                ? createUser.error.message
+                : 'Не удалось создать пользователя')}
           </p>
         )}
 

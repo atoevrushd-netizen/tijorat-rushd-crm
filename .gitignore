@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-ssr/
+
+# env files (секреты не коммитим)
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# editor / os
+.DS_Store
+.idea/
+*.tsbuildinfo
+
+# крупные дизайн-артефакты (не часть приложения, GitHub отклонит >100МБ)
+UI KIT/
+SRM-design-handoff.zip
+README-DESIGN.md
+
+# supabase CLI временное
+supabase/.temp/
+supabase/.branches/
+
+# PWA dev output
+dev-dist/

@@ -1,0 +1,165 @@
+import { useState } from 'react'
+import { Check, Clock, Pencil, Plus, Trash2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/Button'
+import { TaskStatusBadge } from '@/features/tasks/TaskStatusBadge'
+import { useDeleteTask, useSetTaskStatus } from '@/features/tasks/useTasks'
+import type { Task } from '@/types'
+import { EditCalendarTaskModal } from './EditCalendarTaskModal'
+
+const TYPE_LABEL: Record<string, string> = {
+  reels: 'Reels',
+  creative: 'Креатив',
+  other: 'Другое',
+}
+
+/** 'YYYY-MM-DD' → «9 июня, вторник». */
+function formatDayTitle(date: string): string {
+  const d = new Date(date + 'T00:00:00')
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    weekday: 'long',
+  }).format(d)
+}
+
+/** Панель задач выбранного дня. Админ: создаёт, отмечает «выполнено», редактирует, удаляет. Лид — только смотрит. */
+export function DayTasksPanel({
+  date,
+  tasks,
+  isAdmin,
+  onAdd,
+}: {
+  date: string
+  tasks: Task[]
+  isAdmin: boolean
+  onAdd: () => void
+}) {
+  const del = useDeleteTask()
+  const setStatus = useSetTaskStatus()
+  const [editTask, setEditTask] = useState<Task | null>(null)
+
+  function remove(id: string) {
+    if (!window.confirm('Удалить задачу? Действие необратимо.')) return
+    del.mutate(id)
+  }
+
+  function toggleDone(t: Task) {
+    setStatus.mutate({
+      id: t.id,
+      status: t.status === 'done' ? 'not_started' : 'done',
+    })
+  }
+
+  return (
+    <div className="rounded-xl border border-line bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div>
+          <div className="text-[15px] font-bold capitalize text-ink">
+            {formatDayTitle(date)}
+          </div>
+          <div className="text-[12.5px] text-ink-3">
+            {tasks.length ? `задач: ${tasks.length}` : 'нет задач'}
+          </div>
+        </div>
+        {isAdmin && (
+          <Button size="sm" leftIcon={<Plus size={14} />} onClick={onAdd}>
+            Задача
+          </Button>
+        )}
+      </div>
+
+      {tasks.length === 0 ? (
+        <p className="py-6 text-center text-sm text-ink-3">
+          На этот день задач нет.
+          {isAdmin ? ' Нажмите «Задача», чтобы добавить.' : ''}
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {tasks.map((t) => {
+            const isDone = t.status === 'done'
+            return (
+              <li
+                key={t.id}
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-line bg-bg px-3 py-2.5"
+              >
+                {isAdmin && (
+                  <button
+                    type="button"
+                    aria-label={isDone ? 'Снять «выполнено»' : 'Отметить выполненной'}
+                    onClick={() => toggleDone(t)}
+                    disabled={setStatus.isPending}
+                    className={cn(
+                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
+                      isDone
+                        ? 'border-accent bg-accent text-on-accent'
+                        : 'border-line-strong text-transparent hover:border-accent',
+                    )}
+                  >
+                    <Check size={14} strokeWidth={3} />
+                  </button>
+                )}
+
+                <span className="flex w-12 shrink-0 items-center gap-1 font-mono text-[12px] text-accent">
+                  {t.due_time ? (
+                    <>
+                      <Clock size={12} />
+                      {t.due_time.slice(0, 5)}
+                    </>
+                  ) : (
+                    <span className="text-ink-3">—:—</span>
+                  )}
+                </span>
+
+                <div className="min-w-[110px] flex-1">
+                  <div
+                    className={cn(
+                      'truncate text-[13.5px] font-semibold',
+                      isDone ? 'text-ink-3 line-through' : 'text-ink',
+                    )}
+                  >
+                    {t.title}
+                  </div>
+                  {t.task_type && (
+                    <div className="text-[11.5px] text-ink-3">
+                      {TYPE_LABEL[t.task_type] ?? t.task_type}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1 sm:ml-auto">
+                  <TaskStatusBadge status={t.status} />
+                  {isAdmin && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Редактировать задачу"
+                        onClick={() => setEditTask(t)}
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-accent"
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Удалить задачу"
+                        onClick={() => remove(t.id)}
+                        disabled={del.isPending}
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-danger disabled:opacity-50"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+
+      {isAdmin && (
+        <EditCalendarTaskModal task={editTask} onClose={() => setEditTask(null)} />
+      )}
+    </div>
+  )
+}

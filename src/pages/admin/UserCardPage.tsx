@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Trash2 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { formatDate } from '@/lib/utils'
 import { useUser } from '@/features/users/useUser'
+import { useSoftDeleteUser } from '@/features/users/useUsers'
 import { EditUserModal } from '@/features/users/EditUserModal'
 import { SetPasswordModal } from '@/features/users/SetPasswordModal'
 import { PasswordField } from '@/features/users/PasswordField'
@@ -18,7 +20,9 @@ import { ActivityFeed } from '@/features/activity-log/ActivityFeed'
 /** Карточка пользователя — «медкарта»: данные, вкладки, достижения, история. */
 export function UserCardPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { data: user, isLoading } = useUser(id)
+  const del = useSoftDeleteUser()
   const [editing, setEditing] = useState(false)
   const [pwdOpen, setPwdOpen] = useState(false)
 
@@ -76,6 +80,24 @@ export function UserCardPage() {
                 onClick={() => setPwdOpen(true)}
               >
                 Сменить пароль
+              </Button>
+              <Button
+                variant="danger"
+                className="flex-1 sm:flex-none"
+                leftIcon={<Trash2 size={15} />}
+                loading={del.isPending}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      `Удалить «${user.full_name || 'пользователя'}»? Лид уйдёт в «Корзину» — его можно восстановить.`,
+                    )
+                  )
+                    del.mutate(user.id, {
+                      onSuccess: () => navigate('/admin/users'),
+                    })
+                }}
+              >
+                Удалить
               </Button>
             </div>
           </div>

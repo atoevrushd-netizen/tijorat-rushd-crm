@@ -8,15 +8,16 @@ export async function listUsers({
   search,
   page,
   pageSize,
+  trashed = false,
 }: UsersQuery): Promise<UsersPage> {
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  let query = supabase
-    .from('profiles')
-    .select('*', { count: 'exact' })
-    .order('registration_date', { ascending: false })
-    .range(from, to)
+  let query = supabase.from('profiles').select('*', { count: 'exact' })
+  query = trashed
+    ? query.not('deleted_at', 'is', null)
+    : query.is('deleted_at', null)
+  query = query.order('registration_date', { ascending: false }).range(from, to)
 
   const filter = buildSearchFilter(search)
   if (filter) query = query.or(filter)
@@ -46,6 +47,24 @@ export async function getUserPassword(userId: string): Promise<string | null> {
     .maybeSingle()
   if (error) throw error
   return (data?.password as string | undefined) ?? null
+}
+
+/** Мягкое удаление лида/пользователя (в «Корзину»). Данные сохраняются. */
+export async function softDeleteUser(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) throw error
+}
+
+/** Восстановить лида из «Корзины». */
+export async function restoreUser(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ deleted_at: null })
+    .eq('id', id)
+  if (error) throw error
 }
 
 export type CreateUserInput = {

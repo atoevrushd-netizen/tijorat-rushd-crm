@@ -5,6 +5,8 @@ export type UsersQuery = {
   search: string
   page: number // нумерация с 1
   pageSize: number
+  /** true — показывать «Корзину» (удалённых), false/undefined — активных. */
+  trashed?: boolean
 }
 
 /** Страница списка пользователей. */

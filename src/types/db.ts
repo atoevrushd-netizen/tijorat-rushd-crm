@@ -28,6 +28,8 @@ export type Profile = {
   registration_date: string
   created_at: string
   updated_at: string
+  /** Мягкое удаление: непусто = лид в «Корзине». */
+  deleted_at: string | null
 }
 
 /** Лид (таблица public.leads). */

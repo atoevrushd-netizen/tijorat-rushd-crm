@@ -32,3 +32,6 @@ supabase/.branches/
 
 # PWA dev output
 dev-dist/
+
+# Исходные данные лидов — не публиковать на сайт
+public/Лиды/

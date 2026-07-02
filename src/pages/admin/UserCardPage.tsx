@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Trash2 } from 'lucide-react'
+import { KeyRound, Trash2 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
@@ -70,7 +70,7 @@ export function UserCardPage() {
                 {user.business_direction || 'Направление не указано'}
               </p>
             </div>
-            <div className="flex w-full gap-2 sm:w-auto sm:flex-col">
+            <div className="flex w-full items-center gap-2 sm:w-auto sm:flex-col sm:items-stretch">
               <Button
                 variant="secondary"
                 className="flex-1 sm:flex-none"
@@ -78,17 +78,21 @@ export function UserCardPage() {
               >
                 Редактировать
               </Button>
+              {/* На телефоне — иконки (без текста), на десктопе — текст */}
               <Button
                 variant="secondary"
-                className="flex-1 sm:flex-none"
+                aria-label="Сменить пароль"
+                title="Сменить пароль"
+                leftIcon={<KeyRound size={16} />}
                 onClick={() => setPwdOpen(true)}
               >
-                Сменить пароль
+                <span className="hidden sm:inline">Сменить пароль</span>
               </Button>
               <Button
                 variant="danger"
-                className="flex-1 sm:flex-none"
-                leftIcon={<Trash2 size={15} />}
+                aria-label="Удалить"
+                title="Удалить"
+                leftIcon={<Trash2 size={16} />}
                 loading={del.isPending}
                 onClick={() => {
                   if (
@@ -101,7 +105,7 @@ export function UserCardPage() {
                     })
                 }}
               >
-                Удалить
+                <span className="hidden sm:inline">Удалить</span>
               </Button>
             </div>
           </div>

@@ -33,7 +33,7 @@ export function Avatar({ name, src, size = 40, className = '' }: AvatarProps) {
         height: size,
         borderRadius: radius,
         fontSize: Math.round(size * 0.36),
-        background: 'linear-gradient(135deg,#3b82f6,#2563eb)',
+        background: 'linear-gradient(135deg,#0a84ff,#0a6cd6)',
       }}
     >
       {initials(name)}

@@ -81,7 +81,7 @@ export function DayTasksPanel({
             return (
               <li
                 key={t.id}
-                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-line bg-bg px-3 py-2.5"
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[14px] border border-line bg-surface-2 px-3 py-2.5"
               >
                 {isAdmin && (
                   <button

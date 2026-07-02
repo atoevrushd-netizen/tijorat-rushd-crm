@@ -21,7 +21,7 @@ export function LanguageToggle() {
         {/* Скользящий индикатор активного языка */}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-y-[3px] left-[3px] w-9 rounded-full bg-accent shadow-[0_2px_10px_rgba(59,130,246,.45)] transition-transform duration-300 ease-kit"
+          className="pointer-events-none absolute inset-y-[3px] left-[3px] w-9 rounded-full bg-accent shadow-[0_2px_10px_rgba(10,132,255,.45)] transition-transform duration-300 ease-kit"
           style={{ transform: `translateX(${activeIndex * 100}%)` }}
         />
         {LANGS.map((l) => (

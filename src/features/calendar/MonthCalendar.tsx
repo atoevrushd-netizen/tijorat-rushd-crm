@@ -78,7 +78,7 @@ export function MonthCalendar({
                 'relative flex h-10 items-center justify-center rounded-lg text-[13px] transition-colors sm:h-9',
                 c.inMonth ? 'text-ink' : 'text-ink-3 opacity-40',
                 isSelected
-                  ? 'bg-accent font-bold text-on-accent shadow-[0_2px_10px_rgba(59,130,246,.4)]'
+                  ? 'bg-accent font-bold text-on-accent shadow-[0_2px_10px_rgba(10,132,255,.4)]'
                   : inSub
                     ? 'bg-accent-soft hover:bg-surface-2'
                     : 'hover:bg-surface-2',

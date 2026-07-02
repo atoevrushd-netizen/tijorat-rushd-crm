@@ -56,6 +56,10 @@
     height: 100%;
   }
   body {
+    /* Мобайл: приложение никогда не скроллится вбок.
+       clip (а не hidden) — не создаёт скролл-контейнер и не ломает
+       sticky-шапку и fixed таб-бар. */
+    overflow-x: clip;
     margin: 0;
     background: var(--bg);
     color: var(--text);

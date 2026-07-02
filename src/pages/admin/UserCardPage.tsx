@@ -18,6 +18,7 @@ import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { ActivityFeed } from '@/features/activity-log/ActivityFeed'
 import { SurveyPanel } from '@/features/survey/SurveyPanel'
+import { RazborPanel } from '@/features/razbor/RazborPanel'
 
 /** Карточка пользователя — «медкарта»: данные, вкладки, достижения, история. */
 export function UserCardPage() {
@@ -123,6 +124,12 @@ export function UserCardPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-ink">{t('survey.title')}</h2>
           <SurveyPanel userId={user.id} editable={false} />
+        </section>
+
+        {/* «Разбор» лида (просмотр админом) */}
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-ink">{t('page.razbor')}</h2>
+          <RazborPanel userId={user.id} editable={false} />
         </section>
 
         <UserTabs userId={user.id} />

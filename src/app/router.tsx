@@ -31,6 +31,9 @@ const UserCabinet = lazy(() =>
 const MySurveyPage = lazy(() =>
   import('@/pages/user/MySurveyPage').then((m) => ({ default: m.MySurveyPage })),
 )
+const RazborPage = lazy(() =>
+  import('@/pages/user/RazborPage').then((m) => ({ default: m.RazborPage })),
+)
 const SettingsPage = lazy(() =>
   import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
@@ -66,6 +69,7 @@ export function AppRouter() {
           <Route element={<RequireRole role="user" />}>
             <Route path="/cabinet" element={<UserCabinet />} />
             <Route path="/survey" element={<MySurveyPage />} />
+            <Route path="/razbor" element={<RazborPage />} />
           </Route>
         </Route>
 

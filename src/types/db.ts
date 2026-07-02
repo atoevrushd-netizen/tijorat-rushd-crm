@@ -142,6 +142,33 @@ export type SurveyPerson = {
   photo_url: string | null
 }
 
+/** Раздел «Разбор» (таблица public.razbor_sections). Контент — двуязычный, read-only для лида. */
+export type RazborSection = {
+  id: string
+  sort_order: number
+  title_ru: string
+  title_tg: string
+  report_ru: string
+  report_tg: string
+  questions_ru: string
+  questions_tg: string
+  created_at: string
+}
+
+/** Поле ответа в разборе: «Ответы на вопросы» или «Получить задания». */
+export type RazborField = 'answers' | 'tasks'
+
+/** Ответ лида в разборе (таблица public.razbor_answers). */
+export type RazborAnswer = {
+  id: string
+  user_id: string
+  section_id: string
+  field: RazborField
+  answer: string
+  created_at: string
+  updated_at: string
+}
+
 /** Достижение пользователя (таблица public.achievements). */
 export type Achievement = {
   id: string

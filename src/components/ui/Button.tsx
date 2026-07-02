@@ -13,26 +13,25 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold ' +
-  'transition-all duration-[180ms] ease-kit select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-[.55]'
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[14px] font-semibold ' +
+  'transition-all duration-150 ease-ios select-none active:scale-[0.96] disabled:pointer-events-none disabled:opacity-[.5]'
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-accent text-on-accent font-bold shadow-[0_4px_16px_rgba(59,130,246,.22)] ' +
-    'hover:bg-accent-600 hover:-translate-y-0.5 hover:shadow-[0_8px_26px_rgba(59,130,246,.34)]',
-  secondary:
-    'bg-surface-3 text-ink border border-line-strong hover:bg-elevated hover:-translate-y-0.5',
+    'bg-accent text-on-accent shadow-[0_4px_16px_rgba(10,132,255,.35)] ' +
+    'hover:bg-accent-600 active:brightness-95',
+  secondary: 'bg-surface-2 text-ink border border-line hover:bg-surface-3',
   outline:
-    'bg-transparent text-ink border border-line-strong hover:border-accent hover:text-accent',
-  ghost: 'bg-transparent text-ink-2 hover:bg-surface-2 hover:text-ink',
+    'bg-transparent text-accent border border-line-strong hover:bg-surface-2',
+  ghost: 'bg-transparent text-accent hover:bg-accent-soft',
   danger:
-    'bg-danger-soft text-danger border border-[rgba(245,107,107,.3)] hover:bg-[rgba(245,107,107,.2)]',
+    'bg-danger-soft text-danger hover:bg-[rgba(255,69,58,.24)]',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'text-[12.5px] px-[15px] py-2',
-  md: 'text-sm px-[22px] py-3',
-  lg: 'text-base px-[30px] py-[15px]',
+  sm: 'text-[13px] px-4 py-2 rounded-[11px]',
+  md: 'text-[15px] px-[22px] py-3',
+  lg: 'text-base px-[30px] py-[15px] rounded-[16px]',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

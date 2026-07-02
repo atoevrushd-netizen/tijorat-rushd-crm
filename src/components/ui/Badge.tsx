@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-type Tone = 'accent' | 'info' | 'warn' | 'danger' | 'muted'
+type Tone = 'accent' | 'success' | 'info' | 'warn' | 'danger' | 'muted'
 
 const TONE: Record<Tone, { wrap: string; dot: string }> = {
   accent: { wrap: 'bg-accent-soft text-accent', dot: 'bg-accent' },
+  success: { wrap: 'bg-success-soft text-success', dot: 'bg-success' },
   info: { wrap: 'bg-info-soft text-info', dot: 'bg-info' },
   warn: { wrap: 'bg-warn-soft text-warn', dot: 'bg-warn' },
   danger: { wrap: 'bg-danger-soft text-danger', dot: 'bg-danger' },

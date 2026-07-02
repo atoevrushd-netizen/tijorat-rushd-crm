@@ -32,29 +32,29 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   if (!open) return null
   return createPortal(
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-md animate-fade-in sm:items-center sm:p-4 sm:pt-[max(1rem,env(safe-area-inset-top))]"
       onClick={onClose}
     >
-      <div className="flex min-h-screen items-start justify-center px-4 pb-8 pt-[max(8vh,env(safe-area-inset-top))]">
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="w-full max-w-md animate-rise rounded-xl border border-line-strong bg-elevated p-6 shadow-sh2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-bold text-ink">{title}</h2>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Закрыть"
-              className="text-ink-3 transition-colors hover:text-ink"
-            >
-              <X size={18} />
-            </button>
-          </div>
-          {children}
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="w-full max-h-[92vh] animate-sheet-up overflow-y-auto rounded-t-[22px] border-t border-line bg-elevated px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 shadow-sh2 sm:max-w-md sm:animate-pop sm:rounded-[22px] sm:border sm:p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* «Грабер» — как у iOS-шторок (только на телефоне) */}
+        <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-line-strong sm:hidden" />
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-[17px] font-bold text-ink">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Закрыть"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-2 text-ink-2 transition-colors hover:text-ink active:scale-90"
+          >
+            <X size={17} />
+          </button>
         </div>
+        {children}
       </div>
     </div>,
     document.body,

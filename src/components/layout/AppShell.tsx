@@ -48,7 +48,7 @@ export function AppShell({
     <div className="flex min-h-full">
       {/* Сайдбар — планшет/десктоп (md+) */}
       <div className="sticky top-0 hidden h-screen md:block">
-        <aside className="flex h-full w-[216px] flex-none flex-col overflow-y-auto border-r border-line bg-[#0c0d0f] px-4 pb-[max(22px,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pt-[max(22px,env(safe-area-inset-top))] lg:w-[248px]">
+        <aside className="flex h-full w-[216px] flex-none flex-col overflow-y-auto border-r border-line bg-[#0a0a0c] px-4 pb-[max(22px,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pt-[max(22px,env(safe-area-inset-top))] lg:w-[248px]">
           <div className="flex items-center gap-[11px] px-2.5 pb-[22px]">
             <img
               src={`${import.meta.env.BASE_URL}logo/logo-light.svg`}
@@ -97,8 +97,8 @@ export function AppShell({
 
           <div className="mt-auto flex items-center gap-[11px] rounded-md border border-line bg-surface p-2.5">
             <div
-              className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] text-[13px] font-extrabold text-on-accent"
-              style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)' }}
+              className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[13px] font-extrabold text-on-accent"
+              style={{ background: 'linear-gradient(135deg,#0a84ff,#0a6cd6)' }}
             >
               {initials}
             </div>
@@ -119,9 +119,9 @@ export function AppShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(11,12,14,.85)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-md sm:gap-4 sm:pl-8 sm:pr-[112px]">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(0,0,0,.72)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-xl sm:gap-4 sm:pl-8 sm:pr-[112px]">
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-bold tracking-tight text-ink sm:text-[22px]">
+            <h1 className="truncate text-[21px] font-bold tracking-tight text-ink sm:text-[27px]">
               {title}
             </h1>
             {subtitle && (
@@ -137,7 +137,7 @@ export function AppShell({
       </div>
 
       {/* Нижняя навигация — телефон (< md), как в нативных приложениях */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-[rgba(11,12,14,.92)] pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-[rgba(0,0,0,.8)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
         {nav.map((item) => {
           const active = isActive(item, pathname)
           return (

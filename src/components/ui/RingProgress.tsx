@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 
-/** Кольцевой прогресс (donut): лаймовая дуга, плавная дорисовка, текст по центру. */
+/**
+ * Кольцевой прогресс в стиле iOS (Activity ring): градиентная дуга,
+ * плавная дорисовка, скруглённые концы, число по центру.
+ */
 export function RingProgress({
   value,
   size = 120,
@@ -14,6 +17,7 @@ export function RingProgress({
   label?: string
   sublabel?: string
 }) {
+  const gid = useId()
   const r = (size - stroke) / 2
   const circumference = 2 * Math.PI * r
   const clamped = Math.max(0, Math.min(100, value))
@@ -32,6 +36,12 @@ export function RingProgress({
       style={{ width: size, height: size }}
     >
       <svg width={size} height={size} className="-rotate-90">
+        <defs>
+          <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--info)" />
+          </linearGradient>
+        </defs>
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -45,17 +55,20 @@ export function RingProgress({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--accent)"
+          stroke={`url(#${gid})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          style={{ transition: 'stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)' }}
+          style={{
+            transition: 'stroke-dashoffset 1s cubic-bezier(.32,.72,0,1)',
+            filter: 'drop-shadow(0 0 6px rgba(10,132,255,.35))',
+          }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {label && (
-          <div className="font-mono text-[24px] font-extrabold leading-none text-ink">
+          <div className="text-[26px] font-bold leading-none tracking-tight text-ink">
             {label}
           </div>
         )}

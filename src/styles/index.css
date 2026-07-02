@@ -3,44 +3,50 @@
 @tailwind utilities;
 
 /* ============================================================
-   Tijorat & Rushd CRM — токены тёмной темы (акцент — синий #3b82f6).
-   Эти переменные читает tailwind.config.js (bg / surface / ink / accent / …).
+   Tijorat & Rushd CRM — тема в стиле iOS (тёмная).
+   Палитра близка к системной iOS Dark: чёрный фон, карточки #1C1C1E,
+   системный синий #0A84FF, iOS-семантика (green/orange/red).
+   Переменные читает tailwind.config.js (bg / surface / ink / accent / …).
    ============================================================ */
 :root {
-  --bg: #0b0c0e;
-  --bg-grad: #0e0f12;
-  --surface: #141518;
-  --surface-2: #191b1f;
-  --surface-3: #1f2226;
-  --elevated: #1c1f23;
+  --bg: #000000;
+  --bg-grad: #0a0a0c;
+  --surface: #1c1c1e;   /* карточка (secondary grouped) */
+  --surface-2: #2c2c2e; /* поле ввода / вложенная ячейка */
+  --surface-3: #3a3a3c; /* дорожка/трек, tertiary */
+  --elevated: #2c2c2e;
 
-  --border: rgba(255, 255, 255, 0.07);
-  --border-2: rgba(255, 255, 255, 0.13);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-2: rgba(255, 255, 255, 0.16);
 
-  --text: #f3f4f2;
-  --text-2: #9ea29b;
-  --text-3: #6a6e68;
+  --text: #ffffff;
+  --text-2: rgba(235, 235, 245, 0.62);
+  --text-3: rgba(235, 235, 245, 0.34);
 
-  --accent: #3b82f6;
-  --accent-600: #2f74e6;
-  --accent-700: #2563eb;
-  --accent-soft: rgba(59,130,246, 0.12);
-  --accent-ring: rgba(59,130,246, 0.3);
+  --accent: #0a84ff;    /* iOS system blue (dark) */
+  --accent-600: #0a78ec;
+  --accent-700: #0a6cd6;
+  --accent-soft: rgba(10, 132, 255, 0.16);
+  --accent-ring: rgba(10, 132, 255, 0.35);
   --on-accent: #ffffff;
 
-  --info: #6db2ff;
-  --info-soft: rgba(109, 178, 255, 0.13);
-  --warn: #f1c34a;
-  --warn-soft: rgba(241, 195, 74, 0.13);
-  --danger: #f56b6b;
-  --danger-soft: rgba(245, 107, 107, 0.13);
+  --success: #30d158;   /* iOS green */
+  --success-soft: rgba(48, 209, 88, 0.16);
+  --info: #64d2ff;      /* iOS teal-blue */
+  --info-soft: rgba(100, 210, 255, 0.15);
+  --warn: #ff9f0a;      /* iOS orange */
+  --warn-soft: rgba(255, 159, 10, 0.15);
+  --danger: #ff453a;    /* iOS red */
+  --danger-soft: rgba(255, 69, 58, 0.15);
 
-  --sh-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.25);
-  --sh-2: 0 8px 40px rgba(0, 0, 0, 0.45);
-  --glow: 0 0 0 1px rgba(59,130,246, 0.25), 0 8px 30px rgba(59,130,246, 0.18);
+  --sh-1: 0 1px 1px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
+  --sh-2: 0 12px 44px rgba(0, 0, 0, 0.6);
+  --glow: 0 0 0 1px rgba(10, 132, 255, 0.35), 0 10px 34px rgba(10, 132, 255, 0.28);
 
-  --font: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* На Apple-устройствах — родной SF Pro (аутентичный iOS-вид), иначе Hanken. */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Hanken Grotesk',
+    system-ui, sans-serif;
+  --mono: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
 }
 
 @layer base {
@@ -51,41 +57,38 @@
   }
   body {
     margin: 0;
-    background:
-      radial-gradient(1000px 560px at 80% -10%, rgba(59,130,246, 0.06), transparent 60%),
-      linear-gradient(180deg, var(--bg-grad), var(--bg));
-    background-attachment: fixed;
+    background: var(--bg);
     color: var(--text);
     font-family: var(--font);
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
   ::selection {
-    background: rgba(59,130,246, 0.28);
+    background: rgba(10, 132, 255, 0.3);
     color: #fff;
   }
+  /* Тонкий, ненавязчивый скроллбар (как в iOS/macOS) */
   ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 9px;
+    height: 9px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.14);
     border-radius: 99px;
-    border: 3px solid transparent;
+    border: 2.5px solid transparent;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.22);
     background-clip: padding-box;
   }
 }
 
 @layer components {
-  /* Underline-инпут как в Figma-шаблоне (нижняя линия вместо рамки-бокса).
-     Кастомные цвета задаём переменными напрямую — без @apply кастомных классов. */
+  /* Underline-инпут (страница входа). */
   .input-underline {
     @apply w-full border-0 border-b bg-transparent px-0.5 py-2.5 text-[15px] outline-none transition-colors;
     color: var(--text);
@@ -98,19 +101,26 @@
     border-bottom-color: var(--accent);
   }
 
-  /* Бокс-инпут (где нужна рамка) */
+  /* iOS-поле: скруглённая «залитая» ячейка. */
   .input-box {
-    @apply w-full rounded-md border px-3.5 py-3 text-sm outline-none transition;
+    @apply w-full rounded-[13px] border px-3.5 py-3 text-[15px] outline-none transition;
     color: var(--text);
-    background: var(--bg);
-    border-color: var(--border-2);
+    background: var(--surface-2);
+    border-color: transparent;
   }
   .input-box::placeholder {
     color: var(--text-3);
   }
   .input-box:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  /* iOS grouped list: единый скруглённый блок со строками-разделителями. */
+  .ios-group {
+    @apply overflow-hidden rounded-[16px] border;
+    background: var(--surface);
+    border-color: var(--border);
   }
 }
 

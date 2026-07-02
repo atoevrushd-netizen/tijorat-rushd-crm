@@ -1,5 +1,6 @@
 import type { TaskStatus } from '@/types'
 import { cn } from '@/lib/utils'
+import { Card } from '@/components/ui/Card'
 import { RingProgress } from '@/components/ui/RingProgress'
 
 const ORDER: TaskStatus[] = [
@@ -19,13 +20,13 @@ const SHORT: Record<TaskStatus, string> = {
   needs_revision: 'Правка',
 }
 
-/** Бар-чарт распределения задач по статусам (по стилю макета). */
+/** Бар-чарт распределения задач по статусам (iOS-стиль: градиент + рост). */
 export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }) {
   const max = Math.max(1, ...ORDER.map((s) => byStatus[s]))
   return (
-    <div className="rounded-lg border border-line bg-surface p-4 sm:p-6">
+    <Card className="p-4 sm:p-6">
       <div className="mb-5">
-        <div className="text-[15px] font-bold text-ink">Задачи по статусам</div>
+        <div className="text-[16px] font-bold text-ink">Задачи по статусам</div>
         <div className="text-[12.5px] text-ink-3">распределение всех задач</div>
       </div>
       <div className="flex h-[170px] items-end gap-2 sm:h-[200px] sm:gap-3">
@@ -37,15 +38,17 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
               key={s}
               className="flex h-full flex-1 flex-col items-center justify-end gap-2.5"
             >
-              <span className="font-mono text-[11px] text-ink-2">{byStatus[s]}</span>
+              <span className="text-[11px] font-semibold text-ink-2">
+                {byStatus[s]}
+              </span>
               <div
-                className="w-full max-w-[44px] rounded-t-[7px]"
+                className="w-full max-w-[46px] origin-bottom animate-bar-grow rounded-[8px] transition-all duration-500 ease-ios"
                 style={{
                   height: `${h}%`,
                   background: accent
-                    ? 'linear-gradient(180deg,var(--accent),var(--accent-700))'
-                    : 'var(--surface-3)',
-                  boxShadow: accent ? '0 0 22px rgba(59,130,246,.3)' : undefined,
+                    ? 'linear-gradient(180deg,var(--info),var(--accent))'
+                    : 'linear-gradient(180deg,var(--surface-3),var(--surface-2))',
+                  boxShadow: accent ? '0 0 22px rgba(10,132,255,.35)' : undefined,
                 }}
               />
               <span className={cn('text-[11px]', accent ? 'text-ink' : 'text-ink-3')}>
@@ -55,7 +58,7 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
           )
         })}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -83,8 +86,8 @@ function Legend({
 export function DonutCard({ accepted, total }: { accepted: number; total: number }) {
   const pct = total ? Math.round((accepted / total) * 100) : 0
   return (
-    <div className="flex flex-col rounded-lg border border-line bg-surface p-4 sm:p-6">
-      <div className="text-[15px] font-bold text-ink">Выполнение задач</div>
+    <Card className="flex flex-col p-4 sm:p-6">
+      <div className="text-[16px] font-bold text-ink">Выполнение задач</div>
       <div className="mb-3 text-[12.5px] text-ink-3">принято от всех задач</div>
       <div className="my-2 flex items-center justify-center">
         <RingProgress value={pct} size={140} stroke={16} label={`${pct}%`} sublabel="выполнено" />
@@ -98,6 +101,6 @@ export function DonutCard({ accepted, total }: { accepted: number; total: number
           muted
         />
       </div>
-    </div>
+    </Card>
   )
 }

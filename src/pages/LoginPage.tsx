@@ -36,7 +36,7 @@ export function LoginPage() {
 
   return (
     <main className="flex min-h-full items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8 shadow-sh2">
+      <div className="w-full max-w-sm rounded-[26px] border border-line bg-surface p-8 shadow-sh2">
         <div className="flex flex-col items-center text-center">
           <Logo size={72} />
           <h1 className="mt-5 text-xl font-bold text-ink">Tijorat &amp; Rushd CRM</h1>
@@ -50,6 +50,7 @@ export function LoginPage() {
             </label>
             <Input
               id="login"
+              variant="box"
               type="text"
               autoComplete="username"
               required
@@ -65,6 +66,7 @@ export function LoginPage() {
             </label>
             <Input
               id="password"
+              variant="box"
               type="password"
               autoComplete="current-password"
               required

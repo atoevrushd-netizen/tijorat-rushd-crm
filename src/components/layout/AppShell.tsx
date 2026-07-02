@@ -3,10 +3,12 @@ import { Link, useLocation } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 
 export type NavItem = {
   to: string
-  label: string
+  /** Ключ перевода подписи (см. i18n/dictionaries/nav). */
+  labelKey: string
   icon: ReactNode
   count?: number
   match?: string
@@ -37,8 +39,9 @@ export function AppShell({
 }) {
   const { profile, role, signOut } = useAuth()
   const { pathname } = useLocation()
-  const name = profile?.full_name || profile?.login || 'Пользователь'
-  const roleLabel = role === 'admin' ? 'Администратор' : 'Пользователь'
+  const { t } = useT()
+  const name = profile?.full_name || profile?.login || t('common.userFallback')
+  const roleLabel = role === 'admin' ? t('common.role.admin') : t('common.role.user')
   const initials = (name.trim()[0] ?? 'U').toUpperCase()
 
   return (
@@ -62,7 +65,7 @@ export function AppShell({
 
           <div className="mb-2" />
           <div className="px-3 pb-2 font-mono text-[10px] uppercase tracking-[.12em] text-ink-3">
-            Меню
+            {t('common.menu')}
           </div>
           <nav className="flex flex-col gap-0.5">
             {nav.map((item) => {
@@ -81,7 +84,7 @@ export function AppShell({
                   <span className="flex h-[15px] w-[15px] items-center justify-center">
                     {item.icon}
                   </span>
-                  {item.label}
+                  {t(item.labelKey)}
                   {item.count != null && (
                     <span className="ml-auto rounded-full bg-surface-3 px-[7px] py-px font-mono text-[11px] text-ink-2">
                       {item.count}
@@ -106,7 +109,7 @@ export function AppShell({
             <button
               type="button"
               onClick={() => void signOut()}
-              aria-label="Выйти"
+              aria-label={t('common.signOut')}
               className="flex h-9 w-9 flex-none items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-danger"
             >
               <LogOut size={16} />
@@ -116,7 +119,7 @@ export function AppShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(11,12,14,.85)] px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-md sm:gap-4 sm:px-8">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(11,12,14,.85)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-md sm:gap-4 sm:pl-8 sm:pr-[112px]">
           <div className="min-w-0">
             <h1 className="truncate text-lg font-bold tracking-tight text-ink sm:text-[22px]">
               {title}
@@ -160,7 +163,7 @@ export function AppShell({
               >
                 {item.icon}
               </span>
-              <span className="max-w-full truncate px-1">{item.label}</span>
+              <span className="max-w-full truncate px-1">{t(item.labelKey)}</span>
             </Link>
           )
         })}

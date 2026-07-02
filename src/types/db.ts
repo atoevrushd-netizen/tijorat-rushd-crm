@@ -108,6 +108,40 @@ export type ActivityEvent = {
   actor?: { full_name: string | null } | null
 }
 
+/** Тип анкеты: A — на входе (до курса), B — после курса. */
+export type SurveyType = 'A' | 'B'
+
+/** Вопрос анкеты (таблица public.survey_questions). Тексты двуязычные. */
+export type SurveyQuestion = {
+  id: string
+  section_order: number
+  section_key: string
+  section_title_ru: string
+  section_title_tg: string | null
+  question_order: number
+  text_ru: string
+  text_tg: string | null
+  created_at: string
+}
+
+/** Ответ лида на вопрос анкеты (таблица public.survey_answers). */
+export type SurveyAnswer = {
+  id: string
+  user_id: string
+  survey_type: SurveyType
+  question_id: string
+  answer: string
+  created_at: string
+  updated_at: string
+}
+
+/** Безопасный список участников для страницы «ответы всех» (view survey_people). */
+export type SurveyPerson = {
+  id: string
+  full_name: string | null
+  photo_url: string | null
+}
+
 /** Достижение пользователя (таблица public.achievements). */
 export type Achievement = {
   id: string

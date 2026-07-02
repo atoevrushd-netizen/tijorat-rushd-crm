@@ -31,6 +31,12 @@ const UserCabinet = lazy(() =>
 const SettingsPage = lazy(() =>
   import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
+const AnswersListPage = lazy(() =>
+  import('@/pages/AnswersListPage').then((m) => ({ default: m.AnswersListPage })),
+)
+const AnswersViewPage = lazy(() =>
+  import('@/pages/AnswersViewPage').then((m) => ({ default: m.AnswersViewPage })),
+)
 
 export function AppRouter() {
   return (
@@ -43,6 +49,9 @@ export function AppRouter() {
           <Route path="/" element={<HomeRedirect />} />
           {/* Настройки доступны и админу, и лиду — содержимое зависит от роли */}
           <Route path="/settings" element={<SettingsPage />} />
+          {/* «Ответы всех» — видят и лиды (ответы друг друга), и админ */}
+          <Route path="/answers" element={<AnswersListPage />} />
+          <Route path="/answers/:id" element={<AnswersViewPage />} />
 
           <Route element={<RequireRole role="admin" />}>
             <Route path="/admin" element={<DashboardPage />} />

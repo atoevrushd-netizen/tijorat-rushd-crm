@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDate } from '@/lib/utils'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
+import { useT } from '@/i18n/useT'
 import { useRestoreUser, useUsers } from '@/features/users/useUsers'
 import { UsersTable } from '@/features/users/UsersTable'
 import { Pagination } from '@/features/users/Pagination'
@@ -21,6 +22,7 @@ const PAGE_SIZE = 10
 export function AdminDashboard() {
   const navigate = useNavigate()
   const restore = useRestoreUser()
+  const { t } = useT()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [createOpen, setCreateOpen] = useState(false)
@@ -40,9 +42,9 @@ export function AdminDashboard() {
 
   return (
     <AppShell
-      title="Пользователи"
+      title={t('page.users')}
       nav={adminNav}
-      action={<Button onClick={() => setCreateOpen(true)}>+ Создать пользователя</Button>}
+      action={<Button onClick={() => setCreateOpen(true)}>{t('users.create')}</Button>}
     >
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="max-w-sm flex-1">
@@ -50,15 +52,15 @@ export function AdminDashboard() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Поиск: имя, телефон, логин, email"
+            placeholder={t('users.searchPlaceholder')}
           />
         </div>
         <Button
           variant={showTrash ? 'primary' : 'outline'}
           leftIcon={<Trash2 size={15} />}
-          onClick={() => setShowTrash((t) => !t)}
+          onClick={() => setShowTrash((v) => !v)}
         >
-          {showTrash ? 'К активным' : 'Корзина'}
+          {showTrash ? t('users.toActive') : t('users.trash')}
         </Button>
       </div>
 
@@ -72,7 +74,7 @@ export function AdminDashboard() {
 
       {isError && (
         <div className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger">
-          Не удалось загрузить пользователей
+          {t('users.loadError')}
           {error instanceof Error ? `: ${error.message}` : ''}.
         </div>
       )}
@@ -115,8 +117,9 @@ function TrashList({
   restoring: boolean
   onRestore: (id: string) => void
 }) {
+  const { t } = useT()
   if (users.length === 0) {
-    return <p className="py-10 text-center text-sm text-ink-3">Корзина пуста</p>
+    return <p className="py-10 text-center text-sm text-ink-3">{t('users.trashEmpty')}</p>
   }
   return (
     <ul className="space-y-2">
@@ -129,7 +132,7 @@ function TrashList({
           <div className="min-w-0 flex-1">
             <div className="truncate font-medium text-ink">{u.full_name || '—'}</div>
             <div className="truncate font-mono text-xs text-ink-3">
-              {u.phone || '—'} · удалён {formatDate(u.deleted_at)}
+              {u.phone || '—'} · {t('users.deletedAt')} {formatDate(u.deleted_at)}
             </div>
           </div>
           <Button
@@ -139,7 +142,7 @@ function TrashList({
             disabled={restoring}
             onClick={() => onRestore(u.id)}
           >
-            Восстановить
+            {t('users.restore')}
           </Button>
         </li>
       ))}

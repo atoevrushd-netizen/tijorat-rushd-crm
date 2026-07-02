@@ -3,17 +3,19 @@ import { AppShell } from '@/components/layout/AppShell'
 import { adminNav, userNav } from '@/components/layout/nav'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { AdminSettings } from '@/features/settings/AdminSettings'
 import { UserSettings } from '@/features/settings/UserSettings'
 
 /** Страница «Настройки» — содержимое зависит от роли. Внизу — выход (важно на телефоне). */
 export function SettingsPage() {
   const { role, signOut } = useAuth()
+  const { t } = useT()
   const isAdmin = role === 'admin'
   return (
     <AppShell
-      title="Настройки"
-      subtitle={isAdmin ? 'Параметры системы и данные' : 'Параметры аккаунта'}
+      title={t('page.settings')}
+      subtitle={isAdmin ? t('settings.subtitleAdmin') : t('settings.subtitleUser')}
       nav={isAdmin ? adminNav : userNav}
     >
       <div className="space-y-6">
@@ -24,7 +26,7 @@ export function SettingsPage() {
           onClick={() => void signOut()}
           className="w-full sm:w-auto"
         >
-          Выйти из аккаунта
+          {t('settings.signOutAccount')}
         </Button>
       </div>
     </AppShell>

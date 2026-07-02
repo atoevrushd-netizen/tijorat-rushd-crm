@@ -5,25 +5,28 @@ import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
+import { SurveyPanel } from '@/features/survey/SurveyPanel'
 
 /** Личный кабинет: профиль, сводка по задачам, задачи и достижения. */
 export function UserCabinet() {
   const { profile } = useAuth()
+  const { t } = useT()
   const [editOpen, setEditOpen] = useState(false)
   if (!profile) return null
   const name = profile.full_name || 'студент'
 
   return (
     <AppShell
-      title="Личный кабинет"
+      title={t('page.cabinet')}
       nav={userNav}
       action={
         <Button variant="secondary" onClick={() => setEditOpen(true)}>
-          Изменить профиль
+          {t('cabinet.editProfile')}
         </Button>
       }
     >
@@ -43,6 +46,15 @@ export function UserCabinet() {
               <p className="font-mono text-xs text-ink-3">{profile.phone}</p>
             )}
           </div>
+        </section>
+
+        {/* Анкеты A/B — сверху кабинета, лид заполняет свои ответы */}
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-lg font-bold text-ink">{t('survey.title')}</h2>
+            <p className="mt-0.5 text-sm text-ink-3">{t('survey.hint')}</p>
+          </div>
+          <SurveyPanel userId={profile.id} editable />
         </section>
 
         <TaskStats userId={profile.id} />

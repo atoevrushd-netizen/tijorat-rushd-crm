@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { formatDate } from '@/lib/utils'
+import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
 import { useSoftDeleteUser } from '@/features/users/useUsers'
 import { EditUserModal } from '@/features/users/EditUserModal'
@@ -16,11 +17,13 @@ import { PasswordField } from '@/features/users/PasswordField'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { ActivityFeed } from '@/features/activity-log/ActivityFeed'
+import { SurveyPanel } from '@/features/survey/SurveyPanel'
 
 /** Карточка пользователя — «медкарта»: данные, вкладки, достижения, история. */
 export function UserCardPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { t } = useT()
   const { data: user, isLoading } = useUser(id)
   const del = useSoftDeleteUser()
   const [editing, setEditing] = useState(false)
@@ -30,7 +33,7 @@ export function UserCardPage() {
 
   if (!user) {
     return (
-      <AppShell title="Карточка пользователя" nav={adminNav}>
+      <AppShell title={t('page.userCard')} nav={adminNav}>
         <p className="text-center text-ink-2">
           Пользователь не найден.{' '}
           <Link to="/admin" className="text-accent underline">
@@ -42,13 +45,13 @@ export function UserCardPage() {
   }
 
   return (
-    <AppShell title="Карточка пользователя" nav={adminNav}>
+    <AppShell title={t('page.userCard')} nav={adminNav}>
       <div className="space-y-6">
         <Link
           to="/admin"
           className="inline-block text-sm text-ink-3 transition-colors hover:text-ink-2"
         >
-          ← К списку
+          {t('users.backToList')}
         </Link>
 
         {/* Шапка */}
@@ -114,6 +117,12 @@ export function UserCardPage() {
               <Field label="Комментарий администратора" value={user.admin_comment} />
             </div>
           </dl>
+        </section>
+
+        {/* Анкеты A/B лида (просмотр админом) */}
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-ink">{t('survey.title')}</h2>
+          <SurveyPanel userId={user.id} editable={false} />
         </section>
 
         <UserTabs userId={user.id} />

@@ -3,6 +3,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { useT } from '@/i18n/useT'
 import {
   useAllTabs,
   useCreateTab,
@@ -12,6 +13,7 @@ import {
 
 /** Простое управление вкладками (вкл/выкл, порядок, добавить/удалить). */
 export function TabsManagerPage() {
+  const { t } = useT()
   const { data: tabs, isLoading } = useAllTabs()
   const create = useCreateTab()
   const update = useUpdateTab()
@@ -23,7 +25,7 @@ export function TabsManagerPage() {
     e.preventDefault()
     if (!key.trim() || !title.trim()) return
     const nextOrder =
-      (tabs && tabs.length ? Math.max(...tabs.map((t) => t.sort_order)) : 0) + 1
+      (tabs && tabs.length ? Math.max(...tabs.map((x) => x.sort_order)) : 0) + 1
     create.mutate(
       { key: key.trim(), title: title.trim(), sort_order: nextOrder },
       {
@@ -45,7 +47,7 @@ export function TabsManagerPage() {
   }
 
   return (
-    <AppShell title="Управление вкладками" nav={adminNav}>
+    <AppShell title={t('page.tabs')} nav={adminNav}>
       <section className="rounded-xl border border-line bg-surface p-6">
         <h2 className="text-lg font-bold text-ink">Вкладки карточки</h2>
         <p className="mt-1 text-sm text-ink-2">

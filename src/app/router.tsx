@@ -49,15 +49,15 @@ export function AppRouter() {
           <Route path="/" element={<HomeRedirect />} />
           {/* Настройки доступны и админу, и лиду — содержимое зависит от роли */}
           <Route path="/settings" element={<SettingsPage />} />
-          {/* «Ответы всех» — видят и лиды (ответы друг друга), и админ */}
-          <Route path="/answers" element={<AnswersListPage />} />
-          <Route path="/answers/:id" element={<AnswersViewPage />} />
 
           <Route element={<RequireRole role="admin" />}>
             <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/users" element={<AdminDashboard />} />
             <Route path="/admin/tabs" element={<TabsManagerPage />} />
             <Route path="/admin/users/:id" element={<UserCardPage />} />
+            {/* «Ответы всех» — только админ (лид видит только свои — в кабинете) */}
+            <Route path="/answers" element={<AnswersListPage />} />
+            <Route path="/answers/:id" element={<AnswersViewPage />} />
           </Route>
 
           <Route element={<RequireRole role="user" />}>

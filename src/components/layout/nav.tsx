@@ -16,9 +16,9 @@ export const adminNav: NavItem[] = [
   { to: '/settings', labelKey: 'nav.settings', icon: <Settings size={15} /> },
 ]
 
-/** Навигация личного кабинета. */
+/** Навигация личного кабинета. Лид видит только свои ответы (в кабинете),
+ * поэтому раздела «Ответы всех» здесь нет — он только у админа. */
 export const userNav: NavItem[] = [
   { to: '/cabinet', labelKey: 'nav.myCabinet', icon: <LayoutDashboard size={15} /> },
-  { to: '/answers', labelKey: 'nav.answers', match: '/answers', icon: <ClipboardList size={15} /> },
   { to: '/settings', labelKey: 'nav.settings', icon: <Settings size={15} /> },
 ]

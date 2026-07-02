@@ -28,6 +28,9 @@ const TabsManagerPage = lazy(() =>
 const UserCabinet = lazy(() =>
   import('@/pages/user/UserCabinet').then((m) => ({ default: m.UserCabinet })),
 )
+const MySurveyPage = lazy(() =>
+  import('@/pages/user/MySurveyPage').then((m) => ({ default: m.MySurveyPage })),
+)
 const SettingsPage = lazy(() =>
   import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
@@ -62,6 +65,7 @@ export function AppRouter() {
 
           <Route element={<RequireRole role="user" />}>
             <Route path="/cabinet" element={<UserCabinet />} />
+            <Route path="/survey" element={<MySurveyPage />} />
           </Route>
         </Route>
 

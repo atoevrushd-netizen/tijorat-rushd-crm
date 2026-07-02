@@ -10,7 +10,6 @@ import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
-import { SurveyPanel } from '@/features/survey/SurveyPanel'
 
 /** Личный кабинет: профиль, сводка по задачам, задачи и достижения. */
 export function UserCabinet() {
@@ -46,15 +45,6 @@ export function UserCabinet() {
               <p className="font-mono text-xs text-ink-3">{profile.phone}</p>
             )}
           </div>
-        </section>
-
-        {/* Анкеты A/B — сверху кабинета, лид заполняет свои ответы */}
-        <section className="space-y-3">
-          <div>
-            <h2 className="text-lg font-bold text-ink">{t('survey.title')}</h2>
-            <p className="mt-0.5 text-sm text-ink-3">{t('survey.hint')}</p>
-          </div>
-          <SurveyPanel userId={profile.id} editable />
         </section>
 
         <TaskStats userId={profile.id} />

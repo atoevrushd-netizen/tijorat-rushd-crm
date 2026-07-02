@@ -3,14 +3,14 @@ import type { Lang } from '../types'
 /** Список пользователей и «Корзина». */
 const bundle: Record<Lang, Record<string, string>> = {
   tg: {
-    'users.create': '+ Корбари нав',
+    'users.create': '+ Эҷоди корбари нав',
     'users.searchPlaceholder': 'Ҷустуҷӯ: ном, телефон, логин, email',
     'users.trash': 'Сабад',
     'users.toActive': 'Ба фаъолон',
-    'users.loadError': 'Корбаронро бор карда нашуд',
+    'users.loadError': 'Боркунии корбарон муяссар нашуд',
     'users.trashEmpty': 'Сабад холӣ аст',
     'users.restore': 'Барқарор кардан',
-    'users.deletedAt': 'нест шуд',
+    'users.deletedAt': 'нест карда шуд',
     'users.backToList': '← Ба рӯйхат',
   },
   ru: {

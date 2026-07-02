@@ -3,14 +3,14 @@ import type { Lang } from '../types'
 /** Общие строки: каркас приложения, роли, часто используемые кнопки. */
 const bundle: Record<Lang, Record<string, string>> = {
   tg: {
-    'common.menu': 'Феҳрист',
+    'common.menu': 'Меню',
     'common.signOut': 'Баромадан',
     'common.role.admin': 'Маъмур',
     'common.role.user': 'Корбар',
     'common.userFallback': 'Корбар',
     'common.close': 'Пӯшидан',
     'common.cancel': 'Бекор кардан',
-    'common.save': 'Нигоҳ доштан',
+    'common.save': 'Сабт кардан',
     'common.language': 'Забон',
   },
   ru: {

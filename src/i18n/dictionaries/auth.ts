@@ -3,12 +3,12 @@ import type { Lang } from '../types'
 /** Страница входа. */
 const bundle: Record<Lang, Record<string, string>> = {
   tg: {
-    'auth.subtitle': 'Ворид ба система',
+    'auth.subtitle': 'Воридшавӣ ба система',
     'auth.login': 'Логин',
     'auth.password': 'Парол',
     'auth.loginPlaceholder': 'логини шумо',
     'auth.submit': 'Ворид шудан',
-    'auth.error': 'Воридшавӣ нашуд',
+    'auth.error': 'Ворид шудан муяссар нашуд',
   },
   ru: {
     'auth.subtitle': 'Вход в систему',

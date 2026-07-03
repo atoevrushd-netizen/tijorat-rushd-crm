@@ -15,9 +15,11 @@ permissions:
   pages: write
   id-token: write
 
+# Для Pages рекомендуется НЕ прерывать идущий деплой (иначе среда github-pages
+# остаётся с «зависшей» публикацией и следующие деплои падают). Ставим в очередь.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:

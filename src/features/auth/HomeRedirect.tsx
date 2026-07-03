@@ -9,5 +9,6 @@ export function HomeRedirect() {
   if (status === 'loading') return <FullPageSpinner />
   if (status === 'unauthenticated') return <Navigate to="/login" replace />
   if (!role) return <NoProfileScreen /> // авторизован, но роль не загрузилась — без цикла
+  if (role === 'developer') return <Navigate to="/dev" replace />
   return <Navigate to={role === 'admin' ? '/admin' : '/cabinet'} replace />
 }

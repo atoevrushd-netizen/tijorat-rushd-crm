@@ -19,6 +19,9 @@ export function RequireRole({ role }: { role: UserRole }) {
   if (status === 'loading') return <FullPageSpinner />
   if (status === 'unauthenticated') return <Navigate to="/login" replace />
   if (!currentRole) return <NoProfileScreen />
-  if (currentRole !== role) return <Navigate to="/" replace />
+  // Разработчик — супер-доступ: проходит и на admin-, и на developer-маршруты.
+  const allowed =
+    currentRole === role || (currentRole === 'developer' && role === 'admin')
+  if (!allowed) return <Navigate to="/" replace />
   return <Outlet />
 }

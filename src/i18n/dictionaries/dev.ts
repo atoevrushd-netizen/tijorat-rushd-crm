@@ -1,0 +1,53 @@
+import type { Lang } from '../types'
+
+/** Роль «Разработчик» и панель супер-доступа. */
+const bundle: Record<Lang, Record<string, string>> = {
+  tg: {
+    'common.role.developer': 'Барноманавис',
+    'nav.dev': 'Барноманавис',
+    'page.dev': 'Панели барноманавис',
+    'dev.hint': 'Супердастрасӣ: идораи нақшҳо ва танзимоти барнома.',
+    'dev.roles': 'Идораи нақшҳо',
+    'dev.rolesHint': 'Нақши ҳар корбарро иваз кунед. Инро танҳо барноманавис карда метавонад.',
+    'dev.roleUser': 'Лид',
+    'dev.roleAdmin': 'Маъмур',
+    'dev.roleDeveloper': 'Барноманавис',
+    'dev.flags': 'Флагҳои барнома',
+    'dev.flagsHint': 'Танзимоти фаъол (калид → қиймат) барои функсияҳои оянда.',
+    'dev.flagKey': 'Калид',
+    'dev.flagValue': 'Қиймат',
+    'dev.addFlag': 'Илова кардан',
+    'dev.noFlags': 'Ҳоло флагҳо нестанд',
+    'dev.overview': 'Шарҳи система',
+    'dev.leads': 'Лидҳо',
+    'dev.admins': 'Маъмурон',
+    'dev.developers': 'Барноманависон',
+    'dev.tasksCount': 'Задачаҳо',
+    'dev.quickLinks': 'Дастрасии зуд',
+  },
+  ru: {
+    'common.role.developer': 'Разработчик',
+    'nav.dev': 'Разработчик',
+    'page.dev': 'Панель разработчика',
+    'dev.hint': 'Супер-доступ: управление ролями и настройками приложения.',
+    'dev.roles': 'Управление ролями',
+    'dev.rolesHint': 'Меняйте роль любого пользователя. Это может только разработчик.',
+    'dev.roleUser': 'Лид',
+    'dev.roleAdmin': 'Администратор',
+    'dev.roleDeveloper': 'Разработчик',
+    'dev.flags': 'Флаги приложения',
+    'dev.flagsHint': 'Гибкие настройки (ключ → значение) для будущих функций.',
+    'dev.flagKey': 'Ключ',
+    'dev.flagValue': 'Значение',
+    'dev.addFlag': 'Добавить',
+    'dev.noFlags': 'Флагов пока нет',
+    'dev.overview': 'Обзор системы',
+    'dev.leads': 'Лидов',
+    'dev.admins': 'Админов',
+    'dev.developers': 'Разработчиков',
+    'dev.tasksCount': 'Задач',
+    'dev.quickLinks': 'Быстрый доступ',
+  },
+}
+
+export default bundle

@@ -5,9 +5,18 @@ import {
   LayoutDashboard,
   LayoutGrid,
   Settings,
+  Terminal,
   Users,
 } from 'lucide-react'
 import type { NavItem } from './AppShell'
+
+/** Пункт меню разработчика — добавляется в AppShell только для роли developer. */
+export const devNavItem: NavItem = {
+  to: '/dev',
+  labelKey: 'nav.dev',
+  match: '/dev',
+  icon: <Terminal size={15} />,
+}
 
 /** Навигация админ-разделов. Подписи — ключи перевода (см. i18n/dictionaries/nav). */
 export const adminNav: NavItem[] = [

@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
+import { devNavItem } from './nav'
 
 export type NavItem = {
   to: string
@@ -41,8 +42,15 @@ export function AppShell({
   const { pathname } = useLocation()
   const { t } = useT()
   const name = profile?.full_name || profile?.login || t('common.userFallback')
-  const roleLabel = role === 'admin' ? t('common.role.admin') : t('common.role.user')
+  const roleLabel =
+    role === 'admin'
+      ? t('common.role.admin')
+      : role === 'developer'
+        ? t('common.role.developer')
+        : t('common.role.user')
   const initials = (name.trim()[0] ?? 'U').toUpperCase()
+  // Разработчику добавляем пункт меню «Разработчик» поверх переданного nav.
+  const fullNav = role === 'developer' ? [...nav, devNavItem] : nav
 
   return (
     <div className="flex min-h-full">
@@ -68,7 +76,7 @@ export function AppShell({
             {t('common.menu')}
           </div>
           <nav className="flex flex-col gap-0.5">
-            {nav.map((item) => {
+            {fullNav.map((item) => {
               const active = isActive(item, pathname)
               return (
                 <Link
@@ -138,7 +146,7 @@ export function AppShell({
 
       {/* Нижняя навигация — телефон (< md), как в нативных приложениях */}
       <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-[rgba(0,0,0,.8)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-        {nav.map((item) => {
+        {fullNav.map((item) => {
           const active = isActive(item, pathname)
           return (
             <Link

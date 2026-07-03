@@ -4,8 +4,8 @@
  * Эти типы переиспользуются всеми фичами.
  */
 
-/** Роль пользователя в системе. */
-export type UserRole = 'admin' | 'user'
+/** Роль пользователя в системе. developer — супер-доступ (наследует права админа). */
+export type UserRole = 'admin' | 'user' | 'developer'
 
 /** Статус пользователя. */
 export type UserStatus = 'active' | 'paused' | 'archived'

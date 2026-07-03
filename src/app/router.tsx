@@ -28,6 +28,9 @@ const TabsManagerPage = lazy(() =>
 const AutoTasksPage = lazy(() =>
   import('@/pages/admin/AutoTasksPage').then((m) => ({ default: m.AutoTasksPage })),
 )
+const DevPage = lazy(() =>
+  import('@/pages/admin/DevPage').then((m) => ({ default: m.DevPage })),
+)
 const UserCabinet = lazy(() =>
   import('@/pages/user/UserCabinet').then((m) => ({ default: m.UserCabinet })),
 )
@@ -74,6 +77,10 @@ export function AppRouter() {
             <Route path="/cabinet" element={<UserCabinet />} />
             <Route path="/survey" element={<MySurveyPage />} />
             <Route path="/razbor" element={<RazborPage />} />
+          </Route>
+
+          <Route element={<RequireRole role="developer" />}>
+            <Route path="/dev" element={<DevPage />} />
           </Route>
         </Route>
 

@@ -12,6 +12,7 @@ import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useUpdateUser } from './useUpdateUser'
 
@@ -96,7 +97,12 @@ export function EditUserModal({
         },
         file,
       },
-      { onSuccess: onClose },
+      {
+        onSuccess: () => {
+          toast.success(t('common.saved'))
+          onClose()
+        },
+      },
     )
   }
 

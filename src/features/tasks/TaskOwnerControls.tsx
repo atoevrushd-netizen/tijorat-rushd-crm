@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import type { Task } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Textarea'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useRespondToTask } from './useTasks'
 
@@ -20,6 +21,7 @@ export function TaskOwnerControls({ task }: { task: Task }) {
         onSuccess: () => {
           setRevision(false)
           setComment('')
+          toast.success(t('common.saved'))
         },
       },
     )
@@ -30,7 +32,12 @@ export function TaskOwnerControls({ task }: { task: Task }) {
       {!revision ? (
         <div className="flex gap-2">
           <Button
-            onClick={() => respond.mutate({ taskId: task.id, accept: true })}
+            onClick={() =>
+              respond.mutate(
+                { taskId: task.id, accept: true },
+                { onSuccess: () => toast.success(t('common.saved')) },
+              )
+            }
             loading={respond.isPending}
           >
             {t('tasksui.accept')}

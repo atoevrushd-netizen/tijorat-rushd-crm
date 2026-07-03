@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Check, Clock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
+import { deadlineState } from '@/lib/deadline'
 import { Button } from '@/components/ui/Button'
 import { useT } from '@/i18n/useT'
 import { dayTitle } from '@/lib/dateI18n'
@@ -26,16 +29,26 @@ export function DayTasksPanel({
   const setStatus = useSetTaskStatus()
   const [editTask, setEditTask] = useState<Task | null>(null)
 
-  function remove(id: string) {
-    if (!window.confirm(t('cal.deleteTaskConfirm'))) return
-    del.mutate(id)
+  async function remove(id: string) {
+    if (
+      !(await confirm({
+        message: t('cal.deleteTaskConfirm'),
+        danger: true,
+        confirmLabel: t('cal.deleteTask'),
+      }))
+    )
+      return
+    del.mutate(id, { onSuccess: () => toast.success(t('common.deleted')) })
   }
 
   function toggleDone(task: Task) {
-    setStatus.mutate({
-      id: task.id,
-      status: task.status === 'done' ? 'not_started' : 'done',
-    })
+    setStatus.mutate(
+      {
+        id: task.id,
+        status: task.status === 'done' ? 'not_started' : 'done',
+      },
+      { onSuccess: () => toast.success(t('common.saved')) },
+    )
   }
 
   return (
@@ -65,6 +78,8 @@ export function DayTasksPanel({
         <ul className="space-y-2">
           {tasks.map((task) => {
             const isDone = task.status === 'done'
+            // Дедлайн задачи = этот день; подсвечиваем время сгорающих/просроченных.
+            const dl = deadlineState(task.deadline, task.status)
             return (
               <li
                 key={task.id}
@@ -87,7 +102,16 @@ export function DayTasksPanel({
                   </button>
                 )}
 
-                <span className="flex w-12 shrink-0 items-center gap-1 font-mono text-[12px] text-accent">
+                <span
+                  className={cn(
+                    'flex w-12 shrink-0 items-center gap-1 font-mono text-[12px]',
+                    dl === 'overdue'
+                      ? 'text-danger'
+                      : dl === 'soon'
+                        ? 'text-warn'
+                        : 'text-accent',
+                  )}
+                >
                   {task.due_time ? (
                     <>
                       <Clock size={12} />

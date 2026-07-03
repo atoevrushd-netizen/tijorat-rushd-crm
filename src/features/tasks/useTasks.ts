@@ -10,7 +10,7 @@ import {
   updateTask,
 } from './api'
 import type { CreateTaskInput, UpdateTaskInput } from './api'
-import type { TaskStatus } from '@/types'
+import type { Task, TaskStatus } from '@/types'
 
 export function useTasks(userId: string, tabId?: string) {
   return useQuery({
@@ -38,11 +38,29 @@ export function useCreateTask() {
 }
 
 export function useSetTaskStatus() {
+  const queryClient = useQueryClient()
   const invalidate = useTasksInvalidator()
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
       setTaskStatus(id, status),
-    onSuccess: () => void invalidate(),
+    // Оптимистично: сразу меняем статус в кэше, чтобы галочка/бейдж откликались
+    // мгновенно, не дожидаясь ответа сети. При ошибке откатываем.
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      const snapshots = queryClient.getQueriesData<Task[]>({ queryKey: ['tasks'] })
+      for (const [key, list] of snapshots) {
+        if (!list) continue
+        queryClient.setQueryData<Task[]>(
+          key,
+          list.map((task) => (task.id === id ? { ...task, status } : task)),
+        )
+      }
+      return { snapshots }
+    },
+    onError: (_err, _vars, ctx) => {
+      ctx?.snapshots.forEach(([key, list]) => queryClient.setQueryData(key, list))
+    },
+    onSettled: () => void invalidate(),
   })
 }
 

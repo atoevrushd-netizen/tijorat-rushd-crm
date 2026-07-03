@@ -11,6 +11,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'common.close': 'Пӯшидан',
     'common.cancel': 'Бекор кардан',
     'common.save': 'Сабт кардан',
+    'common.confirm': 'Тасдиқ',
+    'common.saved': 'Сабт шуд',
+    'common.created': 'Эҷод шуд',
+    'common.deleted': 'Нест карда шуд',
     'common.language': 'Забон',
   },
   ru: {
@@ -22,6 +26,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'common.close': 'Закрыть',
     'common.cancel': 'Отмена',
     'common.save': 'Сохранить',
+    'common.confirm': 'Подтвердить',
+    'common.saved': 'Сохранено',
+    'common.created': 'Создано',
+    'common.deleted': 'Удалено',
     'common.language': 'Язык',
   },
 }

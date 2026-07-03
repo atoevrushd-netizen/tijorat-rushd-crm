@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDate } from '@/lib/utils'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import {
   usePermanentDeleteUser,
@@ -89,7 +91,11 @@ export function AdminDashboard() {
             <TrashList
               users={data.items}
               restoring={restore.isPending}
-              onRestore={(id) => restore.mutate(id)}
+              onRestore={(id) =>
+                restore.mutate(id, {
+                  onSuccess: () => toast.success(t('common.saved')),
+                })
+              }
             />
           ) : (
             <UsersTable
@@ -157,8 +163,17 @@ function TrashList({
               variant="danger"
               leftIcon={<Trash2 size={14} />}
               loading={purge.isPending}
-              onClick={() => {
-                if (window.confirm(t('users.deleteForeverConfirm'))) purge.mutate(u.id)
+              onClick={async () => {
+                if (
+                  await confirm({
+                    message: t('users.deleteForeverConfirm'),
+                    danger: true,
+                    confirmLabel: t('users.deleteForever'),
+                  })
+                )
+                  purge.mutate(u.id, {
+                    onSuccess: () => toast.success(t('common.deleted')),
+                  })
               }}
               aria-label={t('users.deleteForever')}
               title={t('users.deleteForever')}

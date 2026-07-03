@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/features/auth/useAuth'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { saveUser } from './api'
 
@@ -70,6 +71,7 @@ export function SelfEditProfileModal({
           await refreshProfile()
           void queryClient.invalidateQueries({ queryKey: ['users'] })
           void queryClient.invalidateQueries({ queryKey: ['user', profile.id] })
+          toast.success(t('common.saved'))
           onClose()
         },
       },

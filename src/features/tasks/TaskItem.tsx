@@ -1,6 +1,9 @@
 import { X } from 'lucide-react'
 import type { Task } from '@/types'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
+import { deadlineState } from '@/lib/deadline'
 import { useT } from '@/i18n/useT'
 import { TaskStatusBadge } from './TaskStatusBadge'
 import { TaskAdminControls } from './TaskAdminControls'
@@ -25,6 +28,7 @@ export function TaskItem({
   const { t } = useT()
   const delLink = useDeleteTaskLink()
   const canRespond = isOwner && task.status === 'sent_to_user'
+  const dl = deadlineState(task.deadline, task.status)
 
   return (
     <div className="rounded-lg border border-line bg-surface-2 p-4">
@@ -33,7 +37,16 @@ export function TaskItem({
           <div className="break-words font-medium text-ink">{task.title}</div>
           <div className="text-xs text-ink-3">
             {typeLabel(task.task_type, t)}
-            {task.deadline && ` · ${t('tasksui.deadline')} ${formatDate(task.deadline)}`}
+            {task.deadline && (
+              <span
+                className={cn(
+                  dl === 'overdue' && 'text-danger',
+                  dl === 'soon' && 'text-warn',
+                )}
+              >
+                {` · ${t('tasksui.deadline')} ${formatDate(task.deadline)}`}
+              </span>
+            )}
           </div>
         </div>
         <div className="shrink-0">
@@ -56,8 +69,17 @@ export function TaskItem({
               {isAdmin && (
                 <button
                   type="button"
-                  onClick={() => {
-                    if (window.confirm(t('tasksui.confirmDeleteLink'))) delLink.mutate(l.id)
+                  onClick={async () => {
+                    if (
+                      await confirm({
+                        message: t('tasksui.confirmDeleteLink'),
+                        danger: true,
+                        confirmLabel: t('misc.delete'),
+                      })
+                    )
+                      delLink.mutate(l.id, {
+                        onSuccess: () => toast.success(t('common.deleted')),
+                      })
                   }}
                   className="text-ink-3 transition-colors hover:text-danger"
                   aria-label={t('tasksui.deleteLink')}

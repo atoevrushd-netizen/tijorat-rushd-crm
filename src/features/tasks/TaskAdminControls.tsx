@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import type { Task, TaskStatus } from '@/types'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { ADMIN_STATUS_OPTIONS } from './taskStatus'
 import { useAddTaskLink, useDeleteTask, useSetTaskStatus } from './useTasks'
@@ -29,7 +31,10 @@ export function TaskAdminControls({ task }: { task: Task }) {
         value={ADMIN_STATUS_OPTIONS.includes(task.status) ? task.status : ''}
         onChange={(e) =>
           e.target.value &&
-          setStatus.mutate({ id: task.id, status: e.target.value as TaskStatus })
+          setStatus.mutate(
+            { id: task.id, status: e.target.value as TaskStatus },
+            { onSuccess: () => toast.success(t('common.saved')) },
+          )
         }
         className="rounded-md border border-line-strong bg-bg px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent"
       >
@@ -58,8 +63,17 @@ export function TaskAdminControls({ task }: { task: Task }) {
 
       <button
         type="button"
-        onClick={() => {
-          if (window.confirm(t('tasksui.confirmDeleteTask'))) del.mutate(task.id)
+        onClick={async () => {
+          if (
+            await confirm({
+              message: t('tasksui.confirmDeleteTask'),
+              danger: true,
+              confirmLabel: t('misc.delete'),
+            })
+          )
+            del.mutate(task.id, {
+              onSuccess: () => toast.success(t('common.deleted')),
+            })
         }}
         className="text-sm text-danger transition-opacity hover:opacity-80"
       >

@@ -16,6 +16,15 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
   const { data: tasks, isLoading } = useTasks(userId, tabId)
   const [createOpen, setCreateOpen] = useState(false)
 
+  // Сортируем по дедлайну (ближайший — первым), задачи без дедлайна — в конец.
+  const sortedTasks = tasks
+    ? [...tasks].sort((a, b) => {
+        if (!a.deadline) return b.deadline ? 1 : 0
+        if (!b.deadline) return -1
+        return a.deadline.localeCompare(b.deadline)
+      })
+    : tasks
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
@@ -39,9 +48,9 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
       {tasks && tasks.length === 0 && (
         <p className="text-sm text-ink-3">{t('tasksui.noTasks')}</p>
       )}
-      {tasks && tasks.length > 0 && (
+      {sortedTasks && sortedTasks.length > 0 && (
         <div className="space-y-3">
-          {tasks.map((task) => (
+          {sortedTasks.map((task) => (
             <TaskItem key={task.id} task={task} isAdmin={isAdmin} isOwner={isOwner} />
           ))}
         </div>

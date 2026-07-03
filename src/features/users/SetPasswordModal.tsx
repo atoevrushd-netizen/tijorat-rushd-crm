@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useSetPassword } from './useSetPassword'
 
@@ -31,7 +32,15 @@ export function SetPasswordModal({
   function submit(e: FormEvent) {
     e.preventDefault()
     if (password.length < 6) return
-    setPwd.mutate({ userId, password }, { onSuccess: () => setDone(true) })
+    setPwd.mutate(
+      { userId, password },
+      {
+        onSuccess: () => {
+          toast.success(t('common.saved'))
+          setDone(true)
+        },
+      },
+    )
   }
 
   return (

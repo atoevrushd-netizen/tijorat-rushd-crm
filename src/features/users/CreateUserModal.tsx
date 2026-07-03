@@ -5,6 +5,7 @@ import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { UserStatus } from '@/types'
 import { normalizeLogin } from '@/lib/loginEmail'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useCreateUser } from './useCreateUser'
 
@@ -64,6 +65,7 @@ export function CreateUserModal({
       },
       {
         onSuccess: () => {
+          toast.success(t('common.created'))
           setForm(EMPTY)
           onClose()
         },

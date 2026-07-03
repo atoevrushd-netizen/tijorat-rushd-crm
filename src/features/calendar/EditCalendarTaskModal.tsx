@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
+import { toast } from '@/lib/toast'
 import { ADMIN_STATUS_OPTIONS } from '@/features/tasks/taskStatus'
 import { useUpdateTask } from '@/features/tasks/useTasks'
 import { useT } from '@/i18n/useT'
@@ -56,7 +57,12 @@ export function EditCalendarTaskModal({
           status,
         },
       },
-      { onSuccess: onClose },
+      {
+        onSuccess: () => {
+          toast.success(t('common.saved'))
+          onClose()
+        },
+      },
     )
   }
 

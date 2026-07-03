@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { formatDate } from '@/lib/utils'
@@ -36,6 +38,7 @@ export function AchievementsBlock({ userId }: { userId: string }) {
         onSuccess: () => {
           setTitle('')
           setDate('')
+          toast.success(t('common.created'))
         },
       },
     )
@@ -70,8 +73,16 @@ export function AchievementsBlock({ userId }: { userId: string }) {
                   <button
                     type="button"
                     aria-label={t('ach.deleteAria')}
-                    onClick={() => {
-                      if (window.confirm(t('ach.deleteConfirm'))) del.mutate(a.id)
+                    onClick={async () => {
+                      const ok = await confirm({
+                        message: t('ach.deleteConfirm'),
+                        danger: true,
+                        confirmLabel: t('misc.delete'),
+                      })
+                      if (ok)
+                        del.mutate(a.id, {
+                          onSuccess: () => toast.success(t('common.deleted')),
+                        })
                     }}
                     className="text-ink-3 transition-colors hover:text-danger"
                   >

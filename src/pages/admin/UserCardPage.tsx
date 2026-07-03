@@ -8,6 +8,8 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { formatDate } from '@/lib/utils'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
 import { useSoftDeleteUser } from '@/features/users/useUsers'
@@ -94,17 +96,22 @@ export function UserCardPage() {
                 title={t('usercard.delete')}
                 leftIcon={<Trash2 size={16} />}
                 loading={del.isPending}
-                onClick={() => {
+                onClick={async () => {
                   if (
-                    window.confirm(
-                      t('usercard.deleteConfirm').replace(
+                    await confirm({
+                      message: t('usercard.deleteConfirm').replace(
                         '{name}',
                         user.full_name || t('usercard.userFallbackGenitive'),
                       ),
-                    )
+                      danger: true,
+                      confirmLabel: t('usercard.delete'),
+                    })
                   )
                     del.mutate(user.id, {
-                      onSuccess: () => navigate('/admin/users'),
+                      onSuccess: () => {
+                        toast.success(t('common.deleted'))
+                        navigate('/admin/users')
+                      },
                     })
                 }}
               >

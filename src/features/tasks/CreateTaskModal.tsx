@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
+import { toast } from '@/lib/toast'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { useCreateTask } from './useTasks'
@@ -49,7 +50,12 @@ export function CreateTaskModal({
         admin_comment: comment.trim() || undefined,
         created_by: profile?.id ?? null,
       },
-      { onSuccess: close },
+      {
+        onSuccess: () => {
+          toast.success(t('common.created'))
+          close()
+        },
+      },
     )
   }
 

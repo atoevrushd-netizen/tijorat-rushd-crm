@@ -7,6 +7,7 @@ import {
   Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from '@/lib/toast'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
@@ -85,7 +86,10 @@ export function DevPage() {
                     value={p.role}
                     disabled={p.id === profile?.id || setRole.isPending}
                     onChange={(e) =>
-                      setRole.mutate({ userId: p.id, role: e.target.value as UserRole })
+                      setRole.mutate(
+                        { userId: p.id, role: e.target.value as UserRole },
+                        { onSuccess: () => toast.success(t('common.saved')) },
+                      )
                     }
                     className={cn(
                       'rounded-[10px] border border-line bg-surface px-2.5 py-2 text-[13px] font-semibold outline-none focus:border-accent disabled:opacity-60',

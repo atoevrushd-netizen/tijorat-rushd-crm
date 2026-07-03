@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Copy, Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Button } from '@/components/ui/Button'
@@ -92,6 +94,7 @@ export function AutoTasksPage() {
       onSuccess: (g) => {
         setEditingId(g.id)
         setNewName('')
+        toast.success(t('common.created'))
       },
     })
   }
@@ -100,14 +103,26 @@ export function AutoTasksPage() {
     if (!editingGroup) return
     duplicateGroup.mutate(
       { sourceId: editingGroup.id, name: `${editingGroup.name} (копия)` },
-      { onSuccess: (g) => setEditingId(g.id) },
+      {
+        onSuccess: (g) => {
+          setEditingId(g.id)
+          toast.success(t('common.created'))
+        },
+      },
     )
   }
 
-  function removeGroup() {
+  async function removeGroup() {
     if (!editingGroup) return
-    if (window.confirm(t('at.confirmDeleteGroup'))) {
-      deleteGroup.mutate(editingGroup.id)
+    const ok = await confirm({
+      message: t('at.confirmDeleteGroup'),
+      danger: true,
+      confirmLabel: t('at.deleteGroup'),
+    })
+    if (ok) {
+      deleteGroup.mutate(editingGroup.id, {
+        onSuccess: () => toast.success(t('common.deleted')),
+      })
     }
   }
 
@@ -130,7 +145,12 @@ export function AutoTasksPage() {
             </div>
             <Switch
               checked={!!settings?.auto_tasks_enabled}
-              onChange={(v) => updateSettings.mutate({ auto_tasks_enabled: v })}
+              onChange={(v) =>
+                updateSettings.mutate(
+                  { auto_tasks_enabled: v },
+                  { onSuccess: () => toast.success(t('common.saved')) },
+                )
+              }
             />
           </section>
 
@@ -163,7 +183,12 @@ export function AutoTasksPage() {
                 {editingGroup.id !== activeId && (
                   <Button
                     size="sm"
-                    onClick={() => updateSettings.mutate({ active_group_id: editingGroup.id })}
+                    onClick={() =>
+                      updateSettings.mutate(
+                        { active_group_id: editingGroup.id },
+                        { onSuccess: () => toast.success(t('common.saved')) },
+                      )
+                    }
                   >
                     {t('at.makeActive')}
                   </Button>
@@ -215,7 +240,10 @@ export function AutoTasksPage() {
 
               <AddTaskForm
                 onAdd={(v) =>
-                  createTemplate.mutate({ ...v, sort_order: templates.length + 1 })
+                  createTemplate.mutate(
+                    { ...v, sort_order: templates.length + 1 },
+                    { onSuccess: () => toast.success(t('common.saved')) },
+                  )
                 }
               />
 
@@ -229,8 +257,17 @@ export function AutoTasksPage() {
                     <TemplateRow
                       key={tpl.id}
                       template={tpl}
-                      onSave={(patch) => updateTemplate.mutate({ id: tpl.id, patch })}
-                      onDelete={() => deleteTemplate.mutate(tpl.id)}
+                      onSave={(patch) =>
+                        updateTemplate.mutate(
+                          { id: tpl.id, patch },
+                          { onSuccess: () => toast.success(t('common.saved')) },
+                        )
+                      }
+                      onDelete={() =>
+                        deleteTemplate.mutate(tpl.id, {
+                          onSuccess: () => toast.success(t('common.deleted')),
+                        })
+                      }
                     />
                   ))}
                 </div>

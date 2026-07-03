@@ -39,7 +39,7 @@ export function MonthCalendar({
   }).format(new Date(year, month, 1))
 
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
+    <div className="min-w-0 rounded-xl border border-line bg-surface p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="text-[15px] font-bold capitalize text-ink">{monthName}</div>
         <div className="flex items-center gap-1">
@@ -100,9 +100,11 @@ export function MonthCalendar({
       </div>
 
       {subStart && subEnd && (
-        <div className="mt-3 flex items-center gap-2 text-[11.5px] text-ink-3">
-          <span className="h-3 w-3 rounded bg-accent-soft" />
-          Период подписки: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11.5px] text-ink-3">
+          <span className="h-3 w-3 shrink-0 rounded bg-accent-soft" />
+          <span className="min-w-0">
+            Период подписки: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
+          </span>
         </div>
       )}
     </div>

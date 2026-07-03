@@ -27,25 +27,27 @@ export function TaskItem({
   return (
     <div className="rounded-lg border border-line bg-surface-2 p-4">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="font-medium text-ink">{task.title}</div>
+        <div className="min-w-0">
+          <div className="break-words font-medium text-ink">{task.title}</div>
           <div className="text-xs text-ink-3">
             {typeLabel(task.task_type)}
             {task.deadline && ` · дедлайн ${formatDate(task.deadline)}`}
           </div>
         </div>
-        <TaskStatusBadge status={task.status} />
+        <div className="shrink-0">
+          <TaskStatusBadge status={task.status} />
+        </div>
       </div>
 
       {task.task_links && task.task_links.length > 0 && (
         <ul className="mt-2 space-y-1">
           {task.task_links.map((l) => (
-            <li key={l.id} className="flex items-center gap-2 text-sm">
+            <li key={l.id} className="flex min-w-0 items-center gap-2 text-sm">
               <a
                 href={l.url}
                 target="_blank"
                 rel="noreferrer"
-                className="truncate text-info underline"
+                className="min-w-0 truncate text-info underline"
               >
                 {l.label || l.url}
               </a>

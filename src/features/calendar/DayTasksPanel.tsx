@@ -52,10 +52,10 @@ export function DayTasksPanel({
   }
 
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
+    <div className="min-w-0 rounded-xl border border-line bg-surface p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <div>
-          <div className="text-[15px] font-bold capitalize text-ink">
+        <div className="min-w-0">
+          <div className="truncate text-[15px] font-bold capitalize text-ink">
             {formatDayTitle(date)}
           </div>
           <div className="text-[12.5px] text-ink-3">
@@ -111,7 +111,7 @@ export function DayTasksPanel({
                   )}
                 </span>
 
-                <div className="min-w-[110px] flex-1">
+                <div className="min-w-0 flex-1">
                   <div
                     className={cn(
                       'truncate text-[13.5px] font-semibold',

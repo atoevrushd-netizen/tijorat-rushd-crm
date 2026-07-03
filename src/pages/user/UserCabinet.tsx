@@ -8,6 +8,7 @@ import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
+import { DeadlineBanner } from '@/features/tasks/DeadlineBanner'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 
@@ -47,6 +48,7 @@ export function UserCabinet() {
           </div>
         </section>
 
+        <DeadlineBanner userId={profile.id} />
         <TaskStats userId={profile.id} />
         <UserTabs userId={profile.id} />
         <AchievementsBlock userId={profile.id} />

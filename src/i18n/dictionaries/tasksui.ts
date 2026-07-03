@@ -44,6 +44,11 @@ const bundle: Record<Lang, Record<string, string>> = {
     'bulk.preview': 'Сохта мешавад',
     'bulk.createN': 'Сохтан',
     'bulk.done': 'Задачаҳо сохта шуданд',
+    // DeadlineBanner
+    'deadline.title': 'Мӯҳлатҳо',
+    'deadline.overdue': 'Гузашта',
+    'deadline.today': 'Имрӯз',
+    'deadline.soon': 'Ба зудӣ',
     // MediaTab
     'tasksui.tasksCount': 'Задачаҳо',
     'tasksui.addTask': '+ Задача',
@@ -97,6 +102,11 @@ const bundle: Record<Lang, Record<string, string>> = {
     'bulk.preview': 'Будет создано',
     'bulk.createN': 'Создать',
     'bulk.done': 'Задачи созданы',
+    // DeadlineBanner
+    'deadline.title': 'Дедлайны',
+    'deadline.overdue': 'Просрочено',
+    'deadline.today': 'Сегодня',
+    'deadline.soon': 'Скоро',
     // MediaTab
     'tasksui.tasksCount': 'Задач',
     'tasksui.addTask': '+ Задача',

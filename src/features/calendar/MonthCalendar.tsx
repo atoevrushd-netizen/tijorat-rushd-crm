@@ -2,9 +2,9 @@ import { type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Task } from '@/types'
+import { useT } from '@/i18n/useT'
+import { monthYear, weekdaysShort } from '@/lib/dateI18n'
 import { buildMonthMatrix, formatDateShort, isWithinRange } from './calendarUtils'
-
-const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
 type Props = {
   year: number
@@ -32,28 +32,26 @@ export function MonthCalendar({
   onPrev,
   onNext,
 }: Props) {
+  const { t, lang } = useT()
   const weeks = buildMonthMatrix(year, month)
-  const monthName = new Intl.DateTimeFormat('ru-RU', {
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(year, month, 1))
+  const monthName = monthYear(new Date(year, month, 1), lang)
 
   return (
     <div className="min-w-0 rounded-xl border border-line bg-surface p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="text-[15px] font-bold capitalize text-ink">{monthName}</div>
         <div className="flex items-center gap-1">
-          <NavBtn onClick={onPrev} label="Предыдущий месяц">
+          <NavBtn onClick={onPrev} label={t('cal.prevMonth')}>
             <ChevronLeft size={16} />
           </NavBtn>
-          <NavBtn onClick={onNext} label="Следующий месяц">
+          <NavBtn onClick={onNext} label={t('cal.nextMonth')}>
             <ChevronRight size={16} />
           </NavBtn>
         </div>
       </div>
 
       <div className="mb-1 grid grid-cols-7 gap-1">
-        {WEEKDAYS.map((w) => (
+        {weekdaysShort(lang).map((w) => (
           <div
             key={w}
             className="py-1 text-center font-mono text-[10.5px] uppercase tracking-wider text-ink-3"
@@ -103,7 +101,7 @@ export function MonthCalendar({
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[11.5px] text-ink-3">
           <span className="h-3 w-3 shrink-0 rounded bg-accent-soft" />
           <span className="min-w-0">
-            Период подписки: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
+            {t('cal.subscription')}: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
           </span>
         </div>
       )}

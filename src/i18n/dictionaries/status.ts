@@ -1,0 +1,47 @@
+import type { Lang } from '../types'
+
+/** Статусы задач и пользователей — используются на многих экранах. */
+const bundle: Record<Lang, Record<string, string>> = {
+  tg: {
+    'taskStatus.not_started': 'Оғоз нашуда',
+    'taskStatus.in_progress': 'Дар кор',
+    'taskStatus.done': 'Тайёр',
+    'taskStatus.sent_to_user': 'Ба корбар фиристода шуд',
+    'taskStatus.accepted_by_user': 'Аз тарафи корбар қабул шуд',
+    'taskStatus.needs_revision': 'Ислоҳ лозим аст',
+    'taskStatusShort.not_started': 'Оғоз.',
+    'taskStatusShort.in_progress': 'Дар кор',
+    'taskStatusShort.done': 'Тайёр',
+    'taskStatusShort.sent_to_user': 'Фирис.',
+    'taskStatusShort.accepted_by_user': 'Қабул',
+    'taskStatusShort.needs_revision': 'Ислоҳ',
+    'userStatus.active': 'Фаъол',
+    'userStatus.paused': 'Дар таваққуф',
+    'userStatus.archived': 'Дар бойгонӣ',
+    'taskType.reels': 'Reels',
+    'taskType.creative': 'Креатив',
+    'taskType.other': 'Дигар',
+  },
+  ru: {
+    'taskStatus.not_started': 'Не начато',
+    'taskStatus.in_progress': 'В работе',
+    'taskStatus.done': 'Готово',
+    'taskStatus.sent_to_user': 'Отправлено пользователю',
+    'taskStatus.accepted_by_user': 'Принято пользователем',
+    'taskStatus.needs_revision': 'Требуется правка',
+    'taskStatusShort.not_started': 'Не нач.',
+    'taskStatusShort.in_progress': 'В раб.',
+    'taskStatusShort.done': 'Готово',
+    'taskStatusShort.sent_to_user': 'Отпр.',
+    'taskStatusShort.accepted_by_user': 'Принято',
+    'taskStatusShort.needs_revision': 'Правка',
+    'userStatus.active': 'Активен',
+    'userStatus.paused': 'На паузе',
+    'userStatus.archived': 'В архиве',
+    'taskType.reels': 'Reels',
+    'taskType.creative': 'Креатив',
+    'taskType.other': 'Другое',
+  },
+}
+
+export default bundle

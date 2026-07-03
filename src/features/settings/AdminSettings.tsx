@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Database, Download, ShieldCheck, UserCog } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { CalendarClock, Database, Download, ShieldCheck, UserCog } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { Button } from '@/components/ui/Button'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { buildBackup, downloadBackup } from './exportData'
@@ -9,6 +11,7 @@ import { Row, Section } from './SettingsUI'
 /** Подробные настройки администратора: профиль + бэкапы/данные. */
 export function AdminSettings() {
   const { profile } = useAuth()
+  const { t } = useT()
   const [editOpen, setEditOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
@@ -47,6 +50,16 @@ export function AdminSettings() {
       >
         <Row label="Имя" value={profile?.full_name} />
         <Row label="Логин" value={profile?.login ?? profile?.email} />
+      </Section>
+
+      <Section icon={<CalendarClock size={15} />} title={t('page.autotasks')}>
+        <p className="mb-3 text-[13px] text-ink-2">{t('at.hint')}</p>
+        <Link
+          to="/admin/auto-tasks"
+          className="inline-flex items-center gap-2 rounded-[14px] bg-accent px-[22px] py-3 text-[15px] font-semibold text-on-accent transition-all duration-150 ease-ios hover:bg-accent-600 active:scale-[.96]"
+        >
+          {t('at.open')}
+        </Link>
       </Section>
 
       <Section icon={<Database size={15} />} title="Данные и бэкапы">

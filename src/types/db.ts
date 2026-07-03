@@ -169,6 +169,33 @@ export type RazborAnswer = {
   updated_at: string
 }
 
+/** Группа (версия) автозадач (таблица public.task_template_groups). */
+export type TaskTemplateGroup = {
+  id: string
+  name: string
+  created_at: string
+}
+
+/** Шаблон автозадачи (таблица public.task_templates). */
+export type TaskTemplate = {
+  id: string
+  group_id: string
+  tab_key: string // 'calendar' | 'media'
+  title: string
+  task_type: string | null // 'other' | 'reels' | 'creative'
+  deadline: string | null
+  sort_order: number
+  created_at: string
+}
+
+/** Глобальные настройки приложения (таблица public.app_settings, одна строка id=1). */
+export type AppSettings = {
+  id: number
+  auto_tasks_enabled: boolean
+  active_group_id: string | null
+  updated_at: string
+}
+
 /** Достижение пользователя (таблица public.achievements). */
 export type Achievement = {
   id: string

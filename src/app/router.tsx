@@ -25,6 +25,9 @@ const TabsManagerPage = lazy(() =>
     default: m.TabsManagerPage,
   })),
 )
+const AutoTasksPage = lazy(() =>
+  import('@/pages/admin/AutoTasksPage').then((m) => ({ default: m.AutoTasksPage })),
+)
 const UserCabinet = lazy(() =>
   import('@/pages/user/UserCabinet').then((m) => ({ default: m.UserCabinet })),
 )
@@ -60,6 +63,7 @@ export function AppRouter() {
             <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/users" element={<AdminDashboard />} />
             <Route path="/admin/tabs" element={<TabsManagerPage />} />
+            <Route path="/admin/auto-tasks" element={<AutoTasksPage />} />
             <Route path="/admin/users/:id" element={<UserCardPage />} />
             {/* «Ответы всех» — только админ (лид видит только свои — в кабинете) */}
             <Route path="/answers" element={<AnswersListPage />} />

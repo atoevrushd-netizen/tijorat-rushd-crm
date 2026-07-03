@@ -10,6 +10,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'users.loadError': 'Боркунии корбарон муяссар нашуд',
     'users.trashEmpty': 'Сабад холӣ аст',
     'users.restore': 'Барқарор кардан',
+    'users.deleteForever': 'Тамоман нест кардан',
+    'users.deleteForeverConfirm':
+      'Ин лидро ТАМОМАН нест кунам? Амал бебозгашт аст — ҳисоб ва ҳамаи маълумоташ (задачаҳо, ҷавобҳо, парол) нест мешаванд.',
     'users.deletedAt': 'нест карда шуд',
     'users.backToList': '← Ба рӯйхат',
   },
@@ -21,6 +24,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'users.loadError': 'Не удалось загрузить пользователей',
     'users.trashEmpty': 'Корзина пуста',
     'users.restore': 'Восстановить',
+    'users.deleteForever': 'Удалить навсегда',
+    'users.deleteForeverConfirm':
+      'Удалить этого лида НАВСЕГДА? Действие необратимо — аккаунт и все его данные (задачи, ответы, пароль) будут стёрты.',
     'users.deletedAt': 'удалён',
     'users.backToList': '← К списку',
   },

@@ -4,7 +4,12 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { listUsers, restoreUser, softDeleteUser } from './api'
+import {
+  listUsers,
+  permanentDeleteUser,
+  restoreUser,
+  softDeleteUser,
+} from './api'
 import type { UsersQuery } from './types'
 
 /** Хук списка пользователей. keepPreviousData — плавная пагинация без «мигания». */
@@ -38,6 +43,15 @@ export function useRestoreUser() {
   const invalidate = useUsersInvalidator()
   return useMutation({
     mutationFn: restoreUser,
+    onSuccess: () => invalidate(),
+  })
+}
+
+/** Полное удаление лида (необратимо, через Edge Function). */
+export function usePermanentDeleteUser() {
+  const invalidate = useUsersInvalidator()
+  return useMutation({
+    mutationFn: permanentDeleteUser,
     onSuccess: () => invalidate(),
   })
 }

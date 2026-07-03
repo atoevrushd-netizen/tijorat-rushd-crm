@@ -11,7 +11,11 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDate } from '@/lib/utils'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
 import { useT } from '@/i18n/useT'
-import { useRestoreUser, useUsers } from '@/features/users/useUsers'
+import {
+  usePermanentDeleteUser,
+  useRestoreUser,
+  useUsers,
+} from '@/features/users/useUsers'
 import { UsersTable } from '@/features/users/UsersTable'
 import { Pagination } from '@/features/users/Pagination'
 import { CreateUserModal } from '@/features/users/CreateUserModal'
@@ -118,6 +122,7 @@ function TrashList({
   onRestore: (id: string) => void
 }) {
   const { t } = useT()
+  const purge = usePermanentDeleteUser()
   if (users.length === 0) {
     return <p className="py-10 text-center text-sm text-ink-3">{t('users.trashEmpty')}</p>
   }
@@ -135,15 +140,32 @@ function TrashList({
               {u.phone || '—'} · {t('users.deletedAt')} {formatDate(u.deleted_at)}
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            leftIcon={<RotateCcw size={14} />}
-            disabled={restoring}
-            onClick={() => onRestore(u.id)}
-          >
-            {t('users.restore')}
-          </Button>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Button
+              size="sm"
+              variant="secondary"
+              leftIcon={<RotateCcw size={14} />}
+              disabled={restoring}
+              onClick={() => onRestore(u.id)}
+              aria-label={t('users.restore')}
+              title={t('users.restore')}
+            >
+              <span className="hidden sm:inline">{t('users.restore')}</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              leftIcon={<Trash2 size={14} />}
+              loading={purge.isPending}
+              onClick={() => {
+                if (window.confirm(t('users.deleteForeverConfirm'))) purge.mutate(u.id)
+              }}
+              aria-label={t('users.deleteForever')}
+              title={t('users.deleteForever')}
+            >
+              <span className="hidden sm:inline">{t('users.deleteForever')}</span>
+            </Button>
+          </div>
         </li>
       ))}
     </ul>

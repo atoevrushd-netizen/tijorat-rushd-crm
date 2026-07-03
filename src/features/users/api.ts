@@ -72,6 +72,17 @@ export async function restoreUser(id: string): Promise<void> {
   if (error) throw error
 }
 
+/**
+ * ПОЛНОЕ удаление лида (через Edge Function admin-delete-user, service-ключ).
+ * Необратимо: сносит аккаунт и все связанные данные (задачи, ответы, пароль).
+ */
+export async function permanentDeleteUser(id: string): Promise<void> {
+  const { error } = await supabase.functions.invoke('admin-delete-user', {
+    body: { user_id: id },
+  })
+  if (error) throw new Error(await readFunctionError(error))
+}
+
 export type CreateUserInput = {
   full_name: string
   phone: string

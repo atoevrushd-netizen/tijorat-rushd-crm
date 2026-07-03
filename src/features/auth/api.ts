@@ -7,15 +7,6 @@ export async function signInWithPassword(email: string, password: string) {
   if (error) throw error
 }
 
-/** Вход через Google (OAuth-редирект). */
-export async function signInWithGoogle() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin },
-  })
-  if (error) throw error
-}
-
 /** Выход. */
 export async function signOut() {
   const { error } = await supabase.auth.signOut()

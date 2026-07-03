@@ -63,16 +63,11 @@ function Shell({ children }: { children: ReactNode }) {
 }
 
 function TabContent({ tab, userId }: { tab: Tab; userId: string }) {
-  const { t } = useT()
   if (tab.key === 'calendar') {
     return <CalendarTab userId={userId} tabId={tab.id} />
   }
   if (tab.key === 'media') {
     return <MediaTab userId={userId} tabId={tab.id} />
   }
-  return (
-    <p className="text-sm text-ink-3">
-      {t('userTabs.placeholder').replace('{title}', tab.title)}
-    </p>
-  )
+  return null
 }

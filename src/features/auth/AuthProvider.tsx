@@ -9,12 +9,7 @@ import type { Session } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { AuthContext } from './auth-context'
-import {
-  fetchProfile,
-  signInWithGoogle,
-  signInWithPassword,
-  signOut,
-} from './api'
+import { fetchProfile, signInWithPassword, signOut } from './api'
 import type { AuthContextValue, AuthStatus, Profile } from './types'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -87,7 +82,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       role: profile?.role ?? null,
       signInWithPassword,
-      signInWithGoogle,
       signOut,
       refreshProfile,
     }),

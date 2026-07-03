@@ -12,7 +12,6 @@ export type AuthContextValue = {
   profile: Profile | null
   role: UserRole | null
   signInWithPassword: (email: string, password: string) => Promise<void>
-  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   /** Перечитать профиль текущего пользователя (после самостоятельной правки). */
   refreshProfile: () => Promise<void>

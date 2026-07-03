@@ -1,28 +1,22 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CalendarClock,
   ClipboardList,
   LayoutDashboard,
-  LayoutGrid,
-  Plus,
-  Trash2,
   Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
-import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import type { UserRole } from '@/types'
 import {
   useAllProfiles,
-  useFlags,
   useOverview,
-  useSetFlags,
   useSetUserRole,
 } from '@/features/dev/useDev'
 
@@ -61,7 +55,6 @@ export function DevPage() {
             <QuickLink to="/admin/users" icon={<Users size={16} />} label={t('nav.users')} />
             <QuickLink to="/answers" icon={<ClipboardList size={16} />} label={t('nav.answers')} />
             <QuickLink to="/admin/auto-tasks" icon={<CalendarClock size={16} />} label={t('nav.autotasks')} />
-            <QuickLink to="/admin/tabs" icon={<LayoutGrid size={16} />} label={t('nav.tabs')} />
           </div>
         </section>
 
@@ -118,9 +111,6 @@ export function DevPage() {
             </ul>
           )}
         </section>
-
-        {/* Флаги */}
-        <FlagsEditor />
       </div>
     </AppShell>
   )
@@ -155,78 +145,3 @@ function QuickLink({
   )
 }
 
-/** Редактор гибких флагов приложения (ключ → значение). */
-function FlagsEditor() {
-  const { t } = useT()
-  const flagsQ = useFlags()
-  const setFlags = useSetFlags()
-  const [key, setKey] = useState('')
-  const [value, setValue] = useState('')
-
-  const flags = flagsQ.data ?? {}
-  const entries = Object.entries(flags)
-
-  function add(e: FormEvent) {
-    e.preventDefault()
-    const k = key.trim()
-    if (!k) return
-    setFlags.mutate({ ...flags, [k]: value.trim() })
-    setKey('')
-    setValue('')
-  }
-
-  function remove(k: string) {
-    const next = { ...flags }
-    delete next[k]
-    setFlags.mutate(next)
-  }
-
-  const inp =
-    'rounded-[10px] border border-line bg-surface px-2.5 py-2 text-[13px] text-ink outline-none focus:border-accent'
-
-  return (
-    <section className="rounded-[18px] border border-line bg-surface p-5 shadow-sh1">
-      <div className="text-[15px] font-bold text-ink">{t('dev.flags')}</div>
-      <p className="mb-3 mt-0.5 text-[13px] text-ink-3">{t('dev.flagsHint')}</p>
-
-      <form onSubmit={add} className="mb-3 flex flex-wrap items-center gap-2 rounded-[12px] border border-dashed border-line-strong p-2">
-        <input value={key} onChange={(e) => setKey(e.target.value)} placeholder={t('dev.flagKey')} className={cn(inp, 'min-w-[120px] flex-1')} />
-        <input value={value} onChange={(e) => setValue(e.target.value)} placeholder={t('dev.flagValue')} className={cn(inp, 'min-w-[120px] flex-1')} />
-        <Button size="sm" type="submit" leftIcon={<Plus size={15} />}>
-          {t('dev.addFlag')}
-        </Button>
-      </form>
-
-      {flagsQ.isLoading ? (
-        <Skeleton className="h-12 w-full rounded-[12px]" />
-      ) : entries.length === 0 ? (
-        <p className="py-4 text-center text-sm text-ink-3">{t('dev.noFlags')}</p>
-      ) : (
-        <ul className="space-y-2">
-          {entries.map(([k, v]) => (
-            <li key={k} className="flex items-center gap-2 rounded-[12px] bg-surface-2 p-2">
-              <span className="min-w-0 flex-1 truncate font-mono text-[13px] text-ink">
-                {k}
-              </span>
-              <input
-                defaultValue={v}
-                onBlur={(e) => {
-                  if (e.target.value !== v) setFlags.mutate({ ...flags, [k]: e.target.value })
-                }}
-                className={cn(inp, 'w-32')}
-              />
-              <button
-                type="button"
-                onClick={() => remove(k)}
-                aria-label={t('misc.delete')}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-danger-soft hover:text-danger"
-              >
-                <Trash2 size={16} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
-}

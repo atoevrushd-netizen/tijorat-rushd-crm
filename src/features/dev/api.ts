@@ -18,26 +18,6 @@ export async function setUserRole(userId: string, role: UserRole): Promise<void>
   if (error) throw error
 }
 
-export type Flags = Record<string, string>
-
-export async function getFlags(): Promise<Flags> {
-  const { data, error } = await supabase
-    .from('app_settings')
-    .select('flags')
-    .eq('id', 1)
-    .single()
-  if (error) throw error
-  return ((data?.flags as Flags | null) ?? {}) as Flags
-}
-
-export async function setFlags(flags: Flags): Promise<void> {
-  const { error } = await supabase
-    .from('app_settings')
-    .update({ flags, updated_at: new Date().toISOString() })
-    .eq('id', 1)
-  if (error) throw error
-}
-
 export type Overview = {
   leads: number
   admins: number

@@ -1,13 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { UserRole } from '@/types'
-import {
-  getFlags,
-  getOverview,
-  listAllProfiles,
-  setFlags,
-  setUserRole,
-  type Flags,
-} from './api'
+import { getOverview, listAllProfiles, setUserRole } from './api'
 
 export function useAllProfiles() {
   return useQuery({ queryKey: ['dev', 'profiles'], queryFn: listAllProfiles })
@@ -22,18 +15,6 @@ export function useSetUserRole() {
       void qc.invalidateQueries({ queryKey: ['users'] })
       void qc.invalidateQueries({ queryKey: ['dashboard'] })
     },
-  })
-}
-
-export function useFlags() {
-  return useQuery({ queryKey: ['dev', 'flags'], queryFn: getFlags })
-}
-
-export function useSetFlags() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (flags: Flags) => setFlags(flags),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['dev', 'flags'] }),
   })
 }
 

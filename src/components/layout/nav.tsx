@@ -3,7 +3,6 @@ import {
   ClipboardList,
   FileText,
   LayoutDashboard,
-  LayoutGrid,
   Settings,
   Terminal,
   Users,
@@ -24,7 +23,6 @@ export const adminNav: NavItem[] = [
   { to: '/admin/users', labelKey: 'nav.users', match: '/admin/users', icon: <Users size={15} /> },
   { to: '/answers', labelKey: 'nav.answers', match: '/answers', icon: <ClipboardList size={15} /> },
   { to: '/admin/auto-tasks', labelKey: 'nav.autotasks', icon: <CalendarClock size={15} /> },
-  { to: '/admin/tabs', labelKey: 'nav.tabs', icon: <LayoutGrid size={15} /> },
   { to: '/settings', labelKey: 'nav.settings', icon: <Settings size={15} /> },
 ]
 

@@ -79,8 +79,8 @@ export async function getDashboard(): Promise<DashboardData> {
     usersActive: users.filter((u) => u.status === 'active').length,
     tasksTotal: tasks.length,
     tasksAccepted: byStatus.accepted_by_user,
-    tasksInProgress:
-      byStatus.in_progress + byStatus.sent_to_user + byStatus.done,
+    // «В работе» = только незавершённые (done сюда не входит).
+    tasksInProgress: byStatus.in_progress + byStatus.sent_to_user,
     tasksByStatus: byStatus,
     recentUsers: (recentUsersRes.data ?? []) as Profile[],
     recentTasks: rows.map((r) => ({

@@ -11,7 +11,8 @@ import { UserSettings } from '@/features/settings/UserSettings'
 export function SettingsPage() {
   const { role, signOut } = useAuth()
   const { t } = useT()
-  const isAdmin = role === 'admin'
+  // Разработчик — супер-админ: на «Настройках» показываем ему админский раздел.
+  const isAdmin = role === 'admin' || role === 'developer'
   return (
     <AppShell
       title={t('page.settings')}

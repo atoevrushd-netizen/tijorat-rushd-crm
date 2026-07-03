@@ -16,6 +16,15 @@ export const BACKUP_TABLES = [
   'achievements',
   'activity_log',
   'user_credentials',
+  // Анкеты (A/B) и «Разбор» — ответы лидов; без них бэкап был неполным.
+  'survey_questions',
+  'survey_answers',
+  'razbor_sections',
+  'razbor_answers',
+  // Автозадачи и глобальные настройки.
+  'task_template_groups',
+  'task_templates',
+  'app_settings',
 ] as const
 
 export type BackupFile = {

@@ -34,5 +34,9 @@ export function useUpsertAnswer(userId: string, type: SurveyType) {
 
 /** Список участников для страницы «ответы всех». */
 export function useSurveyPeople() {
-  return useQuery({ queryKey: ['survey', 'people'], queryFn: listPeople })
+  return useQuery({
+    queryKey: ['survey', 'people'],
+    queryFn: listPeople,
+    staleTime: 60_000,
+  })
 }

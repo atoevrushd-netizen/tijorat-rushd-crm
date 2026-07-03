@@ -8,12 +8,21 @@ import {
   type TabPatch,
 } from './api'
 
+// Вкладки меняются редко — держим свежими 5 минут (меньше перезапросов).
 export function useActiveTabs() {
-  return useQuery({ queryKey: ['tabs', 'active'], queryFn: listActiveTabs })
+  return useQuery({
+    queryKey: ['tabs', 'active'],
+    queryFn: listActiveTabs,
+    staleTime: 5 * 60_000,
+  })
 }
 
 export function useAllTabs() {
-  return useQuery({ queryKey: ['tabs', 'all'], queryFn: listAllTabs })
+  return useQuery({
+    queryKey: ['tabs', 'all'],
+    queryFn: listAllTabs,
+    staleTime: 5 * 60_000,
+  })
 }
 
 /** Любая мутация вкладок обновляет все списки вкладок. */

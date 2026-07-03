@@ -14,7 +14,11 @@ import {
 } from './api'
 
 export function useSettings() {
-  return useQuery({ queryKey: ['autotasks', 'settings'], queryFn: getSettings })
+  return useQuery({
+    queryKey: ['autotasks', 'settings'],
+    queryFn: getSettings,
+    staleTime: 5 * 60_000,
+  })
 }
 
 export function useUpdateSettings() {
@@ -27,7 +31,11 @@ export function useUpdateSettings() {
 }
 
 export function useGroups() {
-  return useQuery({ queryKey: ['autotasks', 'groups'], queryFn: listGroups })
+  return useQuery({
+    queryKey: ['autotasks', 'groups'],
+    queryFn: listGroups,
+    staleTime: 5 * 60_000,
+  })
 }
 
 export function useCreateGroup() {

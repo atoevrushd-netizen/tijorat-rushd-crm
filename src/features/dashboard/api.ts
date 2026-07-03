@@ -34,12 +34,51 @@ function ownerName(owner: unknown): string | null {
   return (o as { full_name?: string | null })?.full_name ?? null
 }
 
-/** Сводные данные для дашборда админа (RLS пускает только админов). */
+/** Быстрый count без выгрузки строк (head:true → передаётся только число). */
+async function countOf<T extends { count: number | null; error: unknown }>(
+  query: PromiseLike<T>,
+): Promise<number> {
+  const res = await query
+  if (res.error) throw res.error
+  return res.count ?? 0
+}
+
+/**
+ * Сводные данные для дашборда админа (RLS пускает только админов).
+ * Счётчики берём count-запросами (head:true) — не тянем тысячи строк ради подсчёта.
+ */
 export async function getDashboard(): Promise<DashboardData> {
-  const [usersRes, tasksRes, recentUsersRes, recentTasksRes] = await Promise.all([
-    // Считаем только лидов (не админа) и не удалённых.
-    supabase.from('profiles').select('status').eq('role', 'user').is('deleted_at', null),
-    supabase.from('tasks').select('status'),
+  const leadFilter = () =>
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('role', 'user')
+      .is('deleted_at', null)
+  const statusCount = (s: TaskStatus) =>
+    countOf(
+      supabase.from('tasks').select('id', { count: 'exact', head: true }).eq('status', s),
+    )
+
+  const [
+    usersTotal,
+    usersActive,
+    notStarted,
+    inProgress,
+    done,
+    sentToUser,
+    accepted,
+    needsRevision,
+    recentUsersRes,
+    recentTasksRes,
+  ] = await Promise.all([
+    countOf(leadFilter()),
+    countOf(leadFilter().eq('status', 'active')),
+    statusCount('not_started'),
+    statusCount('in_progress'),
+    statusCount('done'),
+    statusCount('sent_to_user'),
+    statusCount('accepted_by_user'),
+    statusCount('needs_revision'),
     supabase
       .from('profiles')
       .select('*')
@@ -54,18 +93,18 @@ export async function getDashboard(): Promise<DashboardData> {
       .limit(6),
   ])
 
-  if (usersRes.error) throw usersRes.error
-  if (tasksRes.error) throw tasksRes.error
   if (recentUsersRes.error) throw recentUsersRes.error
   if (recentTasksRes.error) throw recentTasksRes.error
 
-  const users = (usersRes.data ?? []) as { status: string }[]
-  const tasks = (tasksRes.data ?? []) as { status: TaskStatus }[]
-
-  const byStatus = Object.fromEntries(
-    STATUSES.map((s) => [s, 0]),
-  ) as Record<TaskStatus, number>
-  for (const t of tasks) byStatus[t.status] = (byStatus[t.status] ?? 0) + 1
+  const byStatus: Record<TaskStatus, number> = {
+    not_started: notStarted,
+    in_progress: inProgress,
+    done,
+    sent_to_user: sentToUser,
+    accepted_by_user: accepted,
+    needs_revision: needsRevision,
+  }
+  const tasksTotal = STATUSES.reduce((sum, s) => sum + byStatus[s], 0)
 
   const rows = (recentTasksRes.data ?? []) as {
     id: string
@@ -75,12 +114,12 @@ export async function getDashboard(): Promise<DashboardData> {
   }[]
 
   return {
-    usersTotal: users.length,
-    usersActive: users.filter((u) => u.status === 'active').length,
-    tasksTotal: tasks.length,
-    tasksAccepted: byStatus.accepted_by_user,
+    usersTotal,
+    usersActive,
+    tasksTotal,
+    tasksAccepted: accepted,
     // «В работе» = только незавершённые (done сюда не входит).
-    tasksInProgress: byStatus.in_progress + byStatus.sent_to_user,
+    tasksInProgress: inProgress + sentToUser,
     tasksByStatus: byStatus,
     recentUsers: (recentUsersRes.data ?? []) as Profile[],
     recentTasks: rows.map((r) => ({

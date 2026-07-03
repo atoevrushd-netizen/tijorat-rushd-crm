@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { Profile, UserStatus } from '@/types'
+import { resizeImage } from '@/lib/resizeImage'
 import { buildSearchFilter } from './buildSearchFilter'
 import type { UsersPage, UsersQuery } from './types'
 
@@ -115,11 +116,24 @@ export async function uploadAvatar(userId: string, file: File): Promise<string> 
   if (file.size > 5 * 1024 * 1024) {
     throw new Error('Файл слишком большой (максимум 5 МБ)')
   }
-  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+
+  // Сжимаем на клиенте (256px WebP) — лёгкий аватар, быстрее грузится в списках.
+  // Если сжатие вдруг не удалось — грузим оригинал.
+  let body: Blob = file
+  let ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+  let contentType = file.type
+  try {
+    body = await resizeImage(file, 256, 0.82)
+    ext = 'webp'
+    contentType = 'image/webp'
+  } catch {
+    /* fallback: оригинал */
+  }
+
   const path = `${userId}.${ext}`
   const { error } = await supabase.storage
     .from('avatars')
-    .upload(path, file, { upsert: true, contentType: file.type })
+    .upload(path, body, { upsert: true, contentType })
   if (error) throw error
   const { data } = supabase.storage.from('avatars').getPublicUrl(path)
   // ?v=... — чтобы браузер не показывал старое фото из кэша.

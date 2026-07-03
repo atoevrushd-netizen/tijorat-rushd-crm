@@ -25,8 +25,9 @@ export type CreateTaskInput = {
   created_by?: string | null
 }
 
-export async function createTask(input: CreateTaskInput): Promise<void> {
-  const { error } = await supabase.from('tasks').insert({
+/** Собрать строку для вставки в tasks из входа (единый маппинг для одиночной и пакетной вставки). */
+function toTaskRow(input: CreateTaskInput) {
+  return {
     user_id: input.user_id,
     tab_id: input.tab_id,
     title: input.title,
@@ -35,7 +36,18 @@ export async function createTask(input: CreateTaskInput): Promise<void> {
     due_time: input.due_time || null,
     admin_comment: input.admin_comment || null,
     created_by: input.created_by ?? null,
-  })
+  }
+}
+
+export async function createTask(input: CreateTaskInput): Promise<void> {
+  const { error } = await supabase.from('tasks').insert(toTaskRow(input))
+  if (error) throw error
+}
+
+/** Пакетное создание задач одним запросом (например, «30 Reels» сразу). */
+export async function createTasks(inputs: CreateTaskInput[]): Promise<void> {
+  if (inputs.length === 0) return
+  const { error } = await supabase.from('tasks').insert(inputs.map(toTaskRow))
   if (error) throw error
 }
 

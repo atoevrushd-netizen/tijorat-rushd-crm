@@ -6,6 +6,7 @@ import { useT } from '@/i18n/useT'
 import { useTasks } from './useTasks'
 import { TaskItem } from './TaskItem'
 import { CreateTaskModal } from './CreateTaskModal'
+import { BulkCreateTaskModal } from './BulkCreateTaskModal'
 
 /** Содержимое вкладки «Медиа/Контент»: задачи пользователя. */
 export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
@@ -15,6 +16,7 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
   const isOwner = profile?.id === userId
   const { data: tasks, isLoading } = useTasks(userId, tabId)
   const [createOpen, setCreateOpen] = useState(false)
+  const [bulkOpen, setBulkOpen] = useState(false)
 
   // Сортируем по дедлайну (ближайший — первым), задачи без дедлайна — в конец.
   const sortedTasks = tasks
@@ -32,9 +34,14 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
           {tasks ? `${t('tasksui.tasksCount')}: ${tasks.length}` : ''}
         </span>
         {isAdmin && (
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            {t('tasksui.addTask')}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={() => setBulkOpen(true)}>
+              {t('bulk.btn')}
+            </Button>
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              {t('tasksui.addTask')}
+            </Button>
+          </div>
         )}
       </div>
 
@@ -57,12 +64,20 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
       )}
 
       {isAdmin && (
-        <CreateTaskModal
-          open={createOpen}
-          onClose={() => setCreateOpen(false)}
-          userId={userId}
-          tabId={tabId}
-        />
+        <>
+          <CreateTaskModal
+            open={createOpen}
+            onClose={() => setCreateOpen(false)}
+            userId={userId}
+            tabId={tabId}
+          />
+          <BulkCreateTaskModal
+            open={bulkOpen}
+            onClose={() => setBulkOpen(false)}
+            userId={userId}
+            tabId={tabId}
+          />
+        </>
       )}
     </div>
   )

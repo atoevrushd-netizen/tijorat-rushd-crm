@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addTaskLink,
   createTask,
+  createTasks,
   deleteTask,
   deleteTaskLink,
   listTasks,
@@ -33,6 +34,14 @@ export function useCreateTask() {
   const invalidate = useTasksInvalidator()
   return useMutation({
     mutationFn: (input: CreateTaskInput) => createTask(input),
+    onSuccess: () => void invalidate(),
+  })
+}
+
+export function useCreateTasks() {
+  const invalidate = useTasksInvalidator()
+  return useMutation({
+    mutationFn: (inputs: CreateTaskInput[]) => createTasks(inputs),
     onSuccess: () => void invalidate(),
   })
 }

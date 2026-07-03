@@ -82,7 +82,7 @@ export function DevPage() {
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[13.5px] font-medium text-ink">
                       {p.full_name || '—'}
-                      {p.deleted_at && <span className="ml-1 text-ink-3">(в корзине)</span>}
+                      {p.deleted_at && <span className="ml-1 text-ink-3">{t('devPage.inTrash')}</span>}
                     </div>
                     <div className="truncate font-mono text-[11px] text-ink-3">
                       {p.login ?? p.email ?? '—'}
@@ -218,7 +218,7 @@ function FlagsEditor() {
               <button
                 type="button"
                 onClick={() => remove(k)}
-                aria-label="Удалить"
+                aria-label={t('misc.delete')}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-danger-soft hover:text-danger"
               >
                 <Trash2 size={16} />

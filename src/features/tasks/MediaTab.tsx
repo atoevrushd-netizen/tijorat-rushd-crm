@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '@/features/auth/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useT } from '@/i18n/useT'
 import { useTasks } from './useTasks'
 import { TaskItem } from './TaskItem'
 import { CreateTaskModal } from './CreateTaskModal'
@@ -9,6 +10,7 @@ import { CreateTaskModal } from './CreateTaskModal'
 /** Содержимое вкладки «Медиа/Контент»: задачи пользователя. */
 export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
   const { role, profile } = useAuth()
+  const { t } = useT()
   const isAdmin = role === 'admin'
   const isOwner = profile?.id === userId
   const { data: tasks, isLoading } = useTasks(userId, tabId)
@@ -18,11 +20,11 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
     <div>
       <div className="mb-3 flex items-center justify-between">
         <span className="text-sm text-ink-2">
-          {tasks ? `Задач: ${tasks.length}` : ''}
+          {tasks ? `${t('tasksui.tasksCount')}: ${tasks.length}` : ''}
         </span>
         {isAdmin && (
           <Button size="sm" onClick={() => setCreateOpen(true)}>
-            + Задача
+            {t('tasksui.addTask')}
           </Button>
         )}
       </div>
@@ -35,12 +37,12 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
         </div>
       )}
       {tasks && tasks.length === 0 && (
-        <p className="text-sm text-ink-3">Задач пока нет.</p>
+        <p className="text-sm text-ink-3">{t('tasksui.noTasks')}</p>
       )}
       {tasks && tasks.length > 0 && (
         <div className="space-y-3">
-          {tasks.map((t) => (
-            <TaskItem key={t.id} task={t} isAdmin={isAdmin} isOwner={isOwner} />
+          {tasks.map((task) => (
+            <TaskItem key={task.id} task={task} isAdmin={isAdmin} isOwner={isOwner} />
           ))}
         </div>
       )}

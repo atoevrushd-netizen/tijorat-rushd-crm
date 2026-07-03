@@ -49,22 +49,19 @@ export function TabsManagerPage() {
   return (
     <AppShell title={t('page.tabs')} nav={adminNav}>
       <section className="rounded-xl border border-line bg-surface p-6">
-        <h2 className="text-lg font-bold text-ink">Вкладки карточки</h2>
-        <p className="mt-1 text-sm text-ink-2">
-          Вкладки приходят из БД. Новая вкладка автоматически появляется во всех
-          карточках — без переписывания кода.
-        </p>
+        <h2 className="text-lg font-bold text-ink">{t('tabsMgr.cardTabs')}</h2>
+        <p className="mt-1 text-sm text-ink-2">{t('tabsMgr.desc')}</p>
 
-        {isLoading && <p className="mt-4 text-sm text-ink-3">Загрузка…</p>}
+        {isLoading && <p className="mt-4 text-sm text-ink-3">{t('misc.loading')}</p>}
 
         {tabs && (
           <ul className="mt-4 divide-y divide-line">
-            {tabs.map((t, i) => (
-              <li key={t.id} className="flex items-center gap-3 py-3">
+            {tabs.map((tab, i) => (
+              <li key={tab.id} className="flex items-center gap-3 py-3">
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-ink">{t.title}</div>
+                  <div className="text-sm font-medium text-ink">{tab.title}</div>
                   <div className="font-mono text-[11px] text-ink-3">
-                    key: {t.key} · порядок: {t.sort_order}
+                    key: {tab.key} · {t('tabsMgr.order')}: {tab.sort_order}
                   </div>
                 </div>
                 <button
@@ -72,7 +69,7 @@ export function TabsManagerPage() {
                   onClick={() => move(i, -1)}
                   disabled={i === 0}
                   className="px-2 text-ink-2 hover:text-ink disabled:opacity-30"
-                  aria-label="Выше"
+                  aria-label={t('tabsMgr.moveUp')}
                 >
                   ↑
                 </button>
@@ -81,37 +78,37 @@ export function TabsManagerPage() {
                   onClick={() => move(i, 1)}
                   disabled={i === tabs.length - 1}
                   className="px-2 text-ink-2 hover:text-ink disabled:opacity-30"
-                  aria-label="Ниже"
+                  aria-label={t('tabsMgr.moveDown')}
                 >
                   ↓
                 </button>
                 <label className="flex items-center gap-1.5 text-xs text-ink-2">
                   <input
                     type="checkbox"
-                    checked={t.is_active}
+                    checked={tab.is_active}
                     onChange={(e) =>
                       update.mutate({
-                        id: t.id,
+                        id: tab.id,
                         patch: { is_active: e.target.checked },
                       })
                     }
                     className="accent-accent"
                   />
-                  активна
+                  {t('tabsMgr.active')}
                 </label>
                 <button
                   type="button"
                   onClick={() => {
                     if (
                       window.confirm(
-                        `Удалить вкладку «${t.title}»? Задачи этой вкладки станут недоступны в интерфейсе.`,
+                        t('tabsMgr.deleteConfirm').replace('{title}', tab.title),
                       )
                     )
-                      remove.mutate(t.id)
+                      remove.mutate(tab.id)
                   }}
                   className="text-sm text-danger hover:opacity-80"
                 >
-                  Удалить
+                  {t('misc.delete')}
                 </button>
               </li>
             ))}
@@ -119,13 +116,13 @@ export function TabsManagerPage() {
         )}
 
         <form onSubmit={add} className="mt-6 flex flex-col gap-2 sm:flex-row">
-          <Input value={key} onChange={(e) => setKey(e.target.value)} placeholder="ключ (sales, kpi)" />
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Название вкладки" />
-          <Button type="submit" loading={create.isPending}>Добавить</Button>
+          <Input value={key} onChange={(e) => setKey(e.target.value)} placeholder={t('tabsMgr.keyPlaceholder')} />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('tabsMgr.titlePlaceholder')} />
+          <Button type="submit" loading={create.isPending}>{t('misc.add')}</Button>
         </form>
         {create.isError && (
           <p className="mt-2 text-sm text-danger">
-            {create.error instanceof Error ? create.error.message : 'Не удалось добавить вкладку'}
+            {create.error instanceof Error ? create.error.message : t('tabsMgr.addFail')}
           </p>
         )}
       </section>

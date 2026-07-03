@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { saveUser } from './api'
 
 /** Самостоятельное редактирование своего профиля: фото, имя, телефон. */
@@ -21,6 +22,7 @@ export function SelfEditProfileModal({
   open: boolean
   onClose: () => void
 }) {
+  const { t } = useT()
   const { profile, refreshProfile } = useAuth()
   const queryClient = useQueryClient()
   const save = useMutation({ mutationFn: saveUser })
@@ -77,34 +79,34 @@ export function SelfEditProfileModal({
   if (!profile) return null
 
   return (
-    <Modal open={open} onClose={close} title="Изменить профиль">
+    <Modal open={open} onClose={close} title={t('usercard.selfEditTitle')}>
       <form className="space-y-3" onSubmit={submit}>
         <div className="flex items-center gap-3">
           <Avatar name={fullName} src={preview ?? profile.photo_url} size={56} />
           <label className="cursor-pointer text-sm">
             <span className="rounded-lg border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
-              Изменить фото
+              {t('usercard.changePhoto')}
             </span>
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />
           </label>
         </div>
 
-        <Labeled label="Имя и фамилия">
+        <Labeled label={t('usercard.fieldFullName')}>
           <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
         </Labeled>
-        <Labeled label="Телефон">
+        <Labeled label={t('usercard.fieldPhone')}>
           <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
         </Labeled>
 
         {save.isError && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {save.error instanceof Error ? save.error.message : 'Не удалось сохранить'}
+            {save.error instanceof Error ? save.error.message : t('usercard.saveError')}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={close}>Отмена</Button>
-          <Button type="submit" loading={save.isPending}>Сохранить</Button>
+          <Button type="button" variant="secondary" onClick={close}>{t('common.cancel')}</Button>
+          <Button type="submit" loading={save.isPending}>{t('common.save')}</Button>
         </div>
       </form>
     </Modal>

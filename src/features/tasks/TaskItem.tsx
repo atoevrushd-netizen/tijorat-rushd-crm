@@ -1,14 +1,15 @@
 import { X } from 'lucide-react'
 import type { Task } from '@/types'
 import { formatDate } from '@/lib/utils'
+import { useT } from '@/i18n/useT'
 import { TaskStatusBadge } from './TaskStatusBadge'
 import { TaskAdminControls } from './TaskAdminControls'
 import { TaskOwnerControls } from './TaskOwnerControls'
 import { useDeleteTaskLink } from './useTasks'
 
-function typeLabel(type: string | null): string {
-  if (type === 'reels') return 'Reels'
-  if (type === 'creative') return 'Креатив'
+function typeLabel(type: string | null, t: (key: string, fallback?: string) => string): string {
+  if (type === 'reels') return t('taskType.reels')
+  if (type === 'creative') return t('taskType.creative')
   return type ?? '—'
 }
 
@@ -21,6 +22,7 @@ export function TaskItem({
   isAdmin: boolean
   isOwner: boolean
 }) {
+  const { t } = useT()
   const delLink = useDeleteTaskLink()
   const canRespond = isOwner && task.status === 'sent_to_user'
 
@@ -30,8 +32,8 @@ export function TaskItem({
         <div className="min-w-0">
           <div className="break-words font-medium text-ink">{task.title}</div>
           <div className="text-xs text-ink-3">
-            {typeLabel(task.task_type)}
-            {task.deadline && ` · дедлайн ${formatDate(task.deadline)}`}
+            {typeLabel(task.task_type, t)}
+            {task.deadline && ` · ${t('tasksui.deadline')} ${formatDate(task.deadline)}`}
           </div>
         </div>
         <div className="shrink-0">
@@ -55,10 +57,10 @@ export function TaskItem({
                 <button
                   type="button"
                   onClick={() => {
-                    if (window.confirm('Удалить ссылку?')) delLink.mutate(l.id)
+                    if (window.confirm(t('tasksui.confirmDeleteLink'))) delLink.mutate(l.id)
                   }}
                   className="text-ink-3 transition-colors hover:text-danger"
-                  aria-label="Удалить ссылку"
+                  aria-label={t('tasksui.deleteLink')}
                 >
                   <X size={13} />
                 </button>
@@ -70,19 +72,19 @@ export function TaskItem({
 
       {task.admin_comment && (
         <p className="mt-2 text-sm text-ink-2">
-          <b className="text-ink">Комментарий админа:</b> {task.admin_comment}
+          <b className="text-ink">{t('tasksui.adminComment')}</b> {task.admin_comment}
         </p>
       )}
       {task.user_comment && (
         <p className="mt-1 text-sm text-ink-2">
-          <b className="text-ink">Комментарий пользователя:</b> {task.user_comment}
+          <b className="text-ink">{t('tasksui.userComment')}</b> {task.user_comment}
         </p>
       )}
 
       <div className="mt-2 flex flex-wrap gap-3 text-xs text-ink-3">
-        <span>создано {formatDate(task.created_at)}</span>
-        {task.sent_at && <span>отправлено {formatDate(task.sent_at)}</span>}
-        {task.accepted_at && <span>принято {formatDate(task.accepted_at)}</span>}
+        <span>{t('tasksui.created')} {formatDate(task.created_at)}</span>
+        {task.sent_at && <span>{t('tasksui.sent')} {formatDate(task.sent_at)}</span>}
+        {task.accepted_at && <span>{t('tasksui.accepted')} {formatDate(task.accepted_at)}</span>}
       </div>
 
       {isAdmin && <TaskAdminControls task={task} />}

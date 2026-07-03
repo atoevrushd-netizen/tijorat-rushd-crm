@@ -1,5 +1,6 @@
 import type { TaskStatus } from '@/types'
 import { cn } from '@/lib/utils'
+import { useT } from '@/i18n/useT'
 import { Card } from '@/components/ui/Card'
 import { RingProgress } from '@/components/ui/RingProgress'
 
@@ -11,23 +12,16 @@ const ORDER: TaskStatus[] = [
   'accepted_by_user',
   'needs_revision',
 ]
-const SHORT: Record<TaskStatus, string> = {
-  not_started: 'Не нач.',
-  in_progress: 'В раб.',
-  done: 'Готово',
-  sent_to_user: 'Отпр.',
-  accepted_by_user: 'Принято',
-  needs_revision: 'Правка',
-}
 
 /** Бар-чарт распределения задач по статусам (iOS-стиль: градиент + рост). */
 export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }) {
+  const { t } = useT()
   const max = Math.max(1, ...ORDER.map((s) => byStatus[s]))
   return (
     <Card className="p-4 sm:p-6">
       <div className="mb-5">
-        <div className="text-[16px] font-bold text-ink">Задачи по статусам</div>
-        <div className="text-[12.5px] text-ink-3">распределение всех задач</div>
+        <div className="text-[16px] font-bold text-ink">{t('dash.tasksByStatus')}</div>
+        <div className="text-[12.5px] text-ink-3">{t('dash.tasksByStatusSub')}</div>
       </div>
       <div className="flex h-[170px] items-end gap-2 sm:h-[200px] sm:gap-3">
         {ORDER.map((s) => {
@@ -52,7 +46,7 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
                 }}
               />
               <span className={cn('text-[11px]', accent ? 'text-ink' : 'text-ink-3')}>
-                {SHORT[s]}
+                {t(`taskStatusShort.${s}`)}
               </span>
             </div>
           )
@@ -84,19 +78,20 @@ function Legend({
 
 /** Donut выполнения задач (принято / всего). */
 export function DonutCard({ accepted, total }: { accepted: number; total: number }) {
+  const { t } = useT()
   const pct = total ? Math.round((accepted / total) * 100) : 0
   return (
     <Card className="flex flex-col p-4 sm:p-6">
-      <div className="text-[16px] font-bold text-ink">Выполнение задач</div>
-      <div className="mb-3 text-[12.5px] text-ink-3">принято от всех задач</div>
+      <div className="text-[16px] font-bold text-ink">{t('dash.completion')}</div>
+      <div className="mb-3 text-[12.5px] text-ink-3">{t('dash.completionSub')}</div>
       <div className="my-2 flex items-center justify-center">
-        <RingProgress value={pct} size={140} stroke={16} label={`${pct}%`} sublabel="выполнено" />
+        <RingProgress value={pct} size={140} stroke={16} label={`${pct}%`} sublabel={t('dash.done')} />
       </div>
       <div className="mt-auto flex flex-col gap-2.5">
-        <Legend color="var(--accent)" label="Принято" value={accepted} />
+        <Legend color="var(--accent)" label={t('taskStatusShort.accepted_by_user')} value={accepted} />
         <Legend
           color="var(--surface-3)"
-          label="Остальные"
+          label={t('dash.legendRest')}
           value={Math.max(0, total - accepted)}
           muted
         />

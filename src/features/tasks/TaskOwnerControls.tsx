@@ -2,10 +2,12 @@ import { useState, type FormEvent } from 'react'
 import type { Task } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Textarea'
+import { useT } from '@/i18n/useT'
 import { useRespondToTask } from './useTasks'
 
 /** Действия владельца над отправленной задачей: принять / вернуть на правку. */
 export function TaskOwnerControls({ task }: { task: Task }) {
+  const { t } = useT()
   const respond = useRespondToTask()
   const [revision, setRevision] = useState(false)
   const [comment, setComment] = useState('')
@@ -31,10 +33,10 @@ export function TaskOwnerControls({ task }: { task: Task }) {
             onClick={() => respond.mutate({ taskId: task.id, accept: true })}
             loading={respond.isPending}
           >
-            Принять
+            {t('tasksui.accept')}
           </Button>
           <Button variant="secondary" onClick={() => setRevision(true)}>
-            Вернуть на правку
+            {t('tasksui.returnForRevision')}
           </Button>
         </div>
       ) : (
@@ -43,21 +45,21 @@ export function TaskOwnerControls({ task }: { task: Task }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={2}
-            placeholder="Что поправить?"
+            placeholder={t('tasksui.whatToFix')}
           />
           <div className="flex gap-2">
             <Button type="submit" loading={respond.isPending}>
-              Отправить на правку
+              {t('tasksui.sendForRevision')}
             </Button>
             <Button type="button" variant="secondary" onClick={() => setRevision(false)}>
-              Отмена
+              {t('common.cancel')}
             </Button>
           </div>
         </form>
       )}
       {respond.isError && (
         <p className="mt-1 text-sm text-danger">
-          {respond.error instanceof Error ? respond.error.message : 'Ошибка'}
+          {respond.error instanceof Error ? respond.error.message : t('tasksui.error')}
         </p>
       )}
     </div>

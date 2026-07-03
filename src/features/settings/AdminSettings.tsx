@@ -25,12 +25,16 @@ export function AdminSettings() {
       const total = Object.values(backup.counts).reduce((a, n) => a + n, 0)
       setMsg({
         ok: true,
-        text: `Бэкап создан и скачан: лидов ${backup.counts.leads ?? 0}, пользователей ${backup.counts.profiles ?? 0}, задач ${backup.counts.tasks ?? 0}; всего записей ${total}.`,
+        text: t('settings.backupDone')
+          .replace('{leads}', String(backup.counts.leads ?? 0))
+          .replace('{profiles}', String(backup.counts.profiles ?? 0))
+          .replace('{tasks}', String(backup.counts.tasks ?? 0))
+          .replace('{total}', String(total)),
       })
     } catch (e) {
       setMsg({
         ok: false,
-        text: e instanceof Error ? e.message : 'Не удалось создать бэкап',
+        text: e instanceof Error ? e.message : t('settings.backupFail'),
       })
     } finally {
       setBusy(false)
@@ -41,15 +45,15 @@ export function AdminSettings() {
     <div className="space-y-6">
       <Section
         icon={<UserCog size={15} />}
-        title="Профиль администратора"
+        title={t('settings.adminProfile')}
         action={
           <Button variant="secondary" size="sm" onClick={() => setEditOpen(true)}>
-            Изменить
+            {t('settings.edit')}
           </Button>
         }
       >
-        <Row label="Имя" value={profile?.full_name} />
-        <Row label="Логин" value={profile?.login ?? profile?.email} />
+        <Row label={t('settings.name')} value={profile?.full_name} />
+        <Row label={t('settings.login')} value={profile?.login ?? profile?.email} />
       </Section>
 
       <Section icon={<CalendarClock size={15} />} title={t('page.autotasks')}>
@@ -62,14 +66,14 @@ export function AdminSettings() {
         </Link>
       </Section>
 
-      <Section icon={<Database size={15} />} title="Данные и бэкапы">
+      <Section icon={<Database size={15} />} title={t('settings.dataBackups')}>
         <p className="mb-3 text-[13px] text-ink-2">
-          Бэкап сохраняет <b>все</b> данные CRM в один файл: лиды, пользователи,
-          задачи, вкладки, достижения, история действий и пароли. Скачайте его и
-          храните в надёжном месте — так лиды и их данные не потеряются.
+          {t('settings.backupDesc1')}
+          <b>{t('settings.backupDescAll')}</b>
+          {t('settings.backupDesc2')}
         </p>
         <Button leftIcon={<Download size={15} />} onClick={onBackup} loading={busy}>
-          Создать бэкап
+          {t('settings.createBackup')}
         </Button>
         {msg && (
           <p
@@ -81,18 +85,11 @@ export function AdminSettings() {
             {msg.text}
           </p>
         )}
-        <p className="mt-3 text-[12px] text-ink-3">
-          ⚠️ Делайте бэкап регулярно и перед массовыми изменениями. В файле есть
-          пароли — храните его как секрет.
-        </p>
+        <p className="mt-3 text-[12px] text-ink-3">{t('settings.backupWarn')}</p>
       </Section>
 
-      <Section icon={<ShieldCheck size={15} />} title="Импорт и Корзина">
-        <p className="text-[13px] text-ink-3">
-          Восстановление из бэкапа (безопасное слияние — ничего не удаляет) и
-          «Корзина» удалённых лидов с возможностью восстановления — готовлю
-          следующим шагом.
-        </p>
+      <Section icon={<ShieldCheck size={15} />} title={t('settings.importTrash')}>
+        <p className="text-[13px] text-ink-3">{t('settings.importTrashDesc')}</p>
       </Section>
 
       <SelfEditProfileModal open={editOpen} onClose={() => setEditOpen(false)} />

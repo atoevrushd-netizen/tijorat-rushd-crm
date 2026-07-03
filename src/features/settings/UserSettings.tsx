@@ -1,18 +1,14 @@
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { Button } from '@/components/ui/Button'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { formatDate } from '@/lib/utils'
 import { Row, Section } from './SettingsUI'
 
-const STATUS: Record<string, string> = {
-  active: 'Активен',
-  paused: 'На паузе',
-  archived: 'В архиве',
-}
-
 /** Простые настройки личного кабинета лида: профиль + информация об аккаунте. */
 export function UserSettings() {
+  const { t } = useT()
   const { profile } = useAuth()
   const [editOpen, setEditOpen] = useState(false)
   if (!profile) return null
@@ -25,22 +21,25 @@ export function UserSettings() {
   return (
     <div className="space-y-6">
       <Section
-        title="Профиль"
+        title={t('settings.profile')}
         action={
           <Button variant="secondary" size="sm" onClick={() => setEditOpen(true)}>
-            Изменить
+            {t('settings.edit')}
           </Button>
         }
       >
-        <Row label="Имя и фамилия" value={profile.full_name} />
-        <Row label="Телефон" value={profile.phone} />
-        <Row label="Направление бизнеса" value={profile.business_direction} />
+        <Row label={t('settings.fullName')} value={profile.full_name} />
+        <Row label={t('settings.phone')} value={profile.phone} />
+        <Row label={t('settings.businessDirection')} value={profile.business_direction} />
       </Section>
 
-      <Section title="Аккаунт">
-        <Row label="Логин" value={profile.login ?? profile.email} />
-        <Row label="Статус" value={STATUS[profile.status] ?? profile.status} />
-        {sub && <Row label="Период подписки" value={sub} />}
+      <Section title={t('settings.account')}>
+        <Row label={t('settings.login')} value={profile.login ?? profile.email} />
+        <Row
+          label={t('settings.status')}
+          value={t(`userStatus.${profile.status}`, profile.status)}
+        />
+        {sub && <Row label={t('settings.subscriptionPeriod')} value={sub} />}
       </Section>
 
       <SelfEditProfileModal open={editOpen} onClose={() => setEditOpen(false)} />

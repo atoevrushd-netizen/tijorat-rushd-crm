@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { formatDate } from '@/lib/utils'
@@ -12,6 +13,7 @@ import {
 
 /** Блок достижений: просмотр — по правам, добавление — админу. */
 export function AchievementsBlock({ userId }: { userId: string }) {
+  const { t } = useT()
   const { role, profile } = useAuth()
   const isAdmin = role === 'admin'
   const { data: items, isLoading } = useAchievements(userId)
@@ -41,11 +43,11 @@ export function AchievementsBlock({ userId }: { userId: string }) {
 
   return (
     <section className="rounded-xl border border-line bg-surface p-6">
-      <h2 className="text-base font-bold text-ink">Достижения</h2>
+      <h2 className="text-base font-bold text-ink">{t('ach.title')}</h2>
 
-      {isLoading && <p className="mt-2 text-sm text-ink-3">Загрузка…</p>}
+      {isLoading && <p className="mt-2 text-sm text-ink-3">{t('misc.loading')}</p>}
       {items && items.length === 0 && (
-        <p className="mt-2 text-sm text-ink-3">Пока нет достижений.</p>
+        <p className="mt-2 text-sm text-ink-3">{t('ach.empty')}</p>
       )}
       {items && items.length > 0 && (
         <ul className="mt-3 space-y-2">
@@ -67,9 +69,9 @@ export function AchievementsBlock({ userId }: { userId: string }) {
                 {isAdmin && (
                   <button
                     type="button"
-                    aria-label="Удалить достижение"
+                    aria-label={t('ach.deleteAria')}
                     onClick={() => {
-                      if (window.confirm('Удалить достижение?')) del.mutate(a.id)
+                      if (window.confirm(t('ach.deleteConfirm'))) del.mutate(a.id)
                     }}
                     className="text-ink-3 transition-colors hover:text-danger"
                   >
@@ -88,20 +90,20 @@ export function AchievementsBlock({ userId }: { userId: string }) {
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Новое достижение"
+              placeholder={t('ach.newPlaceholder')}
             />
           </div>
           <div className="sm:w-44">
             <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
           <Button type="submit" loading={add.isPending}>
-            Добавить
+            {t('misc.add')}
           </Button>
         </form>
       )}
       {add.isError && (
         <p className="mt-2 text-sm text-danger">
-          {add.error instanceof Error ? add.error.message : 'Не удалось добавить'}
+          {add.error instanceof Error ? add.error.message : t('ach.addFail')}
         </p>
       )}
     </section>

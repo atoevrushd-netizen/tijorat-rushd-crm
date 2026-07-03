@@ -12,6 +12,7 @@ import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
+import { useT } from '@/i18n/useT'
 import { useUpdateUser } from './useUpdateUser'
 
 const EMPTY = {
@@ -31,6 +32,7 @@ export function EditUserModal({
   user: Profile | null
   onClose: () => void
 }) {
+  const { t } = useT()
   const update = useUpdateUser()
   const [form, setForm] = useState(EMPTY)
   const [file, setFile] = useState<File | null>(null)
@@ -99,55 +101,55 @@ export function EditUserModal({
   }
 
   return (
-    <Modal open={!!user} onClose={close} title="Редактировать пользователя">
+    <Modal open={!!user} onClose={close} title={t('usercard.editTitle')}>
       <form className="space-y-3" onSubmit={handleSubmit}>
         <div className="flex items-center gap-3">
           <Avatar name={form.full_name} src={preview ?? user?.photo_url} size={56} />
           <label className="cursor-pointer text-sm">
             <span className="rounded-lg border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
-              Загрузить фото
+              {t('usercard.uploadPhoto')}
             </span>
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />
           </label>
         </div>
 
-        <Labeled label="Имя и фамилия">
+        <Labeled label={t('usercard.fieldFullName')}>
           <Input value={form.full_name} onChange={field('full_name')} />
         </Labeled>
-        <Labeled label="Телефон">
+        <Labeled label={t('usercard.fieldPhone')}>
           <Input value={form.phone} onChange={field('phone')} />
         </Labeled>
-        <Labeled label="Направление бизнеса">
+        <Labeled label={t('usercard.fieldBusinessDir')}>
           <Input value={form.business_direction} onChange={field('business_direction')} />
         </Labeled>
-        <Labeled label="Статус">
+        <Labeled label={t('usercard.fieldStatus')}>
           <Select value={form.status} onChange={field('status')}>
-            <option value="active">Активен</option>
-            <option value="paused">На паузе</option>
-            <option value="archived">В архиве</option>
+            <option value="active">{t('userStatus.active')}</option>
+            <option value="paused">{t('userStatus.paused')}</option>
+            <option value="archived">{t('userStatus.archived')}</option>
           </Select>
         </Labeled>
         <div className="grid grid-cols-2 gap-3">
-          <Labeled label="Подписка с">
+          <Labeled label={t('usercard.fieldSubStart')}>
             <Input type="date" value={form.subscription_start} onChange={field('subscription_start')} />
           </Labeled>
-          <Labeled label="Подписка по">
+          <Labeled label={t('usercard.fieldSubEnd')}>
             <Input type="date" value={form.subscription_end} onChange={field('subscription_end')} />
           </Labeled>
         </div>
-        <Labeled label="Комментарий администратора">
+        <Labeled label={t('usercard.fieldAdminComment')}>
           <Textarea value={form.admin_comment} onChange={field('admin_comment')} rows={2} />
         </Labeled>
 
         {update.isError && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {update.error instanceof Error ? update.error.message : 'Не удалось сохранить'}
+            {update.error instanceof Error ? update.error.message : t('usercard.saveError')}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={close}>Отмена</Button>
-          <Button type="submit" loading={update.isPending}>Сохранить</Button>
+          <Button type="button" variant="secondary" onClick={close}>{t('common.cancel')}</Button>
+          <Button type="submit" loading={update.isPending}>{t('common.save')}</Button>
         </div>
       </form>
     </Modal>

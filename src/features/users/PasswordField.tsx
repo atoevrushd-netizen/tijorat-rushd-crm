@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, Copy, Eye, EyeOff } from 'lucide-react'
+import { useT } from '@/i18n/useT'
 import { useUserPassword } from './usePassword'
 
 /**
@@ -7,6 +8,7 @@ import { useUserPassword } from './usePassword'
  * Виден только администратору (RLS на user_credentials).
  */
 export function PasswordField({ userId }: { userId: string }) {
+  const { t } = useT()
   const { data: password, isLoading } = useUserPassword(userId)
   const [show, setShow] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -21,7 +23,7 @@ export function PasswordField({ userId }: { userId: string }) {
   return (
     <div>
       <dt className="font-mono text-[11px] uppercase tracking-wide text-ink-3">
-        Пароль
+        {t('usercard.fieldPassword')}
       </dt>
       <dd className="mt-0.5 text-ink">
         {isLoading ? (
@@ -33,7 +35,7 @@ export function PasswordField({ userId }: { userId: string }) {
             </span>
             <button
               type="button"
-              aria-label={show ? 'Скрыть пароль' : 'Показать пароль'}
+              aria-label={show ? t('usercard.hidePassword') : t('usercard.showPassword')}
               onClick={() => setShow((s) => !s)}
               className="text-ink-3 transition-colors hover:text-accent"
             >
@@ -41,7 +43,7 @@ export function PasswordField({ userId }: { userId: string }) {
             </button>
             <button
               type="button"
-              aria-label="Скопировать пароль"
+              aria-label={t('usercard.copyPassword')}
               onClick={copy}
               className="text-ink-3 transition-colors hover:text-accent"
             >
@@ -49,7 +51,7 @@ export function PasswordField({ userId }: { userId: string }) {
             </button>
           </span>
         ) : (
-          <span className="text-ink-3">— (задайте через «Сменить пароль»)</span>
+          <span className="text-ink-3">{t('usercard.passwordEmpty')}</span>
         )}
       </dd>
     </div>

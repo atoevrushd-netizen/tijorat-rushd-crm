@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Profile } from '@/types'
+import { useT } from '@/i18n/useT'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { TaskStatusBadge } from '@/features/tasks/TaskStatusBadge'
@@ -14,25 +15,26 @@ export function RecentUsersCard({
   users: Profile[]
   onOpen: (id: string) => void
 }) {
+  const { t } = useT()
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-surface">
       <div className="flex items-center justify-between border-b border-line px-4 py-4 sm:px-[22px] sm:py-[18px]">
-        <div className="text-[15px] font-bold text-ink">Новые пользователи</div>
+        <div className="text-[15px] font-bold text-ink">{t('dash.recentUsers')}</div>
         <Link
           to="/admin/users"
           className="text-[12.5px] text-ink-2 transition-colors hover:text-accent"
         >
-          Все →
+          {t('dash.all')}
         </Link>
       </div>
       {/* Шапка колонок — только на sm+ */}
       <div className="hidden border-b border-line px-[22px] py-[11px] font-mono text-[10.5px] uppercase tracking-[.06em] text-ink-3 sm:grid sm:grid-cols-[2fr_1fr_1fr]">
-        <div>Пользователь</div>
-        <div>Статус</div>
-        <div>Регистрация</div>
+        <div>{t('dash.colUser')}</div>
+        <div>{t('dash.colStatus')}</div>
+        <div>{t('dash.colRegistration')}</div>
       </div>
       {users.length === 0 && (
-        <p className="py-8 text-center text-sm text-ink-3">Пока нет пользователей</p>
+        <p className="py-8 text-center text-sm text-ink-3">{t('dash.emptyUsers')}</p>
       )}
       {users.map((u) => (
         <button
@@ -61,24 +63,25 @@ export function RecentUsersCard({
 
 /** Список недавних задач. */
 export function RecentTasksCard({ tasks }: { tasks: RecentTask[] }) {
+  const { t } = useT()
   return (
     <div className="rounded-lg border border-line bg-surface p-4 sm:p-[22px]">
-      <div className="mb-4 text-[15px] font-bold text-ink">Последние задачи</div>
+      <div className="mb-4 text-[15px] font-bold text-ink">{t('dash.recentTasks')}</div>
       {tasks.length === 0 && (
-        <p className="py-4 text-sm text-ink-3">Пока нет задач</p>
+        <p className="py-4 text-sm text-ink-3">{t('dash.emptyTasks')}</p>
       )}
       <div className="flex flex-col gap-3">
-        {tasks.map((t) => (
-          <div key={t.id} className="flex items-center gap-3">
+        {tasks.map((task) => (
+          <div key={task.id} className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <div className="truncate text-[13.5px] font-medium text-ink">
-                {t.title}
+                {task.title}
               </div>
-              {t.userName && (
-                <div className="truncate text-[11.5px] text-ink-3">{t.userName}</div>
+              {task.userName && (
+                <div className="truncate text-[11.5px] text-ink-3">{task.userName}</div>
               )}
             </div>
-            <TaskStatusBadge status={t.status} />
+            <TaskStatusBadge status={task.status} />
           </div>
         ))}
       </div>

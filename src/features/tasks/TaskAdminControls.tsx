@@ -2,11 +2,13 @@ import { useState, type FormEvent } from 'react'
 import type { Task, TaskStatus } from '@/types'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { ADMIN_STATUS_OPTIONS, TASK_STATUS_LABEL } from './taskStatus'
+import { useT } from '@/i18n/useT'
+import { ADMIN_STATUS_OPTIONS } from './taskStatus'
 import { useAddTaskLink, useDeleteTask, useSetTaskStatus } from './useTasks'
 
 /** Действия администратора над задачей: статус, ссылка, удаление. */
 export function TaskAdminControls({ task }: { task: Task }) {
+  const { t } = useT()
   const setStatus = useSetTaskStatus()
   const del = useDeleteTask()
   const addLink = useAddTaskLink()
@@ -32,11 +34,11 @@ export function TaskAdminControls({ task }: { task: Task }) {
         className="rounded-md border border-line-strong bg-bg px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent"
       >
         <option value="" disabled>
-          Сменить статус…
+          {t('tasksui.changeStatus')}
         </option>
         {ADMIN_STATUS_OPTIONS.map((s) => (
           <option key={s} value={s}>
-            {TASK_STATUS_LABEL[s]}
+            {t(`taskStatus.${s}`)}
           </option>
         ))}
       </select>
@@ -46,22 +48,22 @@ export function TaskAdminControls({ task }: { task: Task }) {
           <Input
             value={linkUrl}
             onChange={(e) => setLinkUrl(e.target.value)}
-            placeholder="ссылка на материал"
+            placeholder={t('tasksui.linkPlaceholder')}
           />
         </div>
         <Button type="submit" variant="secondary" size="sm">
-          + Ссылка
+          {t('tasksui.addLink')}
         </Button>
       </form>
 
       <button
         type="button"
         onClick={() => {
-          if (window.confirm('Удалить задачу? Действие необратимо.')) del.mutate(task.id)
+          if (window.confirm(t('tasksui.confirmDeleteTask'))) del.mutate(task.id)
         }}
         className="text-sm text-danger transition-opacity hover:opacity-80"
       >
-        Удалить
+        {t('tasksui.delete')}
       </button>
     </div>
   )

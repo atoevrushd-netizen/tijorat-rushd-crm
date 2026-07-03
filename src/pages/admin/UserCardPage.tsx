@@ -36,9 +36,9 @@ export function UserCardPage() {
     return (
       <AppShell title={t('page.userCard')} nav={adminNav}>
         <p className="text-center text-ink-2">
-          Пользователь не найден.{' '}
+          {t('usercard.notFound')}{' '}
           <Link to="/admin" className="text-accent underline">
-            К списку
+            {t('usercard.toList')}
           </Link>
         </p>
       </AppShell>
@@ -67,7 +67,7 @@ export function UserCardPage() {
                 <StatusBadge status={user.status} />
               </div>
               <p className="mt-1 text-sm text-ink-2">
-                {user.business_direction || 'Направление не указано'}
+                {user.business_direction || t('usercard.noDirection')}
               </p>
             </div>
             <div className="flex w-full items-center gap-2 sm:w-auto sm:flex-col sm:items-stretch">
@@ -76,28 +76,31 @@ export function UserCardPage() {
                 className="flex-1 sm:flex-none"
                 onClick={() => setEditing(true)}
               >
-                Редактировать
+                {t('usercard.edit')}
               </Button>
               {/* На телефоне — иконки (без текста), на десктопе — текст */}
               <Button
                 variant="secondary"
-                aria-label="Сменить пароль"
-                title="Сменить пароль"
+                aria-label={t('usercard.changePassword')}
+                title={t('usercard.changePassword')}
                 leftIcon={<KeyRound size={16} />}
                 onClick={() => setPwdOpen(true)}
               >
-                <span className="hidden sm:inline">Сменить пароль</span>
+                <span className="hidden sm:inline">{t('usercard.changePassword')}</span>
               </Button>
               <Button
                 variant="danger"
-                aria-label="Удалить"
-                title="Удалить"
+                aria-label={t('usercard.delete')}
+                title={t('usercard.delete')}
                 leftIcon={<Trash2 size={16} />}
                 loading={del.isPending}
                 onClick={() => {
                   if (
                     window.confirm(
-                      `Удалить «${user.full_name || 'пользователя'}»? Лид уйдёт в «Корзину» — его можно восстановить.`,
+                      t('usercard.deleteConfirm').replace(
+                        '{name}',
+                        user.full_name || t('usercard.userFallbackGenitive'),
+                      ),
                     )
                   )
                     del.mutate(user.id, {
@@ -105,21 +108,24 @@ export function UserCardPage() {
                     })
                 }}
               >
-                <span className="hidden sm:inline">Удалить</span>
+                <span className="hidden sm:inline">{t('usercard.delete')}</span>
               </Button>
             </div>
           </div>
 
           <dl className="mt-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-            <Field label="Телефон" value={user.phone} />
-            <Field label="Логин" value={user.login ?? user.email} />
+            <Field label={t('usercard.fieldPhone')} value={user.phone} />
+            <Field label={t('usercard.fieldLogin')} value={user.login ?? user.email} />
             <PasswordField userId={user.id} />
-            <Field label="Дата регистрации" value={formatDate(user.registration_date)} />
-            <Field label="Роль" value={user.role === 'admin' ? 'Администратор' : 'Пользователь'} />
-            <Field label="Подписка с" value={formatDate(user.subscription_start)} />
-            <Field label="Подписка по" value={formatDate(user.subscription_end)} />
+            <Field label={t('usercard.fieldRegDate')} value={formatDate(user.registration_date)} />
+            <Field
+              label={t('usercard.fieldRole')}
+              value={user.role === 'admin' ? t('common.role.admin') : t('common.role.user')}
+            />
+            <Field label={t('usercard.fieldSubStart')} value={formatDate(user.subscription_start)} />
+            <Field label={t('usercard.fieldSubEnd')} value={formatDate(user.subscription_end)} />
             <div className="sm:col-span-2">
-              <Field label="Комментарий администратора" value={user.admin_comment} />
+              <Field label={t('usercard.fieldAdminComment')} value={user.admin_comment} />
             </div>
           </dl>
         </section>
@@ -144,7 +150,7 @@ export function UserCardPage() {
       <EditUserModal user={editing ? user : null} onClose={() => setEditing(false)} />
       <SetPasswordModal
         userId={user.id}
-        userName={user.full_name || user.login || 'пользователь'}
+        userName={user.full_name || user.login || t('usercard.userFallback')}
         open={pwdOpen}
         onClose={() => setPwdOpen(false)}
       />

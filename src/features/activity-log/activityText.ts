@@ -1,24 +1,30 @@
-import type { ActivityEvent, TaskStatus } from '@/types'
-import { TASK_STATUS_LABEL } from '@/features/tasks/taskStatus'
+import type { ActivityEvent } from '@/types'
 
-function statusLabel(value: unknown): string {
-  if (typeof value === 'string' && value in TASK_STATUS_LABEL) {
-    return TASK_STATUS_LABEL[value as TaskStatus]
+/** Функция перевода из useT (ключ, необязательный fallback). */
+type Translate = (key: string, fallback?: string) => string
+
+function statusLabel(t: Translate, value: unknown): string {
+  const fallback = String(value ?? '—')
+  if (typeof value === 'string') {
+    return t(`taskStatus.${value}`, fallback)
   }
-  return String(value ?? '—')
+  return fallback
 }
 
 /** Человекочитаемый текст события истории. */
-export function activityText(event: ActivityEvent): string {
+export function activityText(event: ActivityEvent, t: Translate): string {
   const details = event.details ?? {}
   const title = typeof details.title === 'string' ? details.title : ''
 
   if (event.entity_type === 'task') {
     if (event.action === 'created') {
-      return `Создана задача «${title}»`
+      return t('activity.taskCreated').replace('{title}', title)
     }
     if (event.action === 'status_changed') {
-      return `Статус задачи «${title}»: ${statusLabel(details.from)} → ${statusLabel(details.to)}`
+      return t('activity.taskStatusChanged')
+        .replace('{title}', title)
+        .replace('{from}', statusLabel(t, details.from))
+        .replace('{to}', statusLabel(t, details.to))
     }
   }
   return `${event.entity_type}: ${event.action}`

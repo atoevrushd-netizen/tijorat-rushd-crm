@@ -5,6 +5,7 @@ import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/useAuth'
+import { useT } from '@/i18n/useT'
 import { useCreateTask } from './useTasks'
 
 export function CreateTaskModal({
@@ -19,6 +20,7 @@ export function CreateTaskModal({
   tabId: string
 }) {
   const { profile } = useAuth()
+  const { t } = useT()
   const create = useCreateTask()
   const [title, setTitle] = useState('')
   const [type, setType] = useState('reels')
@@ -52,33 +54,33 @@ export function CreateTaskModal({
   }
 
   return (
-    <Modal open={open} onClose={close} title="Новая задача">
+    <Modal open={open} onClose={close} title={t('tasksui.newTask')}>
       <form className="space-y-3" onSubmit={submit}>
-        <Labeled label="Название *">
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Reels №1" required />
+        <Labeled label={t('tasksui.nameLabel')}>
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('tasksui.namePlaceholder')} required />
         </Labeled>
-        <Labeled label="Тип">
+        <Labeled label={t('tasksui.type')}>
           <Select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="reels">Reels</option>
-            <option value="creative">Креатив</option>
+            <option value="reels">{t('taskType.reels')}</option>
+            <option value="creative">{t('taskType.creative')}</option>
           </Select>
         </Labeled>
-        <Labeled label="Дедлайн">
+        <Labeled label={t('tasksui.deadlineLabel')}>
           <Input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
         </Labeled>
-        <Labeled label="Комментарий администратора">
+        <Labeled label={t('tasksui.adminCommentLabel')}>
           <Textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} />
         </Labeled>
 
         {create.isError && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {create.error instanceof Error ? create.error.message : 'Не удалось создать'}
+            {create.error instanceof Error ? create.error.message : t('tasksui.createError')}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={close}>Отмена</Button>
-          <Button type="submit" loading={create.isPending}>Создать</Button>
+          <Button type="button" variant="secondary" onClick={close}>{t('common.cancel')}</Button>
+          <Button type="submit" loading={create.isPending}>{t('tasksui.create')}</Button>
         </div>
       </form>
     </Modal>

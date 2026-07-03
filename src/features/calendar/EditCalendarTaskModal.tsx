@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
-import { ADMIN_STATUS_OPTIONS, TASK_STATUS_LABEL } from '@/features/tasks/taskStatus'
+import { ADMIN_STATUS_OPTIONS } from '@/features/tasks/taskStatus'
 import { useUpdateTask } from '@/features/tasks/useTasks'
+import { useT } from '@/i18n/useT'
 
 /** Редактирование задачи календаря (только админ): название, тип, день, время, статус, комментарий. */
 export function EditCalendarTaskModal({
@@ -17,6 +18,7 @@ export function EditCalendarTaskModal({
   onClose: () => void
 }) {
   const update = useUpdateTask()
+  const { t } = useT()
   const [title, setTitle] = useState('')
   const [type, setType] = useState('reels')
   const [date, setDate] = useState('')
@@ -59,56 +61,56 @@ export function EditCalendarTaskModal({
   }
 
   return (
-    <Modal open={!!task} onClose={close} title="Редактировать задачу">
+    <Modal open={!!task} onClose={close} title={t('calmodal.editTitle')}>
       <form className="space-y-3" onSubmit={submit}>
-        <Labeled label="Название *">
+        <Labeled label={t('calmodal.nameLabel')}>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
         </Labeled>
         <div className="grid grid-cols-2 gap-3">
-          <Labeled label="Тип">
+          <Labeled label={t('calmodal.typeLabel')}>
             <Select value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="reels">Reels</option>
-              <option value="creative">Креатив</option>
-              <option value="other">Другое</option>
+              <option value="reels">{t('taskType.reels')}</option>
+              <option value="creative">{t('taskType.creative')}</option>
+              <option value="other">{t('taskType.other')}</option>
             </Select>
           </Labeled>
-          <Labeled label="Статус">
+          <Labeled label={t('calmodal.statusLabel')}>
             <Select
               value={status}
               onChange={(e) => setStatus(e.target.value as TaskStatus)}
             >
               {ADMIN_STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
-                  {TASK_STATUS_LABEL[s]}
+                  {t(`taskStatus.${s}`)}
                 </option>
               ))}
             </Select>
           </Labeled>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Labeled label="День">
+          <Labeled label={t('calmodal.dayLabel')}>
             <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </Labeled>
-          <Labeled label="Время">
+          <Labeled label={t('calmodal.timeLabel')}>
             <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </Labeled>
         </div>
-        <Labeled label="Комментарий">
+        <Labeled label={t('calmodal.commentLabel')}>
           <Textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} />
         </Labeled>
 
         {update.isError && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {update.error instanceof Error ? update.error.message : 'Не удалось сохранить'}
+            {update.error instanceof Error ? update.error.message : t('calmodal.saveError')}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={close}>
-            Отмена
+            {t('common.cancel')}
           </Button>
           <Button type="submit" loading={update.isPending}>
-            Сохранить
+            {t('common.save')}
           </Button>
         </div>
       </form>

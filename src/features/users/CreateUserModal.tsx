@@ -5,6 +5,7 @@ import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
 import type { UserStatus } from '@/types'
 import { normalizeLogin } from '@/lib/loginEmail'
+import { useT } from '@/i18n/useT'
 import { useCreateUser } from './useCreateUser'
 
 const EMPTY = {
@@ -23,6 +24,7 @@ export function CreateUserModal({
   open: boolean
   onClose: () => void
 }) {
+  const { t } = useT()
   const createUser = useCreateUser()
   const [form, setForm] = useState(EMPTY)
   const [clientError, setClientError] = useState<string | null>(null)
@@ -44,13 +46,11 @@ export function CreateUserModal({
     setClientError(null)
     if (!form.full_name.trim()) return
     if (form.login.length < 3) {
-      setClientError(
-        'Логин — латиницей (буквы a-z, цифры), минимум 3 символа. Например: malik99',
-      )
+      setClientError(t('usercard.loginError'))
       return
     }
     if (form.password.length < 6) {
-      setClientError('Пароль — не короче 6 символов')
+      setClientError(t('usercard.passwordMinError'))
       return
     }
     createUser.mutate(
@@ -72,15 +72,15 @@ export function CreateUserModal({
   }
 
   return (
-    <Modal open={open} onClose={close} title="Новый пользователь">
+    <Modal open={open} onClose={close} title={t('usercard.createTitle')}>
       <form className="space-y-3" onSubmit={handleSubmit}>
-        <Labeled label="Имя и фамилия *">
-          <Input value={form.full_name} onChange={field('full_name')} required placeholder="Иван Иванов" />
+        <Labeled label={t('usercard.fieldFullNameReq')}>
+          <Input value={form.full_name} onChange={field('full_name')} required placeholder={t('usercard.fullNamePlaceholder')} />
         </Labeled>
-        <Labeled label="Телефон *">
-          <Input value={form.phone} onChange={field('phone')} required placeholder="+992 ..." />
+        <Labeled label={t('usercard.fieldPhoneReq')}>
+          <Input value={form.phone} onChange={field('phone')} required placeholder={t('usercard.phonePlaceholder')} />
         </Labeled>
-        <Labeled label="Логин (для входа) *">
+        <Labeled label={t('usercard.fieldLoginReq')}>
           <Input
             value={form.login}
             onChange={(e) => {
@@ -88,24 +88,24 @@ export function CreateUserModal({
               setForm((f) => ({ ...f, login: normalizeLogin(e.target.value) }))
             }}
             required
-            placeholder="например, malik99"
+            placeholder={t('usercard.loginPlaceholder')}
             autoComplete="off"
           />
           <p className="text-[11px] text-ink-3">
-            Латиницей: a-z, цифры, точка, дефис (кириллица не подойдёт)
+            {t('usercard.loginHint')}
           </p>
         </Labeled>
-        <Labeled label="Пароль *">
-          <Input type="text" value={form.password} onChange={field('password')} required placeholder="не короче 6 символов" />
+        <Labeled label={t('usercard.fieldPasswordReq')}>
+          <Input type="text" value={form.password} onChange={field('password')} required placeholder={t('usercard.passwordPlaceholder')} />
         </Labeled>
-        <Labeled label="Направление бизнеса">
-          <Input value={form.business_direction} onChange={field('business_direction')} placeholder="Маркетинг" />
+        <Labeled label={t('usercard.fieldBusinessDir')}>
+          <Input value={form.business_direction} onChange={field('business_direction')} placeholder={t('usercard.businessDirPlaceholder')} />
         </Labeled>
-        <Labeled label="Статус">
+        <Labeled label={t('usercard.fieldStatus')}>
           <Select value={form.status} onChange={field('status')}>
-            <option value="active">Активен</option>
-            <option value="paused">На паузе</option>
-            <option value="archived">В архиве</option>
+            <option value="active">{t('userStatus.active')}</option>
+            <option value="paused">{t('userStatus.paused')}</option>
+            <option value="archived">{t('userStatus.archived')}</option>
           </Select>
         </Labeled>
 
@@ -114,13 +114,13 @@ export function CreateUserModal({
             {clientError ??
               (createUser.error instanceof Error
                 ? createUser.error.message
-                : 'Не удалось создать пользователя')}
+                : t('usercard.createError'))}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={close}>Отмена</Button>
-          <Button type="submit" loading={createUser.isPending}>Создать</Button>
+          <Button type="button" variant="secondary" onClick={close}>{t('common.cancel')}</Button>
+          <Button type="submit" loading={createUser.isPending}>{t('usercard.create')}</Button>
         </div>
       </form>
     </Modal>

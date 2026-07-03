@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/useAuth'
 import { useCreateTask } from '@/features/tasks/useTasks'
+import { useT } from '@/i18n/useT'
 import { formatDateShort } from './calendarUtils'
 
 /** Создание задачи на конкретный день (только админ). День приходит из календаря. */
@@ -23,6 +24,7 @@ export function CreateCalendarTaskModal({
   date: string
 }) {
   const { profile } = useAuth()
+  const { t } = useT()
   const create = useCreateTask()
   const [title, setTitle] = useState('')
   const [type, setType] = useState('reels')
@@ -57,44 +59,44 @@ export function CreateCalendarTaskModal({
   }
 
   return (
-    <Modal open={open} onClose={close} title={`Задача на ${formatDateShort(date)}`}>
+    <Modal open={open} onClose={close} title={`${t('calmodal.createTitle')} ${formatDateShort(date)}`}>
       <form className="space-y-3" onSubmit={submit}>
-        <Labeled label="Название *">
+        <Labeled label={t('calmodal.nameLabel')}>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Снять Reels"
+            placeholder={t('calmodal.namePlaceholder')}
             required
           />
         </Labeled>
         <div className="grid grid-cols-2 gap-3">
-          <Labeled label="Тип">
+          <Labeled label={t('calmodal.typeLabel')}>
             <Select value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="reels">Reels</option>
-              <option value="creative">Креатив</option>
-              <option value="other">Другое</option>
+              <option value="reels">{t('taskType.reels')}</option>
+              <option value="creative">{t('taskType.creative')}</option>
+              <option value="other">{t('taskType.other')}</option>
             </Select>
           </Labeled>
-          <Labeled label="Время">
+          <Labeled label={t('calmodal.timeLabel')}>
             <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </Labeled>
         </div>
-        <Labeled label="Комментарий">
+        <Labeled label={t('calmodal.commentLabel')}>
           <Textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} />
         </Labeled>
 
         {create.isError && (
           <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
-            {create.error instanceof Error ? create.error.message : 'Не удалось создать'}
+            {create.error instanceof Error ? create.error.message : t('calmodal.createError')}
           </p>
         )}
 
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={close}>
-            Отмена
+            {t('common.cancel')}
           </Button>
           <Button type="submit" loading={create.isPending}>
-            Создать
+            {t('calmodal.createBtn')}
           </Button>
         </div>
       </form>

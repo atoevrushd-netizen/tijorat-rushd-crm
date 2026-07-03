@@ -13,7 +13,11 @@ export async function listUsers({
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  let query = supabase.from('profiles').select('*', { count: 'exact' })
+  // Только лиды: администратор управляет лидами и в их списке не показывается.
+  let query = supabase
+    .from('profiles')
+    .select('*', { count: 'exact' })
+    .eq('role', 'user')
   query = trashed
     ? query.not('deleted_at', 'is', null)
     : query.is('deleted_at', null)

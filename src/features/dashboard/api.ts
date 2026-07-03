@@ -37,11 +37,14 @@ function ownerName(owner: unknown): string | null {
 /** Сводные данные для дашборда админа (RLS пускает только админов). */
 export async function getDashboard(): Promise<DashboardData> {
   const [usersRes, tasksRes, recentUsersRes, recentTasksRes] = await Promise.all([
-    supabase.from('profiles').select('status'),
+    // Считаем только лидов (не админа) и не удалённых.
+    supabase.from('profiles').select('status').eq('role', 'user').is('deleted_at', null),
     supabase.from('tasks').select('status'),
     supabase
       .from('profiles')
       .select('*')
+      .eq('role', 'user')
+      .is('deleted_at', null)
       .order('registration_date', { ascending: false })
       .limit(5),
     supabase

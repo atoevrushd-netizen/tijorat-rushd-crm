@@ -8,6 +8,7 @@ import {
   listUsers,
   permanentDeleteUser,
   restoreUser,
+  searchUsers,
   softDeleteUser,
 } from './api'
 import type { UsersQuery } from './types'
@@ -18,6 +19,17 @@ export function useUsers(query: UsersQuery) {
     queryKey: ['users', query],
     queryFn: () => listUsers(query),
     placeholderData: keepPreviousData,
+  })
+}
+
+/** Быстрый поиск лидов для глобального поиска (включается от 2 символов). */
+export function useUserSearch(term: string) {
+  const q = term.trim()
+  return useQuery({
+    queryKey: ['user-search', q],
+    queryFn: () => searchUsers(q),
+    enabled: q.length >= 2,
+    staleTime: 10_000,
   })
 }
 

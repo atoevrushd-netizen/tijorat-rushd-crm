@@ -32,6 +32,45 @@ export async function listUsers({
   return { items: (data ?? []) as Profile[], total: count ?? 0 }
 }
 
+/** Все лиды (без пагинации) для экспорта — читаем постранично до конца. */
+export async function listAllLeads(search: string, trashed = false): Promise<Profile[]> {
+  const CHUNK = 1000
+  const rows: Profile[] = []
+  const filter = buildSearchFilter(search)
+  for (let from = 0; ; from += CHUNK) {
+    let query = supabase.from('profiles').select('*').eq('role', 'user')
+    query = trashed
+      ? query.not('deleted_at', 'is', null)
+      : query.is('deleted_at', null)
+    query = query
+      .order('registration_date', { ascending: false })
+      .range(from, from + CHUNK - 1)
+    if (filter) query = query.or(filter)
+    const { data, error } = await query
+    if (error) throw error
+    const batch = (data ?? []) as Profile[]
+    rows.push(...batch)
+    if (batch.length < CHUNK) break
+  }
+  return rows
+}
+
+/** Быстрый поиск лидов для глобального поиска (имя/телефон/логин/email). */
+export async function searchUsers(term: string, limit = 8): Promise<Profile[]> {
+  const filter = buildSearchFilter(term)
+  if (!filter) return []
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('role', 'user')
+    .is('deleted_at', null)
+    .or(filter)
+    .order('registration_date', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  return (data ?? []) as Profile[]
+}
+
 /** Загрузить один профиль по id (для карточки пользователя). */
 export async function getUser(id: string): Promise<Profile | null> {
   const { data, error } = await supabase

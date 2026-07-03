@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
+import { GlobalSearch } from '@/features/users/GlobalSearch'
 import { devNavItem } from './nav'
 
 export type NavItem = {
@@ -72,6 +73,7 @@ export function AppShell({
           </div>
 
           <div className="mb-2" />
+          {(role === 'admin' || role === 'developer') && <GlobalSearch />}
           <div className="px-3 pb-2 font-mono text-[10px] uppercase tracking-[.12em] text-ink-3">
             {t('common.menu')}
           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { RotateCcw, Trash2 } from 'lucide-react'
+import { Download, RotateCcw, Trash2 } from 'lucide-react'
 import type { Profile } from '@/types'
 import { AppShell } from '@/components/layout/AppShell'
 import { adminNav } from '@/components/layout/nav'
@@ -9,10 +9,12 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDate } from '@/lib/utils'
+import { toCSV, downloadCSV } from '@/lib/csv'
 import { useDebouncedValue } from '@/lib/useDebouncedValue'
-import { toast } from '@/lib/toast'
+import { toast, errorMessage } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
+import { listAllLeads } from '@/features/users/api'
 import {
   usePermanentDeleteUser,
   useRestoreUser,
@@ -33,11 +35,34 @@ export function AdminDashboard() {
   const [page, setPage] = useState(1)
   const [createOpen, setCreateOpen] = useState(false)
   const [showTrash, setShowTrash] = useState(false)
+  const [exporting, setExporting] = useState(false)
   const debouncedSearch = useDebouncedValue(search, 300)
 
   useEffect(() => {
     setPage(1)
   }, [debouncedSearch, showTrash])
+
+  // Экспорт текущего среза лидов (с учётом поиска/«Корзины») в CSV для Excel.
+  async function exportCsv() {
+    setExporting(true)
+    try {
+      const rows = await listAllLeads(debouncedSearch, showTrash)
+      const csv = toCSV<Profile>(rows, [
+        { label: t('users.colName'), get: (u) => u.full_name ?? '' },
+        { label: t('users.colPhone'), get: (u) => u.phone ?? '' },
+        { label: t('users.colLogin'), get: (u) => u.login ?? '' },
+        { label: t('users.colDirection'), get: (u) => u.business_direction ?? '' },
+        { label: t('users.colStatus'), get: (u) => t(`userStatus.${u.status}`, u.status) },
+        { label: t('users.colRegistered'), get: (u) => formatDate(u.registration_date) },
+      ])
+      downloadCSV(`tijorat-leads-${new Date().toISOString().slice(0, 10)}.csv`, csv)
+      toast.success(`${t('users.exported')} · ${rows.length}`)
+    } catch (e) {
+      toast.error(errorMessage(e))
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const { data, isLoading, isError, error } = useUsers({
     search: debouncedSearch,
@@ -67,6 +92,14 @@ export function AdminDashboard() {
           onClick={() => setShowTrash((v) => !v)}
         >
           {showTrash ? t('users.toActive') : t('users.trash')}
+        </Button>
+        <Button
+          variant="outline"
+          leftIcon={<Download size={15} />}
+          loading={exporting}
+          onClick={exportCsv}
+        >
+          {t('users.exportCsv')}
         </Button>
       </div>
 

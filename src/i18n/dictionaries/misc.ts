@@ -52,6 +52,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'activity.taskCreated': 'Задачаи «{title}» сохта шуд',
     'activity.taskStatusChanged': 'Ҳолати задачаи «{title}»: {from} → {to}',
 
+    // Уведомления (колокольчик)
+    'notif.title': 'Огоҳиҳо',
+    'notif.empty': 'Ҳоло огоҳӣ нест.',
+
     // Менеджер вкладок
     'tabsMgr.cardTabs': 'Вкладкаҳои корт',
     'tabsMgr.desc':
@@ -132,6 +136,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'activity.empty': 'Пока нет событий.',
     'activity.taskCreated': 'Создана задача «{title}»',
     'activity.taskStatusChanged': 'Статус задачи «{title}»: {from} → {to}',
+
+    // Уведомления (колокольчик)
+    'notif.title': 'Уведомления',
+    'notif.empty': 'Пока нет уведомлений.',
 
     // Менеджер вкладок
     'tabsMgr.cardTabs': 'Вкладки карточки',

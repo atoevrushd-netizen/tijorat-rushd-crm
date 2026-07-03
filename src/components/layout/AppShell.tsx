@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { GlobalSearch } from '@/features/users/GlobalSearch'
+import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { devNavItem } from './nav'
 
 export type NavItem = {
@@ -138,7 +139,10 @@ export function AppShell({
               <div className="mt-0.5 truncate text-[13px] text-ink-3">{subtitle}</div>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-3">{action}</div>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <NotificationBell />
+            {action}
+          </div>
         </header>
 
         <main className="mx-auto w-full max-w-[1180px] px-5 pt-7 pb-[calc(4.75rem+env(safe-area-inset-bottom))] sm:px-8 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">

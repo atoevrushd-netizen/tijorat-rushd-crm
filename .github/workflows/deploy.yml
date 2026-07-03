@@ -53,3 +53,8 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages API иногда отдаёт промежуточные ошибки при опросе статуса —
+          # даём больше попыток и времени, чтобы деплой не падал из-за них.
+          timeout: 600000
+          error_count: 25

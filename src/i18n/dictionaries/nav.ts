@@ -5,8 +5,6 @@ const bundle: Record<Lang, Record<string, string>> = {
   tg: {
     'nav.dashboard': 'Дашборд',
     'nav.users': 'Корбарон',
-    'nav.leads': 'Лидҳо',
-    'page.leads': 'Лидҳо',
     'nav.tabs': 'Бахшҳо',
     'nav.settings': 'Танзимот',
     'nav.myCabinet': 'Кабинети ман',
@@ -22,8 +20,6 @@ const bundle: Record<Lang, Record<string, string>> = {
   ru: {
     'nav.dashboard': 'Дашборд',
     'nav.users': 'Пользователи',
-    'nav.leads': 'Лиды',
-    'page.leads': 'Лиды',
     'nav.tabs': 'Вкладки',
     'nav.settings': 'Настройки',
     'nav.myCabinet': 'Мой кабинет',

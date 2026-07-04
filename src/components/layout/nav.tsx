@@ -7,6 +7,7 @@ import {
   Terminal,
   Users,
 } from 'lucide-react'
+import type { UserRole } from '@/types'
 import type { NavItem } from './AppShell'
 
 /** Пункт меню разработчика — добавляется в AppShell только для роли developer. */
@@ -34,3 +35,14 @@ export const userNav: NavItem[] = [
   { to: '/razbor', labelKey: 'nav.razbor', icon: <FileText size={15} /> },
   { to: '/settings', labelKey: 'nav.settings', icon: <Settings size={15} /> },
 ]
+
+/**
+ * Меню по роли — единый источник правды (используется в AppShell).
+ * Разработчик: админское меню + «Разработчик»; админ: только админское (без «Разработчик»);
+ * лид (и неизвестная роль): только своё. Так ни одна страница не подменит чужое меню.
+ */
+export function navForRole(role: UserRole | null | undefined): NavItem[] {
+  if (role === 'developer') return [...adminNav, devNavItem]
+  if (role === 'admin') return adminNav
+  return userNav
+}

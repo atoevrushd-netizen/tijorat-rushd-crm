@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KeyRound, Trash2 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
@@ -36,7 +35,7 @@ export function UserCardPage() {
 
   if (!user) {
     return (
-      <AppShell title={t('page.userCard')} nav={adminNav}>
+      <AppShell title={t('page.userCard')}>
         <p className="text-center text-ink-2">
           {t('usercard.notFound')}{' '}
           <Link to="/admin" className="text-accent underline">
@@ -48,7 +47,7 @@ export function UserCardPage() {
   }
 
   return (
-    <AppShell title={t('page.userCard')} nav={adminNav}>
+    <AppShell title={t('page.userCard')}>
       <div className="space-y-6">
         <Link
           to="/admin"

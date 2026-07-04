@@ -9,7 +9,6 @@ import {
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/features/auth/useAuth'
@@ -32,7 +31,7 @@ export function DevPage() {
   const setRole = useSetUserRole()
 
   return (
-    <AppShell title={t('page.dev')} subtitle={t('dev.hint')} nav={adminNav}>
+    <AppShell title={t('page.dev')} subtitle={t('dev.hint')}>
       <div className="space-y-4">
         {/* Обзор */}
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">

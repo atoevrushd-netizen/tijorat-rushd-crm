@@ -6,7 +6,7 @@ import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { GlobalSearch } from '@/features/users/GlobalSearch'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
-import { devNavItem } from './nav'
+import { navForRole } from './nav'
 
 export type NavItem = {
   to: string
@@ -30,13 +30,11 @@ function isActive(item: NavItem, pathname: string) {
 export function AppShell({
   title,
   subtitle,
-  nav,
   action,
   children,
 }: {
   title: string
   subtitle?: string
-  nav: NavItem[]
   action?: ReactNode
   children: ReactNode
 }) {
@@ -51,8 +49,9 @@ export function AppShell({
         ? t('common.role.developer')
         : t('common.role.user')
   const initials = (name.trim()[0] ?? 'U').toUpperCase()
-  // Разработчику добавляем пункт меню «Разработчик» поверх переданного nav.
-  const fullNav = role === 'developer' ? [...nav, devNavItem] : nav
+  // Меню определяется РОЛЬЮ (единый источник — navForRole), а не страницей.
+  // Так developer всегда видит своё меню, админ — своё (без «Разработчик»), лид — своё.
+  const fullNav = navForRole(role)
 
   return (
     <div className="flex min-h-full">

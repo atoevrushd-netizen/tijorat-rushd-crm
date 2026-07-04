@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useT } from '@/i18n/useT'
@@ -12,7 +11,7 @@ export function AnswersListPage() {
   const { data, isLoading, isError } = useSurveyPeople()
 
   return (
-    <AppShell title={t('page.answers')} subtitle={t('survey.peopleHint')} nav={adminNav}>
+    <AppShell title={t('page.answers')} subtitle={t('survey.peopleHint')}>
       {isLoading && (
         <div className="grid gap-2 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (

@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { useT } from '@/i18n/useT'
 import { SurveyPanel } from '@/features/survey/SurveyPanel'
 
@@ -12,7 +11,7 @@ export function AnswersViewPage() {
   if (!id) return null
 
   return (
-    <AppShell title={t('page.answers')} subtitle={t('survey.readonly')} nav={adminNav}>
+    <AppShell title={t('page.answers')} subtitle={t('survey.readonly')}>
       <div className="space-y-4">
         <Link
           to="/answers"

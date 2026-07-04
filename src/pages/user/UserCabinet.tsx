@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { AppShell } from '@/components/layout/AppShell'
-import { userNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/components/ui/StatusBadge'
@@ -23,7 +22,6 @@ export function UserCabinet() {
   return (
     <AppShell
       title={t('page.cabinet')}
-      nav={userNav}
       action={
         <Button variant="secondary" onClick={() => setEditOpen(true)}>
           {t('cabinet.editProfile')}

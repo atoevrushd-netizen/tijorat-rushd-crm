@@ -3,7 +3,6 @@ import { Activity, CheckCircle2, UserCheck, Users } from 'lucide-react'
 import { useT } from '@/i18n/useT'
 import { weekdayDayMonth } from '@/lib/dateI18n'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Button } from '@/components/ui/Button'
 import { StatCard } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -29,7 +28,6 @@ export function DashboardPage() {
     <AppShell
       title={`${t('dash.welcome')}, ${firstName}`}
       subtitle={`${dateStr} · ${t('dash.overview')}`}
-      nav={adminNav}
       action={
         <Button leftIcon={<Users className="h-3.5 w-3.5" />} onClick={() => navigate('/admin/users')}>
           {t('dash.allUsers')}

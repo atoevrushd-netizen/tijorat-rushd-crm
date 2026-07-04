@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Download, RotateCcw, Trash2 } from 'lucide-react'
 import type { Profile } from '@/types'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -74,7 +73,6 @@ export function AdminDashboard() {
   return (
     <AppShell
       title={t('page.users')}
-      nav={adminNav}
       action={<Button onClick={() => setCreateOpen(true)}>{t('users.create')}</Button>}
     >
       <div className="mb-4 flex flex-wrap items-center gap-2">

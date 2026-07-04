@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav } from '@/components/layout/nav'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useT } from '@/i18n/useT'
@@ -127,7 +126,7 @@ export function AutoTasksPage() {
   }
 
   return (
-    <AppShell title={t('page.autotasks')} subtitle={t('at.hint')} nav={adminNav}>
+    <AppShell title={t('page.autotasks')} subtitle={t('at.hint')}>
       {settingsQ.isLoading || groupsQ.isLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-20 w-full rounded-[18px]" />

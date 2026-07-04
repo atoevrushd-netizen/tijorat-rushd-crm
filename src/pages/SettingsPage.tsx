@@ -1,6 +1,5 @@
 import { LogOut } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav, userNav } from '@/components/layout/nav'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
@@ -17,7 +16,6 @@ export function SettingsPage() {
     <AppShell
       title={t('page.settings')}
       subtitle={isAdmin ? t('settings.subtitleAdmin') : t('settings.subtitleUser')}
-      nav={isAdmin ? adminNav : userNav}
     >
       <div className="space-y-6">
         {isAdmin ? <AdminSettings /> : <UserSettings />}

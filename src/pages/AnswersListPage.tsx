@@ -1,21 +1,18 @@
 import { Link } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
-import { adminNav, userNav } from '@/components/layout/nav'
+import { adminNav } from '@/components/layout/nav'
 import { Avatar } from '@/components/ui/Avatar'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { useSurveyPeople } from '@/features/survey/useSurvey'
 
 /** «Ответы всех»: список участников — открыть, чтобы посмотреть ответы. */
 export function AnswersListPage() {
-  const { role } = useAuth()
   const { t } = useT()
   const { data, isLoading, isError } = useSurveyPeople()
-  const nav = role === 'admin' ? adminNav : userNav
 
   return (
-    <AppShell title={t('page.answers')} subtitle={t('survey.peopleHint')} nav={nav}>
+    <AppShell title={t('page.answers')} subtitle={t('survey.peopleHint')} nav={adminNav}>
       {isLoading && (
         <div className="grid gap-2 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (

@@ -159,25 +159,42 @@ export function AppShell({
               key={item.to}
               to={item.to}
               className={cn(
-                'group relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors duration-200 active:scale-95',
+                'group relative flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] transition-[color,transform] duration-200 ease-kit active:scale-90',
                 active ? 'text-accent' : 'text-ink-3',
               )}
             >
+              {/* Верхний индикатор активной вкладки */}
               <span
                 className={cn(
                   'absolute top-0 h-[3px] rounded-b-full bg-accent transition-all duration-300 ease-kit',
-                  active ? 'w-7 opacity-100' : 'w-0 opacity-0',
+                  active ? 'w-8 opacity-100' : 'w-0 opacity-0',
                 )}
               />
+              {/* Иконка + мягкая подсветка-пилюля под активной */}
+              <span className="relative flex h-7 w-11 items-center justify-center">
+                <span
+                  className={cn(
+                    'absolute inset-0 rounded-full bg-accent-soft transition-all duration-300 ease-kit',
+                    active ? 'scale-100 opacity-100' : 'scale-75 opacity-0',
+                  )}
+                />
+                <span
+                  className={cn(
+                    'relative flex items-center justify-center transition-transform duration-300 ease-kit [&>svg]:h-[20px] [&>svg]:w-[20px]',
+                    active ? '-translate-y-px scale-105' : 'group-active:scale-90',
+                  )}
+                >
+                  {item.icon}
+                </span>
+              </span>
               <span
                 className={cn(
-                  'flex h-6 items-center justify-center transition-transform duration-200 [&>svg]:h-[21px] [&>svg]:w-[21px]',
-                  active ? 'scale-110' : 'group-active:scale-90',
+                  'max-w-full truncate px-1 transition-all duration-200',
+                  active ? 'font-semibold' : 'font-medium',
                 )}
               >
-                {item.icon}
+                {t(item.labelKey)}
               </span>
-              <span className="max-w-full truncate px-1">{t(item.labelKey)}</span>
             </Link>
           )
         })}

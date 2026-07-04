@@ -122,10 +122,10 @@ export function DayTasksPanel({
                   )}
                 </span>
 
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-[60%]">
                   <div
                     className={cn(
-                      'truncate text-[13.5px] font-semibold',
+                      'break-words text-[13.5px] font-semibold',
                       isDone ? 'text-ink-3 line-through' : 'text-ink',
                     )}
                   >

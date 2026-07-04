@@ -65,23 +65,25 @@ export function RecentUsersCard({
 export function RecentTasksCard({ tasks }: { tasks: RecentTask[] }) {
   const { t } = useT()
   return (
-    <div className="rounded-lg border border-line bg-surface p-4 sm:p-[22px]">
+    <div className="overflow-hidden rounded-lg border border-line bg-surface p-4 sm:p-[22px]">
       <div className="mb-4 text-[15px] font-bold text-ink">{t('dash.recentTasks')}</div>
       {tasks.length === 0 && (
         <p className="py-4 text-sm text-ink-3">{t('dash.emptyTasks')}</p>
       )}
       <div className="flex flex-col gap-3">
         {tasks.map((task) => (
-          <div key={task.id} className="flex items-center gap-3">
+          <div key={task.id} className="flex min-w-0 items-start gap-3">
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[13.5px] font-medium text-ink">
+              <div className="line-clamp-2 break-words text-[13.5px] font-medium text-ink">
                 {task.title}
               </div>
               {task.userName && (
                 <div className="truncate text-[11.5px] text-ink-3">{task.userName}</div>
               )}
             </div>
-            <TaskStatusBadge status={task.status} />
+            <div className="shrink-0">
+              <TaskStatusBadge status={task.status} />
+            </div>
           </div>
         ))}
       </div>

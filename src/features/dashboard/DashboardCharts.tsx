@@ -23,14 +23,14 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
         <div className="text-[16px] font-bold text-ink">{t('dash.tasksByStatus')}</div>
         <div className="text-[12.5px] text-ink-3">{t('dash.tasksByStatusSub')}</div>
       </div>
-      <div className="flex h-[170px] items-end gap-2 sm:h-[200px] sm:gap-3">
+      <div className="flex h-[170px] items-end gap-1.5 sm:h-[200px] sm:gap-3">
         {ORDER.map((s) => {
           const h = Math.max(3, Math.round((byStatus[s] / max) * 100))
           const accent = s === 'accepted_by_user'
           return (
             <div
               key={s}
-              className="flex h-full flex-1 flex-col items-center justify-end gap-2.5"
+              className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2.5"
             >
               <span className="text-[11px] font-semibold text-ink-2">
                 {byStatus[s]}
@@ -45,7 +45,12 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
                   boxShadow: accent ? '0 0 22px rgba(10,132,255,.35)' : undefined,
                 }}
               />
-              <span className={cn('text-[11px]', accent ? 'text-ink' : 'text-ink-3')}>
+              <span
+                className={cn(
+                  'w-full truncate text-center text-[10px] sm:text-[11px]',
+                  accent ? 'text-ink' : 'text-ink-3',
+                )}
+              >
                 {t(`taskStatusShort.${s}`)}
               </span>
             </div>

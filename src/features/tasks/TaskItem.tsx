@@ -4,6 +4,7 @@ import { cn, formatDate } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { deadlineState } from '@/lib/deadline'
+import { taskTitle } from '@/lib/taskI18n'
 import { useT } from '@/i18n/useT'
 import { TaskStatusBadge } from './TaskStatusBadge'
 import { TaskAdminControls } from './TaskAdminControls'
@@ -25,7 +26,7 @@ export function TaskItem({
   isAdmin: boolean
   isOwner: boolean
 }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const delLink = useDeleteTaskLink()
   const canRespond = isOwner && task.status === 'sent_to_user'
   const dl = deadlineState(task.deadline, task.status)
@@ -34,7 +35,7 @@ export function TaskItem({
     <div className="rounded-lg border border-line bg-surface-2 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="break-words font-medium text-ink">{task.title}</div>
+          <div className="break-words font-medium text-ink">{taskTitle(task, lang)}</div>
           <div className="text-xs text-ink-3">
             {typeLabel(task.task_type, t)}
             {task.deadline && (

@@ -78,6 +78,9 @@ export type Task = {
   user_id: string
   tab_id: string | null
   title: string
+  /** Двуязычные заголовки (0029). Отсутствуют до применения миграции — тогда откат на title. */
+  title_ru?: string | null
+  title_tg?: string | null
   task_type: string | null
   status: TaskStatus
   deadline: string | null

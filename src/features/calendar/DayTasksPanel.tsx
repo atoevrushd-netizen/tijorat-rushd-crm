@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { deadlineState } from '@/lib/deadline'
+import { taskTitle } from '@/lib/taskI18n'
 import { Button } from '@/components/ui/Button'
 import { useT } from '@/i18n/useT'
 import { dayTitle } from '@/lib/dateI18n'
@@ -129,7 +130,7 @@ export function DayTasksPanel({
                       isDone ? 'text-ink-3 line-through' : 'text-ink',
                     )}
                   >
-                    {task.title}
+                    {taskTitle(task, lang)}
                   </div>
                   {task.task_type && (
                     <div className="text-[11.5px] text-ink-3">

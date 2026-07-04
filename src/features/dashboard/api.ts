@@ -13,6 +13,8 @@ const STATUSES: TaskStatus[] = [
 export type RecentTask = {
   id: string
   title: string
+  title_ru?: string | null
+  title_tg?: string | null
   status: TaskStatus
   userName: string | null
 }
@@ -87,8 +89,9 @@ export async function getDashboard(): Promise<DashboardData> {
       .order('registration_date', { ascending: false })
       .limit(5),
     supabase
+      // '*' — чтобы безопасно получить title_ru/title_tg (их может ещё не быть до миграции 0029).
       .from('tasks')
-      .select('id,title,status,owner:user_id(full_name)')
+      .select('*,owner:user_id(full_name)')
       .order('updated_at', { ascending: false })
       .limit(6),
   ])
@@ -109,6 +112,8 @@ export async function getDashboard(): Promise<DashboardData> {
   const rows = (recentTasksRes.data ?? []) as {
     id: string
     title: string
+    title_ru?: string | null
+    title_tg?: string | null
     status: TaskStatus
     owner: unknown
   }[]
@@ -125,6 +130,8 @@ export async function getDashboard(): Promise<DashboardData> {
     recentTasks: rows.map((r) => ({
       id: r.id,
       title: r.title,
+      title_ru: r.title_ru,
+      title_tg: r.title_tg,
       status: r.status,
       userName: ownerName(r.owner),
     })),

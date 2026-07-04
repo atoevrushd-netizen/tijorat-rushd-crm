@@ -5,6 +5,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { TaskStatusBadge } from '@/features/tasks/TaskStatusBadge'
 import { formatDate } from '@/lib/utils'
+import { taskTitle } from '@/lib/taskI18n'
 import type { RecentTask } from './api'
 
 /** Новые пользователи: ряд-flex на телефоне, таблица-grid на sm+. */
@@ -63,7 +64,7 @@ export function RecentUsersCard({
 
 /** Список недавних задач. */
 export function RecentTasksCard({ tasks }: { tasks: RecentTask[] }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-surface p-4 sm:p-[22px]">
       <div className="mb-4 text-[15px] font-bold text-ink">{t('dash.recentTasks')}</div>
@@ -75,7 +76,7 @@ export function RecentTasksCard({ tasks }: { tasks: RecentTask[] }) {
           <div key={task.id} className="flex min-w-0 items-start gap-3">
             <div className="min-w-0 flex-1">
               <div className="line-clamp-2 break-words text-[13.5px] font-medium text-ink">
-                {task.title}
+                {taskTitle(task, lang)}
               </div>
               {task.userName && (
                 <div className="truncate text-[11.5px] text-ink-3">{task.userName}</div>

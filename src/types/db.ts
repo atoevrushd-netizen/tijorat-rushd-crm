@@ -42,6 +42,31 @@ export type Lead = {
   created_at: string
 }
 
+/** Поля «карточки данных» лида (таблица public.lead_cards). */
+export type LeadCardField =
+  | 'age'
+  | 'job_status'
+  | 'start_date'
+  | 'buddy'
+  | 'niche'
+  | 'point_a'
+  | 'point_b'
+  | 'artifact'
+  | 'debt_was'
+  | 'debt_left'
+  | 'earned_total'
+  | 'plan_month'
+  | 'fact_month'
+  | 'company_name'
+  | 'avg_check'
+  | 'margin'
+  | 'pqb'
+
+/** Бизнес-карта лида (public.lead_cards): заполняется в кабинете. */
+export type LeadCard = { user_id: string; updated_at: string } & Partial<
+  Record<LeadCardField, string | null>
+>
+
 /** Вкладка карточки (таблица public.tabs) — гибкая система вкладок. */
 export type Tab = {
   id: string

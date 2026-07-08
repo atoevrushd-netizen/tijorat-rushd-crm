@@ -14,6 +14,7 @@ import tasksui from './dictionaries/tasksui'
 import calmodal from './dictionaries/calmodal'
 import dash from './dictionaries/dash'
 import usercard from './dictionaries/usercard'
+import leadcard from './dictionaries/leadcard'
 import misc from './dictionaries/misc'
 
 export type Bundle = Record<Lang, Record<string, string>>
@@ -22,7 +23,7 @@ export type Bundle = Record<Lang, Record<string, string>>
 // Новые разделы добавляются как отдельные файлы в ./dictionaries и импортируются здесь.
 const bundles: Bundle[] = [
   common, auth, nav, users, settings, survey, razbor, autotasks, dev, status, calendar,
-  tasksui, calmodal, dash, usercard, misc,
+  tasksui, calmodal, dash, usercard, leadcard, misc,
 ]
 
 const dictionary: Bundle = { tg: {}, ru: {} }

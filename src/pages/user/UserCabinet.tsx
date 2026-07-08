@@ -8,6 +8,7 @@ import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
 import { DeadlineBanner } from '@/features/tasks/DeadlineBanner'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
+import { LeadCardPanel } from '@/features/leadcard/LeadCardPanel'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 
 /** Личный кабинет: градиентный баннер профиля, сводка по задачам, задачи и достижения. */
@@ -62,6 +63,7 @@ export function UserCabinet() {
         </section>
 
         <DeadlineBanner userId={profile.id} />
+        <LeadCardPanel userId={profile.id} />
         <TaskStats userId={profile.id} />
         <UserTabs userId={profile.id} />
         <AchievementsBlock userId={profile.id} />

@@ -29,6 +29,7 @@ export default {
           600: 'var(--accent-600)',
           700: 'var(--accent-700)',
           soft: 'var(--accent-soft)',
+          'soft-2': 'var(--accent-soft-2)',
           ring: 'var(--accent-ring)',
         },
         'on-accent': 'var(--on-accent)',
@@ -52,13 +53,16 @@ export default {
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
+        card: 'var(--sh-card)',
         sh1: 'var(--sh-1)',
         sh2: 'var(--sh-2)',
         glow: 'var(--glow)',
+        hero: 'var(--sh-hero)',
       },
       backgroundImage: {
-        // Океановый градиент акцента (bg-accent-grad)
+        // Океановый градиент акцента (bg-accent-grad) + богатый hero-градиент (bg-hero-grad)
         'accent-grad': 'var(--accent-grad)',
+        'hero-grad': 'var(--hero-grad)',
       },
       transitionTimingFunction: {
         kit: 'cubic-bezier(.2,.8,.2,1)',

@@ -16,7 +16,13 @@ function Pill({ tone, children }: { tone: Tone; children: ReactNode }) {
         ? 'bg-warn-soft text-warn'
         : 'bg-accent-soft text-accent'
   return (
-    <span className={cn('rounded-full px-2.5 py-1 text-[12px] font-semibold', cls)}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold',
+        cls,
+      )}
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
       {children}
     </span>
   )
@@ -49,47 +55,54 @@ export function DeadlineBanner({ userId }: { userId: string }) {
   const highlight = [...overdue, ...today].slice(0, 3)
 
   return (
-    <section className="animate-rise rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className="flex items-center gap-2 text-[13px] font-bold text-ink">
-          <AlarmClock size={16} className="text-warn" />
-          {t('deadline.title')}
+    <section className="animate-rise rounded-[18px] border border-line bg-surface p-4 shadow-sh1 sm:p-5">
+      <div className="flex items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-warn-soft text-warn">
+          <AlarmClock size={19} />
         </span>
-        {overdue.length > 0 && (
-          <Pill tone="danger">
-            {t('deadline.overdue')}: {overdue.length}
-          </Pill>
-        )}
-        {today.length > 0 && (
-          <Pill tone="warn">
-            {t('deadline.today')}: {today.length}
-          </Pill>
-        )}
-        {soon > 0 && (
-          <Pill tone="accent">
-            {t('deadline.soon')}: {soon}
-          </Pill>
-        )}
-      </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[14px] font-bold text-ink">{t('deadline.title')}</span>
+            {overdue.length > 0 && (
+              <Pill tone="danger">
+                {t('deadline.overdue')}: {overdue.length}
+              </Pill>
+            )}
+            {today.length > 0 && (
+              <Pill tone="warn">
+                {t('deadline.today')}: {today.length}
+              </Pill>
+            )}
+            {soon > 0 && (
+              <Pill tone="accent">
+                {t('deadline.soon')}: {soon}
+              </Pill>
+            )}
+          </div>
 
-      {highlight.length > 0 && (
-        <ul className="mt-2.5 space-y-1">
-          {highlight.map((task) => (
-            <li key={task.id} className="flex items-center gap-2 text-[12.5px]">
-              <span
-                className={cn(
-                  'h-1.5 w-1.5 shrink-0 rounded-full',
-                  overdue.includes(task) ? 'bg-danger' : 'bg-warn',
-                )}
-              />
-              <span className="truncate text-ink-2">{task.title}</span>
-              <span className="ml-auto shrink-0 font-mono text-[11px] text-ink-3">
-                {task.deadline}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+          {highlight.length > 0 && (
+            <ul className="mt-3 space-y-1.5">
+              {highlight.map((task) => (
+                <li
+                  key={task.id}
+                  className="flex items-center gap-2.5 rounded-[10px] bg-surface-2 px-3 py-2 text-[12.5px]"
+                >
+                  <span
+                    className={cn(
+                      'h-1.5 w-1.5 shrink-0 rounded-full',
+                      overdue.includes(task) ? 'bg-danger' : 'bg-warn',
+                    )}
+                  />
+                  <span className="truncate text-ink-2">{task.title}</span>
+                  <span className="ml-auto shrink-0 font-mono text-[11px] text-ink-3">
+                    {task.deadline}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </section>
   )
 }

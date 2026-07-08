@@ -75,7 +75,7 @@ export function CreateUserModal({
 
   return (
     <Modal open={open} onClose={close} title={t('usercard.createTitle')}>
-      <form className="space-y-3" onSubmit={handleSubmit}>
+      <form className="space-y-3.5" onSubmit={handleSubmit}>
         <Labeled label={t('usercard.fieldFullNameReq')}>
           <Input value={form.full_name} onChange={field('full_name')} required placeholder={t('usercard.fullNamePlaceholder')} />
         </Labeled>
@@ -93,7 +93,7 @@ export function CreateUserModal({
             placeholder={t('usercard.loginPlaceholder')}
             autoComplete="off"
           />
-          <p className="text-[11px] text-ink-3">
+          <p className="mt-1 text-[11px] leading-snug text-ink-3">
             {t('usercard.loginHint')}
           </p>
         </Labeled>
@@ -112,7 +112,7 @@ export function CreateUserModal({
         </Labeled>
 
         {(clientError || createUser.isError) && (
-          <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {clientError ??
               (createUser.error instanceof Error
                 ? createUser.error.message

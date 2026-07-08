@@ -36,7 +36,7 @@ export function TaskAdminControls({ task }: { task: Task }) {
             { onSuccess: () => toast.success(t('common.saved')) },
           )
         }
-        className="rounded-[12px] border border-line bg-surface px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent"
+        className="rounded-[12px] border border-line bg-surface px-3 py-2 text-sm text-ink outline-none transition-colors hover:border-line-strong focus:border-accent"
       >
         <option value="" disabled>
           {t('tasksui.changeStatus')}
@@ -61,8 +61,11 @@ export function TaskAdminControls({ task }: { task: Task }) {
         </Button>
       </form>
 
-      <button
+      <Button
         type="button"
+        variant="danger"
+        size="sm"
+        className="ml-auto"
         onClick={async () => {
           if (
             await confirm({
@@ -75,10 +78,9 @@ export function TaskAdminControls({ task }: { task: Task }) {
               onSuccess: () => toast.success(t('common.deleted')),
             })
         }}
-        className="text-sm text-danger transition-opacity hover:opacity-80"
       >
         {t('tasksui.delete')}
-      </button>
+      </Button>
     </div>
   )
 }

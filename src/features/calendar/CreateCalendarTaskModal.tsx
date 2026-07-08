@@ -66,7 +66,7 @@ export function CreateCalendarTaskModal({
 
   return (
     <Modal open={open} onClose={close} title={`${t('calmodal.createTitle')} ${formatDateShort(date)}`}>
-      <form className="space-y-3" onSubmit={submit}>
+      <form className="space-y-3.5" onSubmit={submit}>
         <Labeled label={t('calmodal.nameLabel')}>
           <Input
             value={title}
@@ -92,7 +92,7 @@ export function CreateCalendarTaskModal({
         </Labeled>
 
         {create.isError && (
-          <p className="rounded-[12px] bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {create.error instanceof Error ? create.error.message : t('calmodal.createError')}
           </p>
         )}

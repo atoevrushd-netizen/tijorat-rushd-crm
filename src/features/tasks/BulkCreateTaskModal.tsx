@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { ListChecks } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
@@ -91,7 +92,7 @@ export function BulkCreateTaskModal({
 
   return (
     <Modal open={open} onClose={close} title={t('bulk.title')}>
-      <form className="space-y-3" onSubmit={submit}>
+      <form className="space-y-3.5" onSubmit={submit}>
         <Labeled label={t('bulk.baseLabel')}>
           <Input value={base} onChange={(e) => setBase(e.target.value)} placeholder="Reels" required />
         </Labeled>
@@ -114,7 +115,7 @@ export function BulkCreateTaskModal({
           </Labeled>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-2 text-[13px] text-ink-2">
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-[12px] bg-surface-2 px-3.5 py-3 text-[13px] font-medium text-ink-2">
           <input
             type="checkbox"
             checked={numbering}
@@ -144,11 +145,17 @@ export function BulkCreateTaskModal({
         </Labeled>
 
         {/* Предпросмотр: что именно создастся */}
-        <div className="rounded-[12px] border border-line bg-surface-2 px-3 py-2 text-[12.5px] text-ink-3">
-          <div className="font-semibold text-ink-2">
-            {t('bulk.preview')}: {inputs.length}
+        <div className="rounded-[12px] border border-line bg-surface-2 p-3.5 text-[12.5px]">
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-semibold text-ink-2">
+              <ListChecks className="h-4 w-4 text-accent" />
+              {t('bulk.preview')}
+            </span>
+            <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
+              {inputs.length}
+            </span>
           </div>
-          <div className="mt-1 space-y-0.5 font-mono">
+          <div className="mt-2 space-y-0.5 font-mono text-ink-3">
             {inputs.slice(0, 3).map((it, i) => (
               <div key={i} className="truncate">
                 • {it.title}

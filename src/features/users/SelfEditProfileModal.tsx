@@ -82,11 +82,11 @@ export function SelfEditProfileModal({
 
   return (
     <Modal open={open} onClose={close} title={t('usercard.selfEditTitle')}>
-      <form className="space-y-3" onSubmit={submit}>
-        <div className="flex items-center gap-3">
+      <form className="space-y-3.5" onSubmit={submit}>
+        <div className="flex items-center gap-3.5 rounded-[14px] bg-surface-2 p-3">
           <Avatar name={fullName} src={preview ?? profile.photo_url} size={56} />
           <label className="cursor-pointer text-sm">
-            <span className="rounded-[12px] border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+            <span className="inline-flex items-center rounded-[11px] border border-line-strong bg-surface px-3.5 py-2 font-medium text-ink-2 shadow-card transition-colors hover:bg-surface-2 hover:text-ink">
               {t('usercard.changePhoto')}
             </span>
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />
@@ -101,7 +101,7 @@ export function SelfEditProfileModal({
         </Labeled>
 
         {save.isError && (
-          <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {save.error instanceof Error ? save.error.message : t('usercard.saveError')}
           </p>
         )}

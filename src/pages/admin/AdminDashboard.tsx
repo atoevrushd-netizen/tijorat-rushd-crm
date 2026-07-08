@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, RotateCcw, Trash2 } from 'lucide-react'
+import { Download, RotateCcw, Search, Trash2 } from 'lucide-react'
 import type { Profile } from '@/types'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
@@ -75,24 +75,26 @@ export function AdminDashboard() {
       title={t('page.users')}
       action={<Button onClick={() => setCreateOpen(true)}>{t('users.create')}</Button>}
     >
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div className="max-w-sm flex-1">
+      <div className="mb-4 flex flex-wrap items-center gap-2 rounded-[16px] border border-line bg-surface p-2.5 shadow-sh1">
+        <div className="min-w-[180px] flex-1">
           <Input
+            variant="box"
             type="search"
+            leftIcon={<Search size={16} />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('users.searchPlaceholder')}
           />
         </div>
         <Button
-          variant={showTrash ? 'primary' : 'outline'}
+          variant={showTrash ? 'primary' : 'secondary'}
           leftIcon={<Trash2 size={15} />}
           onClick={() => setShowTrash((v) => !v)}
         >
           {showTrash ? t('users.toActive') : t('users.trash')}
         </Button>
         <Button
-          variant="outline"
+          variant="secondary"
           leftIcon={<Download size={15} />}
           loading={exporting}
           onClick={exportCsv}
@@ -102,9 +104,9 @@ export function AdminDashboard() {
       </div>
 
       {isLoading && (
-        <div className="space-y-2 rounded-[16px] border border-line bg-surface p-4 shadow-sh1">
+        <div className="space-y-2.5 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
           {[0, 1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-12 w-full" />
+            <Skeleton key={i} className="h-14 w-full rounded-[14px]" />
           ))}
         </div>
       )}
@@ -161,16 +163,23 @@ function TrashList({
   const { t } = useT()
   const purge = usePermanentDeleteUser()
   if (users.length === 0) {
-    return <p className="py-10 text-center text-sm text-ink-3">{t('users.trashEmpty')}</p>
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-[18px] border border-line bg-surface px-6 py-14 text-center shadow-sh1">
+        <span className="flex h-12 w-12 items-center justify-center rounded-[15px] bg-surface-2 text-ink-3">
+          <Trash2 className="h-6 w-6" />
+        </span>
+        <p className="text-sm font-medium text-ink-2">{t('users.trashEmpty')}</p>
+      </div>
+    )
   }
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-2.5">
       {users.map((u) => (
         <li
           key={u.id}
           className="flex items-center gap-3 rounded-[16px] border border-line bg-surface p-3 shadow-sh1"
         >
-          <Avatar name={u.full_name} src={u.photo_url} size={40} />
+          <Avatar name={u.full_name} src={u.photo_url} size={44} />
           <div className="min-w-0 flex-1">
             <div className="truncate font-medium text-ink">{u.full_name || '—'}</div>
             <div className="truncate font-mono text-xs text-ink-3">

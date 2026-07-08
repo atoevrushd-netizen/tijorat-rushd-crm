@@ -35,15 +35,19 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-full items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-[18px] border border-line bg-surface p-8 shadow-sh1">
+    <main className="relative flex min-h-full items-center justify-center overflow-hidden px-4 py-10">
+      {/* Мягкие градиентные пятна за карточкой — премиальная глубина фона */}
+      <div className="pointer-events-none absolute -top-28 left-1/2 h-72 w-[38rem] -translate-x-1/2 rounded-full bg-hero-grad opacity-[0.18] blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-accent-grad opacity-[0.12] blur-3xl" />
+
+      <div className="relative z-10 w-full max-w-sm rounded-[22px] border border-line bg-surface p-8 shadow-sh2 sm:p-9">
         <div className="flex flex-col items-center text-center">
           {/* Логотип белый — на светлой теме показываем его на чипе с океановым градиентом */}
-          <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent-grad shadow-glow">
-            <Logo size={28} />
+          <span className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-accent-grad shadow-glow">
+            <Logo size={30} />
           </span>
-          <h1 className="mt-5 text-xl font-bold text-ink">Tijorat &amp; Rushd CRM</h1>
-          <p className="mt-1 text-sm text-ink-2">{t('auth.subtitle')}</p>
+          <h1 className="mt-5 text-[24px] font-bold tracking-tight text-ink">Tijorat &amp; Rushd CRM</h1>
+          <p className="mt-1.5 text-[13.5px] text-ink-2">{t('auth.subtitle')}</p>
         </div>
 
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
@@ -80,12 +84,12 @@ export function LoginPage() {
           </div>
 
           {error && (
-            <p className="rounded-[10px] bg-danger-soft px-3 py-2 text-sm text-danger">
+            <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
               {error}
             </p>
           )}
 
-          <Button type="submit" loading={submitting} className="w-full">
+          <Button type="submit" loading={submitting} size="lg" className="mt-1 w-full">
             {t('auth.submit')}
           </Button>
         </form>

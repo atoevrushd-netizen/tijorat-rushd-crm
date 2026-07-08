@@ -108,11 +108,11 @@ export function EditUserModal({
 
   return (
     <Modal open={!!user} onClose={close} title={t('usercard.editTitle')}>
-      <form className="space-y-3" onSubmit={handleSubmit}>
-        <div className="flex items-center gap-3">
+      <form className="space-y-3.5" onSubmit={handleSubmit}>
+        <div className="flex items-center gap-3.5 rounded-[14px] bg-surface-2 p-3">
           <Avatar name={form.full_name} src={preview ?? user?.photo_url} size={56} />
           <label className="cursor-pointer text-sm">
-            <span className="rounded-[12px] border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+            <span className="inline-flex items-center rounded-[11px] border border-line-strong bg-surface px-3.5 py-2 font-medium text-ink-2 shadow-card transition-colors hover:bg-surface-2 hover:text-ink">
               {t('usercard.uploadPhoto')}
             </span>
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />
@@ -148,7 +148,7 @@ export function EditUserModal({
         </Labeled>
 
         {update.isError && (
-          <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {update.error instanceof Error ? update.error.message : t('usercard.saveError')}
           </p>
         )}

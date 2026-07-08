@@ -68,7 +68,7 @@ export function EditCalendarTaskModal({
 
   return (
     <Modal open={!!task} onClose={close} title={t('calmodal.editTitle')}>
-      <form className="space-y-3" onSubmit={submit}>
+      <form className="space-y-3.5" onSubmit={submit}>
         <Labeled label={t('calmodal.nameLabel')}>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
         </Labeled>
@@ -106,7 +106,7 @@ export function EditCalendarTaskModal({
         </Labeled>
 
         {update.isError && (
-          <p className="rounded-[12px] bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {update.error instanceof Error ? update.error.message : t('calmodal.saveError')}
           </p>
         )}

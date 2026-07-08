@@ -61,7 +61,7 @@ export function CreateTaskModal({
 
   return (
     <Modal open={open} onClose={close} title={t('tasksui.newTask')}>
-      <form className="space-y-3" onSubmit={submit}>
+      <form className="space-y-3.5" onSubmit={submit}>
         <Labeled label={t('tasksui.nameLabel')}>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('tasksui.namePlaceholder')} required />
         </Labeled>
@@ -79,7 +79,7 @@ export function CreateTaskModal({
         </Labeled>
 
         {create.isError && (
-          <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
             {create.error instanceof Error ? create.error.message : t('tasksui.createError')}
           </p>
         )}

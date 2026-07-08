@@ -19,7 +19,7 @@ export function UserSettings() {
       : null
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       <Section
         title={t('settings.profile')}
         action={

@@ -56,7 +56,7 @@ export function CalendarTab({ userId, tabId }: { userId: string; tabId: string }
 
   return (
     <div>
-      <div className="flex min-w-0 flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:items-start">
+      <div className="flex min-w-0 flex-col gap-4 sm:gap-5 lg:grid lg:grid-cols-[minmax(0,368px)_minmax(0,1fr)] lg:items-start">
         <MonthCalendar
           year={view.year}
           month={view.month}

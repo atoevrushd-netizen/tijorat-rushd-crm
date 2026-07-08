@@ -53,13 +53,13 @@ export function DayTasksPanel({
   }
 
   return (
-    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
-      <div className="mb-3 flex items-center justify-between gap-2">
+    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1 sm:p-5">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <div className="min-w-0">
-          <div className="truncate text-[15px] font-bold capitalize text-ink">
+          <div className="truncate text-[16px] font-bold capitalize text-ink">
             {dayTitle(date, lang)}
           </div>
-          <div className="text-[12.5px] text-ink-3">
+          <div className="mt-0.5 text-[12.5px] text-ink-3">
             {tasks.length ? `${t('cal.tasksN')}: ${tasks.length}` : t('cal.noTasks')}
           </div>
         </div>
@@ -71,12 +71,12 @@ export function DayTasksPanel({
       </div>
 
       {tasks.length === 0 ? (
-        <p className="py-6 text-center text-sm text-ink-3">
+        <p className="rounded-[12px] bg-surface-2 py-8 text-center text-sm text-ink-3">
           {t('cal.emptyDay')}
           {isAdmin ? t('cal.emptyDayAdmin') : ''}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2.5">
           {tasks.map((task) => {
             const isDone = task.status === 'done'
             // Дедлайн задачи = этот день; подсвечиваем время сгорающих/просроченных.
@@ -84,7 +84,7 @@ export function DayTasksPanel({
             return (
               <li
                 key={task.id}
-                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[14px] border border-line bg-surface-2 px-3 py-2.5"
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[12px] border border-line bg-surface-2 px-3 py-2.5 transition-colors hover:border-line-strong"
               >
                 {isAdmin && (
                   <button
@@ -95,7 +95,7 @@ export function DayTasksPanel({
                     className={cn(
                       'flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] border-2 transition-colors',
                       isDone
-                        ? 'border-transparent bg-accent-grad text-on-accent'
+                        ? 'border-transparent bg-accent-grad text-on-accent shadow-glow'
                         : 'border-line-strong text-transparent hover:border-accent',
                     )}
                   >
@@ -105,7 +105,7 @@ export function DayTasksPanel({
 
                 <span
                   className={cn(
-                    'flex w-12 shrink-0 items-center gap-1 font-mono text-[12px]',
+                    'inline-flex w-14 shrink-0 items-center justify-center gap-1 rounded-[8px] bg-surface px-2 py-1 font-mono text-[12px] shadow-card',
                     dl === 'overdue'
                       ? 'text-danger'
                       : dl === 'soon'
@@ -147,7 +147,7 @@ export function DayTasksPanel({
                         type="button"
                         aria-label={t('cal.editTask')}
                         onClick={() => setEditTask(task)}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-accent"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-accent"
                       >
                         <Pencil size={15} />
                       </button>
@@ -156,7 +156,7 @@ export function DayTasksPanel({
                         aria-label={t('cal.deleteTask')}
                         onClick={() => remove(task.id)}
                         disabled={del.isPending}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-danger disabled:opacity-50"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-danger disabled:opacity-50"
                       >
                         <Trash2 size={16} />
                       </button>

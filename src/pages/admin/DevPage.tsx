@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom'
 import {
   CalendarClock,
   ClipboardList,
+  Code2,
   LayoutDashboard,
+  ShieldCheck,
   Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
+import { StatCard } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
@@ -32,17 +35,37 @@ export function DevPage() {
 
   return (
     <AppShell title={t('page.dev')} subtitle={t('dev.hint')}>
-      <div className="space-y-4">
+      <div className="space-y-4 sm:space-y-5">
         {/* Обзор */}
-        <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {overviewQ.isLoading || !overviewQ.data ? (
-            [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[84px] rounded-[18px]" />)
+            [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[128px] rounded-[18px]" />)
           ) : (
             <>
-              <StatTile label={t('dev.leads')} value={overviewQ.data.leads} />
-              <StatTile label={t('dev.admins')} value={overviewQ.data.admins} />
-              <StatTile label={t('dev.developers')} value={overviewQ.data.developers} />
-              <StatTile label={t('dev.tasksCount')} value={overviewQ.data.tasks} />
+              <StatCard
+                tone="accent"
+                label={t('dev.leads')}
+                value={overviewQ.data.leads}
+                icon={<Users className="h-[18px] w-[18px]" />}
+              />
+              <StatCard
+                tone="info"
+                label={t('dev.admins')}
+                value={overviewQ.data.admins}
+                icon={<ShieldCheck className="h-[18px] w-[18px]" />}
+              />
+              <StatCard
+                tone="warn"
+                label={t('dev.developers')}
+                value={overviewQ.data.developers}
+                icon={<Code2 className="h-[18px] w-[18px]" />}
+              />
+              <StatCard
+                tone="success"
+                label={t('dev.tasksCount')}
+                value={overviewQ.data.tasks}
+                icon={<ClipboardList className="h-[18px] w-[18px]" />}
+              />
             </>
           )}
         </section>
@@ -65,13 +88,13 @@ export function DevPage() {
           {profilesQ.isLoading ? (
             <Skeleton className="h-40 w-full rounded-[12px]" />
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {(profilesQ.data ?? []).map((p) => (
                 <li
                   key={p.id}
-                  className="flex items-center gap-3 rounded-[12px] bg-surface-2 p-2.5"
+                  className="flex items-center gap-3 rounded-[12px] border border-line bg-surface-2 p-3 transition-colors hover:border-line-strong"
                 >
-                  <Avatar name={p.full_name} src={p.photo_url} size={36} />
+                  <Avatar name={p.full_name} src={p.photo_url} size={40} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[13.5px] font-medium text-ink">
                       {p.full_name || '—'}
@@ -116,15 +139,6 @@ export function DevPage() {
         </section>
       </div>
     </AppShell>
-  )
-}
-
-function StatTile({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
-      <div className="text-[26px] font-bold tracking-tight text-ink">{value}</div>
-      <div className="mt-0.5 text-[12.5px] text-ink-2">{label}</div>
-    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -46,11 +47,14 @@ export function SetPasswordModal({
   return (
     <Modal open={open} onClose={close} title={t('usercard.changePassword')}>
       {done ? (
-        <div className="space-y-3">
-          <p className="rounded-md bg-accent-soft px-3 py-2 text-sm text-accent">
-            {t('usercard.pwdChanged').replace('{name}', userName)}
-          </p>
-          <div className="rounded-md bg-surface-3 px-3 py-2 font-mono text-sm text-ink">
+        <div className="space-y-3.5">
+          <div className="flex items-start gap-2.5 rounded-[12px] bg-success-soft px-3.5 py-3">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
+            <p className="text-[13px] font-medium text-success">
+              {t('usercard.pwdChanged').replace('{name}', userName)}
+            </p>
+          </div>
+          <div className="rounded-[12px] border border-line bg-surface-2 px-4 py-3 text-center font-mono text-[15px] tracking-wide text-ink">
             {password}
           </div>
           <div className="flex justify-end">
@@ -58,8 +62,8 @@ export function SetPasswordModal({
           </div>
         </div>
       ) : (
-        <form className="space-y-3" onSubmit={submit}>
-          <p className="text-sm text-ink-2">
+        <form className="space-y-3.5" onSubmit={submit}>
+          <p className="text-[13.5px] leading-relaxed text-ink-2">
             {t('usercard.pwdSetHint').replace('{name}', userName)}
           </p>
           <Input
@@ -70,7 +74,7 @@ export function SetPasswordModal({
             required
           />
           {setPwd.isError && (
-            <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+            <p className="rounded-[12px] bg-danger-soft px-3.5 py-2.5 text-[13px] font-medium text-danger">
               {setPwd.error instanceof Error ? setPwd.error.message : t('usercard.pwdError')}
             </p>
           )}

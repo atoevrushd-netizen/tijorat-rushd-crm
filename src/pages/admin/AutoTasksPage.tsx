@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Copy, Plus, Trash2 } from 'lucide-react'
+import { Copy, Plus, Trash2, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
@@ -133,13 +133,25 @@ export function AutoTasksPage() {
           <Skeleton className="h-24 w-full rounded-[18px]" />
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 sm:space-y-5">
           {/* Тумблер вкл/выкл */}
-          <section className="flex items-center justify-between gap-4 rounded-[18px] border border-line bg-surface p-5 shadow-sh1">
-            <div className="min-w-0">
-              <div className="font-semibold text-ink">{t('at.enabled')}</div>
-              <div className="mt-0.5 text-[13px] text-ink-3">
-                {settings?.auto_tasks_enabled ? t('at.enabledOn') : t('at.enabledOff')}
+          <section className="flex items-center justify-between gap-4 rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
+            <div className="flex min-w-0 items-center gap-3.5">
+              <span
+                className={cn(
+                  'flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] transition-colors',
+                  settings?.auto_tasks_enabled
+                    ? 'bg-success-soft text-success'
+                    : 'bg-surface-2 text-ink-3',
+                )}
+              >
+                <Zap size={20} />
+              </span>
+              <div className="min-w-0">
+                <div className="font-semibold text-ink">{t('at.enabled')}</div>
+                <div className="mt-0.5 text-[13px] text-ink-3">
+                  {settings?.auto_tasks_enabled ? t('at.enabledOn') : t('at.enabledOff')}
+                </div>
               </div>
             </div>
             <Switch
@@ -154,8 +166,10 @@ export function AutoTasksPage() {
           </section>
 
           {/* Группы */}
-          <section className="space-y-3 rounded-[18px] border border-line bg-surface p-5 shadow-sh1">
-            <div className="text-[15px] font-bold text-ink">{t('at.groups')}</div>
+          <section className="space-y-3 rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
+            <div className="mb-1 px-1 font-mono text-[11px] uppercase tracking-[.1em] text-ink-3">
+              {t('at.groups')}
+            </div>
             <div className="flex flex-wrap gap-2">
               {groups.map((g) => (
                 <button
@@ -227,14 +241,14 @@ export function AutoTasksPage() {
 
           {/* Задачи группы */}
           {editingGroup && (
-            <section className="space-y-3 rounded-[18px] border border-line bg-surface p-5 shadow-sh1">
+            <section className="space-y-3 rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-[15px] font-bold text-ink">
+                <div className="text-[15px] font-bold tracking-tight text-ink">
                   {t('at.tasksOf')} «{editingGroup.name}»
                 </div>
-                <div className="font-mono text-[12px] text-ink-3">
+                <span className="inline-flex items-center rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12px] font-semibold text-accent">
                   {templates.length} {t('at.count')}
-                </div>
+                </span>
               </div>
 
               <AddTaskForm
@@ -249,9 +263,11 @@ export function AutoTasksPage() {
               {templatesQ.isLoading ? (
                 <Skeleton className="h-40 w-full rounded-[12px]" />
               ) : templates.length === 0 ? (
-                <p className="py-6 text-center text-sm text-ink-3">{t('at.empty')}</p>
+                <p className="rounded-[12px] bg-surface-2 py-8 text-center text-sm text-ink-3">
+                  {t('at.empty')}
+                </p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {templates.map((tpl) => (
                     <TemplateRow
                       key={tpl.id}
@@ -307,7 +323,7 @@ function AddTaskForm({
   const sel = 'rounded-[10px] border border-line bg-surface px-2 py-2 text-[13px] text-ink outline-none focus:border-accent'
 
   return (
-    <form onSubmit={submit} className="flex flex-wrap items-center gap-2 rounded-[12px] border border-dashed border-line-strong p-2">
+    <form onSubmit={submit} className="flex flex-wrap items-center gap-2 rounded-[14px] border border-dashed border-line-strong bg-surface-2/50 p-2.5">
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}

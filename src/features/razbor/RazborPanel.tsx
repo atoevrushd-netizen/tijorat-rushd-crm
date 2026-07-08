@@ -37,16 +37,16 @@ export function RazborPanel({
 
   if (sectionsQ.isLoading) {
     return (
-      <section className="space-y-2">
+      <section className="space-y-2.5">
         {[0, 1, 2].map((i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-xl" />
+          <Skeleton key={i} className="h-16 w-full rounded-[16px]" />
         ))}
       </section>
     )
   }
   if (sectionsQ.isError) {
     return (
-      <div className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">
+      <div className="rounded-[14px] bg-danger-soft px-4 py-3 text-sm text-danger">
         {t('razbor.loadError')}
       </div>
     )
@@ -54,14 +54,14 @@ export function RazborPanel({
   const sections = sectionsQ.data ?? []
   if (sections.length === 0) {
     return (
-      <p className="rounded-xl border border-line bg-surface px-4 py-6 text-center text-sm text-ink-3">
+      <p className="rounded-[16px] border border-line bg-surface px-4 py-8 text-center text-sm text-ink-3 shadow-sh1">
         {t('razbor.empty')}
       </p>
     )
   }
 
   return (
-    <section className="space-y-2">
+    <section className="space-y-2.5">
       {sections.map((s) => {
         const ans = answers.get(`${s.id}:answers`) ?? ''
         const tasks = answers.get(`${s.id}:tasks`) ?? ''

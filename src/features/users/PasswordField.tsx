@@ -21,11 +21,11 @@ export function PasswordField({ userId }: { userId: string }) {
   }
 
   return (
-    <div>
+    <div className="rounded-[12px] bg-surface-2 px-3.5 py-3">
       <dt className="font-mono text-[11px] uppercase tracking-wide text-ink-3">
         {t('usercard.fieldPassword')}
       </dt>
-      <dd className="mt-0.5 text-ink">
+      <dd className="mt-1 font-medium text-ink">
         {isLoading ? (
           '…'
         ) : password ? (
@@ -37,7 +37,7 @@ export function PasswordField({ userId }: { userId: string }) {
               type="button"
               aria-label={show ? t('usercard.hidePassword') : t('usercard.showPassword')}
               onClick={() => setShow((s) => !s)}
-              className="text-ink-3 transition-colors hover:text-accent"
+              className="flex h-7 w-7 items-center justify-center rounded-[9px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-accent"
             >
               {show ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
@@ -45,7 +45,7 @@ export function PasswordField({ userId }: { userId: string }) {
               type="button"
               aria-label={t('usercard.copyPassword')}
               onClick={copy}
-              className="text-ink-3 transition-colors hover:text-accent"
+              className="flex h-7 w-7 items-center justify-center rounded-[9px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-accent"
             >
               {copied ? <Check size={15} className="text-accent" /> : <Copy size={15} />}
             </button>

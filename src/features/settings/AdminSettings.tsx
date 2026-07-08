@@ -42,7 +42,7 @@ export function AdminSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       <Section
         icon={<UserCog size={15} />}
         title={t('settings.adminProfile')}
@@ -78,8 +78,8 @@ export function AdminSettings() {
         {msg && (
           <p
             className={
-              'mt-3 rounded-[10px] px-3 py-2 text-sm ' +
-              (msg.ok ? 'bg-accent-soft text-accent' : 'bg-danger-soft text-danger')
+              'mt-3 rounded-[12px] px-3.5 py-2.5 text-sm font-medium ' +
+              (msg.ok ? 'bg-success-soft text-success' : 'bg-danger-soft text-danger')
             }
           >
             {msg.text}

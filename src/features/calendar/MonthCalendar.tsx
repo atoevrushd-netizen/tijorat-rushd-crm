@@ -38,10 +38,10 @@ export function MonthCalendar({
   const monthName = monthYear(new Date(year, month, 1), lang)
 
   return (
-    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-[15px] font-bold capitalize text-ink">{monthName}</div>
-        <div className="flex items-center gap-1.5">
+    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1 sm:p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-[16px] font-bold capitalize text-ink">{monthName}</div>
+        <div className="flex items-center gap-1 rounded-[12px] bg-surface-2 p-1">
           <NavBtn onClick={onPrev} label={t('cal.prevMonth')}>
             <ChevronLeft size={16} />
           </NavBtn>
@@ -51,7 +51,7 @@ export function MonthCalendar({
         </div>
       </div>
 
-      <div className="mb-1.5 grid grid-cols-7 gap-1.5">
+      <div className="mb-2 grid grid-cols-7 gap-1.5">
         {weekdaysShort(lang).map((w) => (
           <div
             key={w}
@@ -80,13 +80,13 @@ export function MonthCalendar({
               type="button"
               onClick={() => onSelect(c.date)}
               className={cn(
-                'relative flex h-10 items-center justify-center rounded-[10px] text-[13px] transition-colors',
+                'relative flex aspect-square items-center justify-center rounded-[12px] text-[13px] transition-colors',
                 // Цвет текста и фон — взаимоисключающие ветки (cn не решает конфликты классов).
                 isSelected
                   ? 'bg-accent-grad font-bold text-on-accent shadow-glow'
                   : c.inMonth
                     ? inSub
-                      ? 'bg-accent-soft text-ink hover:bg-[rgba(46,124,246,.16)]'
+                      ? 'bg-accent-soft text-ink hover:bg-accent-soft-2'
                       : 'bg-surface-2 text-ink hover:bg-surface-3'
                     : 'bg-transparent text-ink-3 hover:bg-surface-2',
                 isToday && !isSelected && 'border-[1.5px] border-accent',
@@ -112,8 +112,8 @@ export function MonthCalendar({
       </div>
 
       {subStart && subEnd && (
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11.5px] text-ink-3">
-          <span className="h-3 w-3 shrink-0 rounded-[4px] bg-accent-soft" />
+        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[12px] bg-surface-2 px-3 py-2 text-[11.5px] text-ink-2">
+          <span className="h-3 w-3 shrink-0 rounded-[4px] bg-accent-soft-2" />
           <span className="min-w-0">
             {t('cal.subscription')}: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
           </span>
@@ -137,7 +137,7 @@ function NavBtn({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-surface-2 text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink"
+      className="flex h-8 w-8 items-center justify-center rounded-[9px] text-ink-2 transition-colors hover:bg-surface hover:text-ink hover:shadow-card"
     >
       {children}
     </button>

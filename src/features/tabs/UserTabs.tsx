@@ -29,8 +29,8 @@ export function UserTabs({ userId }: { userId: string }) {
   const current = tabs.find((tab) => tab.key === activeKey) ?? tabs[0]
 
   return (
-    <section className="rounded-xl border border-line bg-surface">
-      <div className="flex flex-wrap gap-1 border-b border-line p-2">
+    <section className="overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
+      <div className="flex flex-wrap gap-1.5 border-b border-line p-2.5 sm:p-3">
         {tabs.map((tab) => {
           const isActive = tab.key === current.key
           return (
@@ -40,8 +40,8 @@ export function UserTabs({ userId }: { userId: string }) {
               onClick={() => setActiveKey(tab.key)}
               className={
                 isActive
-                  ? 'rounded-md bg-accent-grad px-3 py-1.5 text-sm font-semibold text-on-accent shadow-glow'
-                  : 'rounded-md px-3 py-1.5 text-sm text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink'
+                  ? 'rounded-[11px] bg-accent-grad px-3.5 py-2 text-sm font-semibold text-on-accent shadow-glow'
+                  : 'rounded-[11px] px-3.5 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink'
               }
             >
               {tab.title}
@@ -49,7 +49,7 @@ export function UserTabs({ userId }: { userId: string }) {
           )
         })}
       </div>
-      <div className="p-4">
+      <div className="p-4 sm:p-5">
         <TabContent tab={current} userId={userId} />
       </div>
     </section>
@@ -58,7 +58,9 @@ export function UserTabs({ userId }: { userId: string }) {
 
 function Shell({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-line bg-surface">{children}</section>
+    <section className="rounded-[18px] border border-line bg-surface shadow-sh1">
+      {children}
+    </section>
   )
 }
 

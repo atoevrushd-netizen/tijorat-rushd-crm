@@ -64,23 +64,21 @@ export function SurveyQuestionField({
   }
 
   return (
-    <div className="flex gap-3 py-3">
-      <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-md bg-surface-3 font-mono text-[12px] font-bold text-ink-2">
+    <div className="flex gap-3 py-3.5">
+      <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-[9px] bg-accent-soft font-mono text-[12px] font-bold text-accent">
         {index}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[13.5px] leading-snug text-ink">{text}</p>
+        <p className="text-[13.5px] font-medium leading-snug text-ink">{text}</p>
 
         {readOnly ? (
-          <p
-            className={
-              value.trim()
-                ? 'mt-1.5 whitespace-pre-wrap text-sm text-ink-2'
-                : 'mt-1.5 text-sm italic text-ink-3'
-            }
-          >
-            {value.trim() || t('survey.noAnswer')}
-          </p>
+          value.trim() ? (
+            <div className="mt-2 whitespace-pre-wrap rounded-[10px] bg-surface-2 px-3 py-2 text-sm text-ink-2">
+              {value}
+            </div>
+          ) : (
+            <p className="mt-1.5 text-sm italic text-ink-3">{t('survey.noAnswer')}</p>
+          )
         ) : (
           <>
             <textarea
@@ -90,7 +88,7 @@ export function SurveyQuestionField({
               onChange={(e) => setValue(e.target.value)}
               onBlur={handleBlur}
               placeholder={t('survey.answerPlaceholder')}
-              className="mt-2 w-full resize-none overflow-hidden rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+              className="mt-2 w-full resize-none overflow-hidden rounded-[12px] border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
             />
             <div className="mt-1 h-4 text-[11px]">
               {status === 'saving' && (

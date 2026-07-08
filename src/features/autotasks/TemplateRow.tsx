@@ -21,7 +21,7 @@ export function TemplateRow({
   useEffect(() => setTitle(template.title), [template.title])
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-[12px] bg-surface-2 p-2">
+    <div className="flex flex-wrap items-center gap-2 rounded-[12px] border border-line bg-surface-2 p-2.5 transition-colors hover:border-line-strong">
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}

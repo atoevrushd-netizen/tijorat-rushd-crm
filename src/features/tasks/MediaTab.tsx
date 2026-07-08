@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Inbox } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -29,8 +30,8 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm text-ink-2">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <span className="text-[13px] font-medium text-ink-2">
           {tasks ? `${t('tasksui.tasksCount')}: ${tasks.length}` : ''}
         </span>
         {isAdmin && (
@@ -48,12 +49,17 @@ export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
       {isLoading && (
         <div className="space-y-3">
           {[0, 1].map((i) => (
-            <Skeleton key={i} className="h-24 w-full" />
+            <Skeleton key={i} className="h-28 w-full rounded-[14px]" />
           ))}
         </div>
       )}
       {tasks && tasks.length === 0 && (
-        <p className="text-sm text-ink-3">{t('tasksui.noTasks')}</p>
+        <div className="flex flex-col items-center gap-2 rounded-[14px] border border-dashed border-line-strong bg-surface-2 px-4 py-10 text-center">
+          <span className="flex h-11 w-11 items-center justify-center rounded-[13px] bg-surface-3 text-ink-3">
+            <Inbox size={20} />
+          </span>
+          <p className="text-sm text-ink-3">{t('tasksui.noTasks')}</p>
+        </div>
       )}
       {sortedTasks && sortedTasks.length > 0 && (
         <div className="space-y-3">

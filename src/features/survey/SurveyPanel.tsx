@@ -62,30 +62,30 @@ export function SurveyPanel({
 
   if (questionsQ.isLoading) {
     return (
-      <section className="space-y-2">
+      <section className="space-y-2.5">
         {[0, 1, 2].map((i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-xl" />
+          <Skeleton key={i} className="h-16 w-full rounded-[16px]" />
         ))}
       </section>
     )
   }
   if (questionsQ.isError) {
     return (
-      <div className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">
+      <div className="rounded-[14px] bg-danger-soft px-4 py-3 text-sm text-danger">
         {t('survey.loadError')}
       </div>
     )
   }
   if (total === 0) {
     return (
-      <p className="rounded-xl border border-line bg-surface px-4 py-6 text-center text-sm text-ink-3">
+      <p className="rounded-[16px] border border-line bg-surface px-4 py-8 text-center text-sm text-ink-3 shadow-sh1">
         {t('survey.empty')}
       </p>
     )
   }
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-4">
       {/* Переключатель A/B + прогресс */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-[14px] border border-line bg-surface-2 p-1">
@@ -119,14 +119,14 @@ export function SurveyPanel({
       </div>
 
       {/* Полоса прогресса */}
-      <div className="rounded-xl border border-line bg-surface px-4 py-3">
-        <div className="mb-1.5 flex items-center justify-between text-[12px]">
-          <span className="text-ink-2">
+      <div className="rounded-[16px] border border-line bg-surface p-4 shadow-sh1">
+        <div className="mb-2 flex items-baseline justify-between">
+          <span className="text-[12.5px] font-medium text-ink-2">
             {answeredTotal} {t('survey.of')} {total} {t('survey.answered')}
           </span>
-          <span className="font-mono font-bold text-accent">{pct}%</span>
+          <span className="font-mono text-[17px] font-bold leading-none text-accent">{pct}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
+        <div className="h-2 overflow-hidden rounded-full bg-surface-3">
           <div
             className="h-full rounded-full bg-accent-grad transition-all duration-500 ease-kit"
             style={{ width: `${pct}%` }}
@@ -135,7 +135,7 @@ export function SurveyPanel({
       </div>
 
       {/* Разделы-шторки */}
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {sections.map((s) => (
           <SurveyAccordion
             key={s.order}

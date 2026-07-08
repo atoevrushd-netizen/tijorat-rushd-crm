@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react'
+import { FileText, HelpCircle } from 'lucide-react'
 import type { RazborField, RazborSection as Section } from '@/types'
 import { useT } from '@/i18n/useT'
 import { AutoSaveTextarea } from '@/components/ui/AutoSaveTextarea'
@@ -19,12 +21,16 @@ export function RazborSection({
   const questions = (lang === 'tg' && section.questions_tg) || section.questions_ru
 
   return (
-    <div className="space-y-3 py-3">
+    <div className="space-y-3 py-4">
       {report.trim() && (
-        <ReadBlock title={t('razbor.report')} text={report} />
+        <ReadBlock icon={<FileText size={13} />} title={t('razbor.report')} text={report} />
       )}
       {questions.trim() && (
-        <ReadBlock title={t('razbor.questions')} text={questions} />
+        <ReadBlock
+          icon={<HelpCircle size={13} />}
+          title={t('razbor.questions')}
+          text={questions}
+        />
       )}
 
       <AutoSaveTextarea
@@ -46,10 +52,11 @@ export function RazborSection({
 }
 
 /** Показываемый (read-only) блок текста разбора. */
-function ReadBlock({ title, text }: { title: string; text: string }) {
+function ReadBlock({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="rounded-lg border border-line bg-surface-2 p-3">
-      <div className="mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-3">
+    <div className="rounded-[12px] border border-line bg-surface-2 p-3.5">
+      <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-3">
+        {icon}
         {title}
       </div>
       <p className="whitespace-pre-wrap text-sm text-ink-2">{text}</p>

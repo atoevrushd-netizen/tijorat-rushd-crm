@@ -1,6 +1,6 @@
 import { Spinner } from './Spinner'
 
-/** Полноэкранный индикатор загрузки (на тёмном фоне приложения). */
+/** Полноэкранный индикатор загрузки (на фоне приложения). */
 export function FullPageSpinner() {
   return (
     <div className="flex min-h-full items-center justify-center">

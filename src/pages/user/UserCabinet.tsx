@@ -30,7 +30,7 @@ export function UserCabinet() {
     >
       <div className="space-y-6">
         {/* Профиль */}
-        <section className="flex items-center gap-4 rounded-xl border border-line bg-surface p-6">
+        <section className="flex items-center gap-4 rounded-[18px] border border-line bg-surface p-6 shadow-sh1">
           <Avatar name={profile.full_name} src={profile.photo_url} size={64} />
           <div>
             <div className="flex flex-wrap items-center gap-3">

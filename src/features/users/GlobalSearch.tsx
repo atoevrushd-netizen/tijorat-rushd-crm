@@ -81,7 +81,7 @@ export function GlobalSearch() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mb-2 flex w-full items-center gap-2 rounded-md border border-line bg-surface-2 px-3 py-2 text-[13px] text-ink-3 transition-colors hover:text-ink"
+        className="mb-2 flex w-full items-center gap-2 rounded-md border border-line bg-surface-2 px-3 py-2 text-[13px] text-ink-3 transition-colors hover:border-line-strong hover:text-ink"
       >
         <Search size={15} />
         <span className="flex-1 text-left">{t('search.open')}</span>
@@ -93,11 +93,11 @@ export function GlobalSearch() {
       {open &&
         createPortal(
           <div
-            className="fixed inset-0 z-[58] flex justify-center bg-black/60 px-4 pt-[12vh] backdrop-blur-sm"
+            className="fixed inset-0 z-[58] flex justify-center bg-black/30 px-4 pt-[12vh] backdrop-blur-sm"
             onClick={close}
           >
             <div
-              className="animate-sheet-up h-fit w-full max-w-[520px] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1"
+              className="animate-sheet-up h-fit w-full max-w-[520px] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh2"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-2 border-b border-line px-4">

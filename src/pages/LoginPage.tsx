@@ -36,9 +36,12 @@ export function LoginPage() {
 
   return (
     <main className="flex min-h-full items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-[26px] border border-line bg-surface p-8 shadow-sh2">
+      <div className="w-full max-w-sm rounded-[18px] border border-line bg-surface p-8 shadow-sh1">
         <div className="flex flex-col items-center text-center">
-          <Logo size={72} />
+          {/* Логотип белый — на светлой теме показываем его на чипе с океановым градиентом */}
+          <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent-grad shadow-glow">
+            <Logo size={28} />
+          </span>
           <h1 className="mt-5 text-xl font-bold text-ink">Tijorat &amp; Rushd CRM</h1>
           <p className="mt-1 text-sm text-ink-2">{t('auth.subtitle')}</p>
         </div>
@@ -77,7 +80,7 @@ export function LoginPage() {
           </div>
 
           {error && (
-            <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+            <p className="rounded-[10px] bg-danger-soft px-3 py-2 text-sm text-danger">
               {error}
             </p>
           )}

@@ -60,7 +60,7 @@ export function AdminSettings() {
         <p className="mb-3 text-[13px] text-ink-2">{t('at.hint')}</p>
         <Link
           to="/admin/auto-tasks"
-          className="inline-flex items-center gap-2 rounded-[14px] bg-accent px-[22px] py-3 text-[15px] font-semibold text-on-accent transition-all duration-150 ease-ios hover:bg-accent-600 active:scale-[.96]"
+          className="inline-flex items-center gap-2 rounded-[13px] bg-accent-grad px-[22px] py-3 text-[15px] font-semibold text-on-accent shadow-glow transition-all duration-150 ease-ios hover:brightness-[1.06] active:scale-[.96] active:brightness-95"
         >
           {t('at.open')}
         </Link>
@@ -78,7 +78,7 @@ export function AdminSettings() {
         {msg && (
           <p
             className={
-              'mt-3 rounded-md px-3 py-2 text-sm ' +
+              'mt-3 rounded-[10px] px-3 py-2 text-sm ' +
               (msg.ok ? 'bg-accent-soft text-accent' : 'bg-danger-soft text-danger')
             }
           >

@@ -140,7 +140,7 @@ function QuickLink({
   return (
     <Link
       to={to}
-      className="flex items-center gap-2 rounded-[12px] bg-surface-2 px-3 py-2.5 text-[13px] font-medium text-ink-2 transition-colors hover:text-ink active:scale-[.98]"
+      className="flex items-center gap-2 rounded-[12px] bg-surface-2 px-3 py-2.5 text-[13px] font-medium text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink active:scale-[.98]"
     >
       <span className="text-accent">{icon}</span>
       <span className="truncate">{label}</span>

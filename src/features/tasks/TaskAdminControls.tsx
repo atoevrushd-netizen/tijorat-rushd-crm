@@ -36,7 +36,7 @@ export function TaskAdminControls({ task }: { task: Task }) {
             { onSuccess: () => toast.success(t('common.saved')) },
           )
         }
-        className="rounded-md border border-line-strong bg-bg px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent"
+        className="rounded-[12px] border border-line bg-surface px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent"
       >
         <option value="" disabled>
           {t('tasksui.changeStatus')}

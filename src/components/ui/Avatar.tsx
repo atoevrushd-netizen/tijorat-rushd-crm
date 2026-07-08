@@ -8,7 +8,7 @@ type AvatarProps = {
   className?: string
 }
 
-/** Аватар: squircle. Фото — или инициалы на лайм-градиенте (по киту). */
+/** Аватар: squircle. Фото — или инициалы на океановом градиенте (по киту). */
 export function Avatar({ name, src, size = 40, className = '' }: AvatarProps) {
   const radius = Math.round(size * 0.28) // squircle, не круг
 
@@ -33,7 +33,7 @@ export function Avatar({ name, src, size = 40, className = '' }: AvatarProps) {
         height: size,
         borderRadius: radius,
         fontSize: Math.round(size * 0.36),
-        background: 'linear-gradient(135deg,#0a84ff,#0a6cd6)',
+        background: 'var(--accent-grad)',
       }}
     >
       {initials(name)}

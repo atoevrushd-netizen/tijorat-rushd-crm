@@ -15,7 +15,7 @@ export function AnswersListPage() {
       {isLoading && (
         <div className="grid gap-2 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-xl" />
+            <Skeleton key={i} className="h-16 w-full rounded-[16px]" />
           ))}
         </div>
       )}
@@ -38,7 +38,7 @@ export function AnswersListPage() {
             <li key={p.id}>
               <Link
                 to={`/answers/${p.id}`}
-                className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3 transition-all duration-[180ms] ease-kit hover:-translate-y-0.5 hover:border-line-strong hover:shadow-sh2"
+                className="flex items-center gap-3 rounded-[16px] border border-line bg-surface p-3 shadow-sh1 transition-all duration-[180ms] ease-kit hover:-translate-y-0.5 hover:border-line-strong hover:shadow-sh2"
               >
                 <Avatar name={p.full_name} src={p.photo_url} size={44} />
                 <div className="min-w-0 flex-1">

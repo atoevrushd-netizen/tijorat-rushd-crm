@@ -13,25 +13,25 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[14px] font-semibold ' +
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[13px] font-semibold ' +
   'transition-all duration-150 ease-ios select-none active:scale-[0.96] disabled:pointer-events-none disabled:opacity-[.5]'
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-accent text-on-accent shadow-[0_4px_16px_rgba(10,132,255,.35)] ' +
-    'hover:bg-accent-600 active:brightness-95',
+    'bg-accent-grad text-on-accent shadow-glow ' +
+    'hover:brightness-[1.06] active:brightness-95',
   secondary: 'bg-surface-2 text-ink border border-line hover:bg-surface-3',
   outline:
     'bg-transparent text-accent border border-line-strong hover:bg-surface-2',
   ghost: 'bg-transparent text-accent hover:bg-accent-soft',
   danger:
-    'bg-danger-soft text-danger hover:bg-[rgba(255,69,58,.24)]',
+    'bg-danger-soft text-danger hover:bg-[rgba(255,59,48,.16)]',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'text-[13px] px-4 py-2 rounded-[11px]',
+  sm: 'text-[13px] px-4 py-2 rounded-[12px]',
   md: 'text-[15px] px-[22px] py-3',
-  lg: 'text-base px-[30px] py-[15px] rounded-[16px]',
+  lg: 'text-base px-[30px] py-[15px]',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

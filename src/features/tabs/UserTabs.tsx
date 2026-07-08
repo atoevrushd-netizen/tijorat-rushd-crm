@@ -40,7 +40,7 @@ export function UserTabs({ userId }: { userId: string }) {
               onClick={() => setActiveKey(tab.key)}
               className={
                 isActive
-                  ? 'rounded-md bg-accent-soft px-3 py-1.5 text-sm font-semibold text-accent'
+                  ? 'rounded-md bg-accent-grad px-3 py-1.5 text-sm font-semibold text-on-accent shadow-glow'
                   : 'rounded-md px-3 py-1.5 text-sm text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink'
               }
             >

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import type { Task } from '@/types'
 import { useT } from '@/i18n/useT'
 import { monthYear, weekdaysShort } from '@/lib/dateI18n'
+import { deadlineState } from '@/lib/deadline'
 import { buildMonthMatrix, formatDateShort, isWithinRange } from './calendarUtils'
 
 type Props = {
@@ -37,10 +38,10 @@ export function MonthCalendar({
   const monthName = monthYear(new Date(year, month, 1), lang)
 
   return (
-    <div className="min-w-0 rounded-xl border border-line bg-surface p-4">
+    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
       <div className="mb-3 flex items-center justify-between">
         <div className="text-[15px] font-bold capitalize text-ink">{monthName}</div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <NavBtn onClick={onPrev} label={t('cal.prevMonth')}>
             <ChevronLeft size={16} />
           </NavBtn>
@@ -50,7 +51,7 @@ export function MonthCalendar({
         </div>
       </div>
 
-      <div className="mb-1 grid grid-cols-7 gap-1">
+      <div className="mb-1.5 grid grid-cols-7 gap-1.5">
         {weekdaysShort(lang).map((w) => (
           <div
             key={w}
@@ -61,9 +62,15 @@ export function MonthCalendar({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5">
         {weeks.flat().map((c) => {
-          const count = tasksByDate[c.date]?.length ?? 0
+          const dayTasks = tasksByDate[c.date] ?? []
+          const count = dayTasks.length
+          // День «горит», если среди задач есть просроченные или сгорающие.
+          const isHot = dayTasks.some((task) => {
+            const dl = deadlineState(task.deadline, task.status)
+            return dl === 'overdue' || dl === 'soon'
+          })
           const inSub = isWithinRange(c.date, subStart, subEnd)
           const isSelected = c.date === selected
           const isToday = c.date === today
@@ -73,24 +80,31 @@ export function MonthCalendar({
               type="button"
               onClick={() => onSelect(c.date)}
               className={cn(
-                'relative flex h-10 items-center justify-center rounded-lg text-[13px] transition-colors sm:h-9',
-                c.inMonth ? 'text-ink' : 'text-ink-3 opacity-40',
+                'relative flex h-10 items-center justify-center rounded-[10px] text-[13px] transition-colors',
+                // Цвет текста и фон — взаимоисключающие ветки (cn не решает конфликты классов).
                 isSelected
-                  ? 'bg-accent font-bold text-on-accent shadow-[0_2px_10px_rgba(10,132,255,.4)]'
-                  : inSub
-                    ? 'bg-accent-soft hover:bg-surface-2'
-                    : 'hover:bg-surface-2',
-                isToday && !isSelected && 'ring-1 ring-inset ring-accent',
+                  ? 'bg-accent-grad font-bold text-on-accent shadow-glow'
+                  : c.inMonth
+                    ? inSub
+                      ? 'bg-accent-soft text-ink hover:bg-[rgba(46,124,246,.16)]'
+                      : 'bg-surface-2 text-ink hover:bg-surface-3'
+                    : 'bg-transparent text-ink-3 hover:bg-surface-2',
+                isToday && !isSelected && 'border-[1.5px] border-accent',
               )}
             >
               <span>{c.day}</span>
               {count > 0 && (
-                <span
-                  className={cn(
-                    'absolute bottom-1 h-1.5 w-1.5 rounded-full',
-                    isSelected ? 'bg-on-accent' : 'bg-accent',
-                  )}
-                />
+                <span className="absolute bottom-[5px] flex gap-[3px]">
+                  {Array.from({ length: Math.min(count, 3) }).map((_, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        'h-[4px] w-[4px] rounded-full',
+                        isSelected ? 'bg-on-accent' : isHot ? 'bg-warn' : 'bg-accent',
+                      )}
+                    />
+                  ))}
+                </span>
               )}
             </button>
           )
@@ -99,7 +113,7 @@ export function MonthCalendar({
 
       {subStart && subEnd && (
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[11.5px] text-ink-3">
-          <span className="h-3 w-3 shrink-0 rounded bg-accent-soft" />
+          <span className="h-3 w-3 shrink-0 rounded-[4px] bg-accent-soft" />
           <span className="min-w-0">
             {t('cal.subscription')}: {formatDateShort(subStart)} — {formatDateShort(subEnd)}
           </span>
@@ -123,7 +137,7 @@ function NavBtn({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="flex h-8 w-8 items-center justify-center rounded-md border border-line-strong text-ink-2 transition-colors hover:border-accent hover:text-accent"
+      className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-surface-2 text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink"
     >
       {children}
     </button>

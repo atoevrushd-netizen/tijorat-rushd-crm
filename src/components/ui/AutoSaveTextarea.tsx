@@ -83,7 +83,7 @@ export function AutoSaveTextarea({
             onChange={(e) => setValue(e.target.value)}
             onBlur={handleBlur}
             placeholder={placeholder}
-            className="w-full resize-none overflow-hidden rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+            className="w-full resize-none overflow-hidden rounded-[12px] border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
           />
           <div className="mt-1 h-4 text-[11px]">
             {status === 'saving' && (

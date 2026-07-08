@@ -18,7 +18,7 @@ export function RecentUsersCard({
 }) {
   const { t } = useT()
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-surface">
+    <div className="overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
       <div className="flex items-center justify-between border-b border-line px-4 py-4 sm:px-[22px] sm:py-[18px]">
         <div className="text-[15px] font-bold text-ink">{t('dash.recentUsers')}</div>
         <Link
@@ -66,7 +66,7 @@ export function RecentUsersCard({
 export function RecentTasksCard({ tasks }: { tasks: RecentTask[] }) {
   const { t, lang } = useT()
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-surface p-4 sm:p-[22px]">
+    <div className="overflow-hidden rounded-[18px] border border-line bg-surface p-4 shadow-sh1 sm:p-[22px]">
       <div className="mb-4 text-[15px] font-bold text-ink">{t('dash.recentTasks')}</div>
       {tasks.length === 0 && (
         <p className="py-4 text-sm text-ink-3">{t('dash.emptyTasks')}</p>

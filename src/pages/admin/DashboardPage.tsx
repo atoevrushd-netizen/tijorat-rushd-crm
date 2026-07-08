@@ -35,7 +35,7 @@ export function DashboardPage() {
       }
     >
       {isError ? (
-        <div className="rounded-xl border border-line bg-surface p-8 text-center text-sm">
+        <div className="rounded-[18px] border border-line bg-surface p-8 text-center text-sm shadow-sh1">
           <p className="text-danger">{t('dash.loadError')}</p>
           <p className="mt-1 text-ink-3">{t('dash.loadErrorHint')}</p>
         </div>

@@ -37,9 +37,10 @@ export function RingProgress({
     >
       <svg width={size} height={size} className="-rotate-90">
         <defs>
+          {/* Стопы совпадают с системным --accent-grad (светлый край → океан) */}
           <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="var(--accent)" />
-            <stop offset="100%" stopColor="var(--info)" />
+            <stop offset="0%" stopColor="var(--accent-2)" />
+            <stop offset="100%" stopColor="var(--accent)" />
           </linearGradient>
         </defs>
         <circle
@@ -62,7 +63,7 @@ export function RingProgress({
           strokeDashoffset={offset}
           style={{
             transition: 'stroke-dashoffset 1s cubic-bezier(.32,.72,0,1)',
-            filter: 'drop-shadow(0 0 6px rgba(10,132,255,.35))',
+            filter: 'drop-shadow(0 0 6px rgba(46,124,246,.3))',
           }}
         />
       </svg>

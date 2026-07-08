@@ -102,7 +102,7 @@ export function AdminDashboard() {
       </div>
 
       {isLoading && (
-        <div className="space-y-2 rounded-xl border border-line bg-surface p-4">
+        <div className="space-y-2 rounded-[16px] border border-line bg-surface p-4 shadow-sh1">
           {[0, 1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-12 w-full" />
           ))}
@@ -110,7 +110,7 @@ export function AdminDashboard() {
       )}
 
       {isError && (
-        <div className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger">
+        <div className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm text-danger">
           {t('users.loadError')}
           {error instanceof Error ? `: ${error.message}` : ''}.
         </div>
@@ -168,7 +168,7 @@ function TrashList({
       {users.map((u) => (
         <li
           key={u.id}
-          className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3"
+          className="flex items-center gap-3 rounded-[16px] border border-line bg-surface p-3 shadow-sh1"
         >
           <Avatar name={u.full_name} src={u.photo_url} size={40} />
           <div className="min-w-0 flex-1">

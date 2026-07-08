@@ -163,10 +163,10 @@ export function AutoTasksPage() {
                   type="button"
                   onClick={() => setEditingId(g.id)}
                   className={cn(
-                    'rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors',
+                    'rounded-[12px] px-3.5 py-1.5 text-[13px] font-medium transition-all',
                     editingId === g.id
-                      ? 'bg-accent text-on-accent'
-                      : 'bg-surface-2 text-ink-2 hover:text-ink',
+                      ? 'bg-accent-grad text-on-accent shadow-glow'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3 hover:text-ink',
                   )}
                 >
                   {g.name}

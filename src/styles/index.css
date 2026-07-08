@@ -3,45 +3,51 @@
 @tailwind utilities;
 
 /* ============================================================
-   Tijorat & Rushd CRM — тема в стиле iOS (тёмная).
-   Палитра близка к системной iOS Dark: чёрный фон, карточки #1C1C1E,
-   системный синий #0A84FF, iOS-семантика (green/orange/red).
+   Tijorat & Rushd CRM — светлая тема «Ocean Light» (Apple-стиль).
+   Референсы: /UI KIT — светлый минимализм, белые карточки на
+   лавандово-сером фоне, гладко-квадратные кнопки, океановый
+   сине-градиентный акцент с мягким «внутренним свечением»
+   (ambient-тень цвета акцента, без глоу).
    Переменные читает tailwind.config.js (bg / surface / ink / accent / …).
    ============================================================ */
 :root {
-  --bg: #000000;
-  --bg-grad: #0a0a0c;
-  --surface: #1c1c1e;   /* карточка (secondary grouped) */
-  --surface-2: #2c2c2e; /* поле ввода / вложенная ячейка */
-  --surface-3: #3a3a3c; /* дорожка/трек, tertiary */
-  --elevated: #2c2c2e;
+  --bg: #f2f2f7;        /* светлый лавандово-серый фон приложения */
+  --bg-grad: #ffffff;
+  --surface: #ffffff;   /* карточка */
+  --surface-2: #f4f4f8; /* поле ввода / вложенная ячейка */
+  --surface-3: #e8e8ef; /* дорожка/трек, tertiary */
+  --elevated: #ffffff;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-2: rgba(255, 255, 255, 0.16);
+  --border: rgba(18, 18, 28, 0.07);
+  --border-2: rgba(18, 18, 28, 0.14);
 
-  --text: #ffffff;
-  --text-2: rgba(235, 235, 245, 0.62);
-  --text-3: rgba(235, 235, 245, 0.34);
+  --text: #15151c;
+  --text-2: rgba(22, 22, 32, 0.62);
+  --text-3: rgba(22, 22, 32, 0.4);
 
-  --accent: #0a84ff;    /* iOS system blue (dark) */
-  --accent-600: #0a78ec;
-  --accent-700: #0a6cd6;
-  --accent-soft: rgba(10, 132, 255, 0.16);
-  --accent-ring: rgba(10, 132, 255, 0.35);
+  /* «Магический океан»: светло-бирюзовый → глубокий синий */
+  --accent: #2e7cf6;
+  --accent-2: #3db6f8;  /* светлый край градиента */
+  --accent-600: #2469db;
+  --accent-700: #1c56bd;
+  --accent-soft: rgba(46, 124, 246, 0.1);
+  --accent-ring: rgba(46, 124, 246, 0.3);
+  --accent-grad: linear-gradient(135deg, #3db6f8 0%, #2e7cf6 60%, #2563eb 100%);
   --on-accent: #ffffff;
 
-  --success: #30d158;   /* iOS green */
-  --success-soft: rgba(48, 209, 88, 0.16);
-  --info: #64d2ff;      /* iOS teal-blue */
-  --info-soft: rgba(100, 210, 255, 0.15);
-  --warn: #ff9f0a;      /* iOS orange */
-  --warn-soft: rgba(255, 159, 10, 0.15);
-  --danger: #ff453a;    /* iOS red */
-  --danger-soft: rgba(255, 69, 58, 0.15);
+  --success: #34c759;   /* iOS green (light) */
+  --success-soft: rgba(52, 199, 89, 0.12);
+  --info: #32ade6;      /* iOS teal-blue (light) */
+  --info-soft: rgba(50, 173, 230, 0.12);
+  --warn: #e8890a;      /* оранжевый, читаемый на светлом */
+  --warn-soft: rgba(255, 149, 0, 0.14);
+  --danger: #eb3529;    /* iOS red (light), чуть темнее для контраста */
+  --danger-soft: rgba(255, 59, 48, 0.1);
 
-  --sh-1: 0 1px 1px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
-  --sh-2: 0 12px 44px rgba(0, 0, 0, 0.6);
-  --glow: 0 0 0 1px rgba(10, 132, 255, 0.35), 0 10px 34px rgba(10, 132, 255, 0.28);
+  --sh-1: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.07);
+  --sh-2: 0 18px 48px rgba(16, 24, 40, 0.16);
+  /* «Свечение» акцента: мягкая цветная ambient-тень (не глоу-ореол) */
+  --glow: 0 2px 6px rgba(46, 124, 246, 0.2), 0 10px 26px rgba(46, 124, 246, 0.24);
 
   /* На Apple-устройствах — родной SF Pro (аутентичный iOS-вид), иначе Hanken. */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Hanken Grotesk',
@@ -68,8 +74,7 @@
     letter-spacing: -0.015em;
   }
   ::selection {
-    background: rgba(10, 132, 255, 0.3);
-    color: #fff;
+    background: rgba(46, 124, 246, 0.22);
   }
   /* Тонкий, ненавязчивый скроллбар (как в iOS/macOS) */
   ::-webkit-scrollbar {
@@ -80,15 +85,41 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(20, 20, 30, 0.16);
     border-radius: 99px;
     border: 2.5px solid transparent;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(20, 20, 30, 0.26);
     background-clip: padding-box;
   }
+}
+
+/* ── «Жидкий» нижний таб-бар ─────────────────────────────────────
+   Позиция выемки (в %) анимируется как настоящее число — браузер
+   плавно «переливает» вырез от кнопки к кнопке (Chrome/Safari 16.4+).
+   Без поддержки @property выемка переключается мгновенно, а пузырёк
+   всё равно едет плавно — деградация мягкая. */
+@property --notch-x {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 50%;
+}
+
+.liquid-bar {
+  --notch-x: 50%;
+  transition: --notch-x 0.45s cubic-bezier(0.3, 1.2, 0.35, 1);
+  -webkit-mask-image: radial-gradient(
+    circle 33px at var(--notch-x) -6px,
+    transparent 32px,
+    #000 32.8px
+  );
+  mask-image: radial-gradient(
+    circle 33px at var(--notch-x) -6px,
+    transparent 32px,
+    #000 32.8px
+  );
 }
 
 @layer components {

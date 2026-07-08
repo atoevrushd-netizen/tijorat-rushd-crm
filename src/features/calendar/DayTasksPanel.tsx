@@ -53,7 +53,7 @@ export function DayTasksPanel({
   }
 
   return (
-    <div className="min-w-0 rounded-xl border border-line bg-surface p-4">
+    <div className="min-w-0 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate text-[15px] font-bold capitalize text-ink">
@@ -93,9 +93,9 @@ export function DayTasksPanel({
                     onClick={() => toggleDone(task)}
                     disabled={setStatus.isPending}
                     className={cn(
-                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
+                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] border-2 transition-colors',
                       isDone
-                        ? 'border-accent bg-accent text-on-accent'
+                        ? 'border-transparent bg-accent-grad text-on-accent'
                         : 'border-line-strong text-transparent hover:border-accent',
                     )}
                   >
@@ -147,7 +147,7 @@ export function DayTasksPanel({
                         type="button"
                         aria-label={t('cal.editTask')}
                         onClick={() => setEditTask(task)}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-accent"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-accent"
                       >
                         <Pencil size={15} />
                       </button>
@@ -156,7 +156,7 @@ export function DayTasksPanel({
                         aria-label={t('cal.deleteTask')}
                         onClick={() => remove(task.id)}
                         disabled={del.isPending}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-danger disabled:opacity-50"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-danger disabled:opacity-50"
                       >
                         <Trash2 size={16} />
                       </button>

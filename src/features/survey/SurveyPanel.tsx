@@ -88,15 +88,17 @@ export function SurveyPanel({
     <section className="space-y-3">
       {/* Переключатель A/B + прогресс */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-full border border-line-strong bg-surface-2 p-1">
+        <div className="inline-flex rounded-[14px] border border-line bg-surface-2 p-1">
           {TYPES.map((ty) => (
             <button
               key={ty}
               type="button"
               onClick={() => setType(ty)}
               className={cn(
-                'rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors sm:px-4',
-                type === ty ? 'bg-accent text-on-accent' : 'text-ink-2 hover:text-ink',
+                'rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors sm:px-4',
+                type === ty
+                  ? 'bg-accent-grad text-on-accent shadow-glow'
+                  : 'text-ink-2 hover:text-ink',
               )}
             >
               {t(ty === 'A' ? 'survey.typeA' : 'survey.typeB')}
@@ -126,7 +128,7 @@ export function SurveyPanel({
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
           <div
-            className="h-full rounded-full bg-accent transition-all duration-500 ease-kit"
+            className="h-full rounded-full bg-accent-grad transition-all duration-500 ease-kit"
             style={{ width: `${pct}%` }}
           />
         </div>

@@ -112,7 +112,7 @@ export function EditUserModal({
         <div className="flex items-center gap-3">
           <Avatar name={form.full_name} src={preview ?? user?.photo_url} size={56} />
           <label className="cursor-pointer text-sm">
-            <span className="rounded-lg border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+            <span className="rounded-[12px] border border-line-strong px-3 py-1.5 text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
               {t('usercard.uploadPhoto')}
             </span>
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />

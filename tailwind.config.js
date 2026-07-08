@@ -25,6 +25,7 @@ export default {
         },
         accent: {
           DEFAULT: 'var(--accent)',
+          2: 'var(--accent-2)',
           600: 'var(--accent-600)',
           700: 'var(--accent-700)',
           soft: 'var(--accent-soft)',
@@ -55,6 +56,10 @@ export default {
         sh2: 'var(--sh-2)',
         glow: 'var(--glow)',
       },
+      backgroundImage: {
+        // Океановый градиент акцента (bg-accent-grad)
+        'accent-grad': 'var(--accent-grad)',
+      },
       transitionTimingFunction: {
         kit: 'cubic-bezier(.2,.8,.2,1)',
         spring: 'cubic-bezier(.34,1.56,.64,1)',
@@ -82,8 +87,8 @@ export default {
         },
         ringPulse: {
           '0%': { boxShadow: '0 0 0 0 var(--accent-ring)' },
-          '70%': { boxShadow: '0 0 0 12px rgba(10,132,255,0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(10,132,255,0)' },
+          '70%': { boxShadow: '0 0 0 12px rgba(46,124,246,0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(46,124,246,0)' },
         },
         barGrow: {
           from: { transform: 'scaleY(.05)' },

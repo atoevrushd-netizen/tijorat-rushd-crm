@@ -40,9 +40,9 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
                 style={{
                   height: `${h}%`,
                   background: accent
-                    ? 'linear-gradient(180deg,var(--info),var(--accent))'
+                    ? 'var(--accent-grad)'
                     : 'linear-gradient(180deg,var(--surface-3),var(--surface-2))',
-                  boxShadow: accent ? '0 0 22px rgba(10,132,255,.35)' : undefined,
+                  boxShadow: accent ? 'var(--glow)' : undefined,
                 }}
               />
               <span

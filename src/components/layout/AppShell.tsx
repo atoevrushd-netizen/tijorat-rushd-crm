@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type CSSProperties, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -24,8 +24,10 @@ function isActive(item: NavItem, pathname: string) {
 }
 
 /**
- * Каркас CRM: на планшете/десктопе — боковое меню (сайдбар);
- * на телефоне — нижняя навигация (таб-бар, как в нативных приложениях).
+ * Каркас CRM (светлая тема «Ocean Light»): на планшете/десктопе — белый сайдбар;
+ * на телефоне — «жидкий» нижний таб-бар: активная вкладка — круглый пузырёк
+ * с океановым градиентом, «выныривающий» из бара; при переключении выемка и
+ * пузырёк плавно переливаются к новой кнопке.
  */
 export function AppShell({
   title,
@@ -50,20 +52,28 @@ export function AppShell({
         : t('common.role.user')
   const initials = (name.trim()[0] ?? 'U').toUpperCase()
   // Меню определяется РОЛЬЮ (единый источник — navForRole), а не страницей.
-  // Так developer всегда видит своё меню, админ — своё (без «Разработчик»), лид — своё.
   const fullNav = navForRole(role)
+
+  // «Жидкий» таб-бар: центр активной вкладки в % ширины бара.
+  const activeIndex = fullNav.findIndex((item) => isActive(item, pathname))
+  const notchX =
+    activeIndex >= 0 ? ((activeIndex + 0.5) / fullNav.length) * 100 : -25
+  const activeItem = activeIndex >= 0 ? fullNav[activeIndex] : null
 
   return (
     <div className="flex min-h-full">
       {/* Сайдбар — планшет/десктоп (md+) */}
       <div className="sticky top-0 hidden h-screen md:block">
-        <aside className="flex h-full w-[216px] flex-none flex-col overflow-y-auto border-r border-line bg-[#0a0a0c] px-4 pb-[max(22px,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pt-[max(22px,env(safe-area-inset-top))] lg:w-[248px]">
+        <aside className="flex h-full w-[216px] flex-none flex-col overflow-y-auto border-r border-line bg-surface px-4 pb-[max(22px,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pt-[max(22px,env(safe-area-inset-top))] lg:w-[248px]">
           <div className="flex items-center gap-[11px] px-2.5 pb-[22px]">
-            <img
-              src={`${import.meta.env.BASE_URL}logo/logo-light.svg`}
-              alt="Tijorat & Rushd"
-              className="h-7 w-auto"
-            />
+            {/* Логотип — белый знак на чипе с океановым градиентом */}
+            <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[11px] bg-accent-grad shadow-glow">
+              <img
+                src={`${import.meta.env.BASE_URL}logo/logo-light.svg`}
+                alt="Tijorat & Rushd"
+                className="h-5 w-auto"
+              />
+            </span>
             <div>
               <div className="text-[14.5px] font-extrabold leading-tight text-ink">
                 Tijorat &amp; Rushd
@@ -85,7 +95,7 @@ export function AppShell({
                   key={item.to}
                   to={item.to}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2.5 text-[13.5px] transition-all duration-150 ease-kit active:scale-[0.98]',
+                    'flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[13.5px] transition-all duration-150 ease-kit active:scale-[0.98]',
                     active
                       ? 'bg-accent-soft font-semibold text-accent'
                       : 'font-medium text-ink-2 hover:bg-surface-2 hover:text-ink',
@@ -105,11 +115,8 @@ export function AppShell({
             })}
           </nav>
 
-          <div className="mt-auto flex items-center gap-[11px] rounded-md border border-line bg-surface p-2.5">
-            <div
-              className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[13px] font-extrabold text-on-accent"
-              style={{ background: 'linear-gradient(135deg,#0a84ff,#0a6cd6)' }}
-            >
+          <div className="mt-auto flex items-center gap-[11px] rounded-[14px] border border-line bg-surface-2 p-2.5">
+            <div className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-accent-grad text-[13px] font-extrabold text-on-accent">
               {initials}
             </div>
             <div className="min-w-0 flex-1">
@@ -120,7 +127,7 @@ export function AppShell({
               type="button"
               onClick={() => void signOut()}
               aria-label={t('common.signOut')}
-              className="flex h-9 w-9 flex-none items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-danger"
+              className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-surface-3 hover:text-danger"
             >
               <LogOut size={16} />
             </button>
@@ -129,7 +136,7 @@ export function AppShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(0,0,0,.72)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-xl sm:gap-4 sm:pl-8 sm:pr-[112px]">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(242,242,247,0.85)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-xl sm:gap-4 sm:pl-8 sm:pr-[112px]">
           <div className="min-w-0">
             <h1 className="truncate text-[21px] font-bold tracking-tight text-ink sm:text-[27px]">
               {title}
@@ -144,59 +151,74 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1180px] px-5 pt-7 pb-[calc(4.75rem+env(safe-area-inset-bottom))] sm:px-8 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+        <main className="mx-auto w-full max-w-[1180px] px-5 pt-7 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:px-8 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
           <div className="animate-rise">{children}</div>
         </main>
       </div>
 
-      {/* Нижняя навигация — телефон (< md), как в нативных приложениях */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-[rgba(0,0,0,.8)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-        {fullNav.map((item) => {
-          const active = isActive(item, pathname)
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={cn(
-                'group relative flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] transition-[color,transform] duration-200 ease-kit active:scale-90',
-                active ? 'text-accent' : 'text-ink-3',
-              )}
-            >
-              {/* Верхний индикатор активной вкладки */}
+      {/* «Жидкий» таб-бар — телефон (< md) */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 md:hidden">
+        {/* Пузырёк активной вкладки — «выныривает» из выемки бара */}
+        <div
+          className="pointer-events-none absolute top-0 z-10 transition-[left] duration-[450ms] ease-[cubic-bezier(.3,1.2,.35,1)]"
+          style={{ left: `${notchX}%` }}
+        >
+          <div
+            className={cn(
+              'flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-[55%] items-center justify-center rounded-full bg-accent-grad text-on-accent shadow-glow transition-opacity duration-200',
+              activeItem ? 'opacity-100' : 'opacity-0',
+            )}
+          >
+            {activeItem && (
               <span
+                key={activeItem.to}
+                className="flex animate-pop items-center justify-center [&>svg]:h-[22px] [&>svg]:w-[22px]"
+              >
+                {activeItem.icon}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Бар с плавно переливающейся выемкой (mask + @property --notch-x) */}
+        <div
+          className="liquid-bar flex bg-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_rgba(16,24,40,.09)]"
+          style={{ '--notch-x': `${notchX}%` } as CSSProperties}
+        >
+          {fullNav.map((item) => {
+            const active = isActive(item, pathname)
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
                 className={cn(
-                  'absolute top-0 h-[3px] rounded-b-full bg-accent transition-all duration-300 ease-kit',
-                  active ? 'w-8 opacity-100' : 'w-0 opacity-0',
+                  'group relative flex h-[62px] flex-1 flex-col items-center justify-center gap-1 text-[10px] transition-colors duration-200 ease-kit',
+                  active ? 'text-accent' : 'text-ink-3 active:scale-90',
                 )}
-              />
-              {/* Иконка + мягкая подсветка-пилюля под активной */}
-              <span className="relative flex h-7 w-11 items-center justify-center">
+              >
+                {/* Иконка в ряду: активная скрыта — она «уплыла» в пузырёк */}
                 <span
                   className={cn(
-                    'absolute inset-0 rounded-full bg-accent-soft transition-all duration-300 ease-kit',
-                    active ? 'scale-100 opacity-100' : 'scale-75 opacity-0',
-                  )}
-                />
-                <span
-                  className={cn(
-                    'relative flex items-center justify-center transition-transform duration-300 ease-kit [&>svg]:h-[20px] [&>svg]:w-[20px]',
-                    active ? '-translate-y-px scale-105' : 'group-active:scale-90',
+                    'flex h-6 items-center justify-center transition-all duration-200 [&>svg]:h-[21px] [&>svg]:w-[21px]',
+                    active
+                      ? 'scale-50 opacity-0'
+                      : 'scale-100 opacity-100 group-active:scale-90',
                   )}
                 >
                   {item.icon}
                 </span>
-              </span>
-              <span
-                className={cn(
-                  'max-w-full truncate px-1 transition-all duration-200',
-                  active ? 'font-semibold' : 'font-medium',
-                )}
-              >
-                {t(item.labelKey)}
-              </span>
-            </Link>
-          )
-        })}
+                <span
+                  className={cn(
+                    'max-w-full truncate px-1 transition-all duration-200',
+                    active ? 'translate-y-1.5 font-semibold' : 'font-medium',
+                  )}
+                >
+                  {t(item.labelKey)}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
       </nav>
     </div>
   )

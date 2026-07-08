@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /** hover-подъём (для кликабельных карточек) */
   hover?: boolean
-  /** премиальная карточка: лёгкий градиент + glow на hover */
+  /** премиальная карточка: цветная ambient-тень (glow) на hover */
   glow?: boolean
 }
 
@@ -13,10 +13,10 @@ export function Card({ hover, glow, className, children, ...rest }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-[18px] border border-line shadow-sh1 transition-all duration-200 ease-ios',
-        glow ? 'bg-gradient-to-b from-surface-2 to-surface' : 'bg-surface',
-        hover && 'cursor-pointer hover:border-line-strong hover:brightness-110 active:scale-[.985]',
-        glow && 'hover:shadow-glow',
+        'rounded-[18px] border border-line bg-surface shadow-sh1 transition-all duration-200 ease-ios',
+        hover && 'cursor-pointer hover:border-line-strong active:scale-[.985]',
+        // цветная и серая hover-тени конфликтуют — glow приоритетнее
+        glow ? 'hover:shadow-glow' : hover && 'hover:shadow-sh2',
         className,
       )}
       {...rest}

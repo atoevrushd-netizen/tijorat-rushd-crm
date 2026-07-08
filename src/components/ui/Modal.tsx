@@ -32,7 +32,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   if (!open) return null
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-md animate-fade-in sm:items-center sm:p-4 sm:pt-[max(1rem,env(safe-area-inset-top))]"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-sm animate-fade-in sm:items-center sm:p-4 sm:pt-[max(1rem,env(safe-area-inset-top))]"
       onClick={onClose}
     >
       <div
@@ -49,7 +49,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Закрыть"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-2 text-ink-2 transition-colors hover:text-ink active:scale-90"
+            className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-surface-2 text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink active:scale-90"
           >
             <X size={17} />
           </button>

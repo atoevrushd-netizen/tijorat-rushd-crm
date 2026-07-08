@@ -57,7 +57,7 @@ export function UserCardPage() {
         </Link>
 
         {/* Шапка */}
-        <section className="rounded-xl border border-line bg-surface p-6">
+        <section className="rounded-[18px] border border-line bg-surface p-6 shadow-sh1">
           <div className="flex flex-wrap items-start gap-4">
             <Avatar name={user.full_name} src={user.photo_url} size={72} />
             <div className="flex-1">

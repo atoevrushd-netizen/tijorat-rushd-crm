@@ -32,7 +32,7 @@ export function TaskItem({
   const dl = deadlineState(task.deadline, task.status)
 
   return (
-    <div className="rounded-lg border border-line bg-surface-2 p-4">
+    <div className="rounded-[12px] border border-line bg-surface-2 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="break-words font-medium text-ink">{taskTitle(task, lang)}</div>
@@ -63,7 +63,7 @@ export function TaskItem({
                 href={l.url}
                 target="_blank"
                 rel="noreferrer"
-                className="min-w-0 truncate text-info underline"
+                className="min-w-0 truncate text-accent underline"
               >
                 {l.label || l.url}
               </a>

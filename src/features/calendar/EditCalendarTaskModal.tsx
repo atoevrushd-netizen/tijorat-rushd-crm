@@ -106,7 +106,7 @@ export function EditCalendarTaskModal({
         </Labeled>
 
         {update.isError && (
-          <p className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p className="rounded-[12px] bg-danger-soft px-3 py-2 text-sm text-danger">
             {update.error instanceof Error ? update.error.message : t('calmodal.saveError')}
           </p>
         )}

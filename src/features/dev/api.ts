@@ -26,16 +26,21 @@ export type Overview = {
 }
 
 export async function getOverview(): Promise<Overview> {
-  const [profs, tasksCount] = await Promise.all([
-    supabase.from('profiles').select('role, deleted_at'),
+  // Считаем count-запросами (head:true) — без выгрузки строк.
+  const roleCount = (role: UserRole) =>
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', role)
+  const [leads, admins, developers, tasksCount] = await Promise.all([
+    roleCount('user').is('deleted_at', null),
+    roleCount('admin'),
+    roleCount('developer'),
     supabase.from('tasks').select('id', { count: 'exact', head: true }),
   ])
-  if (profs.error) throw profs.error
-  const rows = (profs.data ?? []) as { role: UserRole; deleted_at: string | null }[]
+  const err = leads.error || admins.error || developers.error || tasksCount.error
+  if (err) throw err
   return {
-    leads: rows.filter((r) => r.role === 'user' && !r.deleted_at).length,
-    admins: rows.filter((r) => r.role === 'admin').length,
-    developers: rows.filter((r) => r.role === 'developer').length,
+    leads: leads.count ?? 0,
+    admins: admins.count ?? 0,
+    developers: developers.count ?? 0,
     tasks: tasksCount.count ?? 0,
   }
 }

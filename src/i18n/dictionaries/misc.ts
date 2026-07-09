@@ -96,9 +96,7 @@ const bundle: Record<Lang, Record<string, string>> = {
 
     // Рендерер вкладок пользователя
     'userTabs.loading': 'Боркунии вкладкаҳо…',
-    'userTabs.empty': 'Вкладкаҳои фаъол нестанд. Онҳоро дар бахши «Вкладкаҳо» илова кунед.',
-    'userTabs.placeholder':
-      'Вкладкаи «{title}» аз БД пайваст шудааст. Мундариҷаи он баъдтар пайдо мешавад.',
+    'userTabs.empty': 'Вкладкаҳои фаъол нестанд.',
 
     // Панель разработчика
     'devPage.inTrash': '(дар сабад)',
@@ -194,9 +192,7 @@ const bundle: Record<Lang, Record<string, string>> = {
 
     // Рендерер вкладок пользователя
     'userTabs.loading': 'Загрузка вкладок…',
-    'userTabs.empty': 'Нет активных вкладок. Добавьте их в разделе «Вкладки».',
-    'userTabs.placeholder':
-      'Вкладка «{title}» подключена из БД. Её содержимое появится позже.',
+    'userTabs.empty': 'Нет активных вкладок.',
 
     // Панель разработчика
     'devPage.inTrash': '(в корзине)',

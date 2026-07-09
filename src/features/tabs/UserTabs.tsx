@@ -5,6 +5,17 @@ import { MediaTab } from '@/features/tasks/MediaTab'
 import { CalendarTab } from '@/features/calendar/CalendarTab'
 import { useActiveTabs } from './useTabs'
 
+/**
+ * Реестр рендереров вкладок. Ключ вкладки из БД → компонент, который показывает
+ * её содержимое. «Гибкость» честная: список вкладок и их порядок/названия задаёт
+ * БД (таблица `tabs`), но КОНТЕНТ появляется только если под ключ есть рендерер.
+ * Новый домен (продажи, KPI…) = строка в БД + запись здесь — без переписывания.
+ */
+const TAB_RENDERERS: Record<string, (props: { userId: string; tabId: string }) => ReactNode> = {
+  calendar: ({ userId, tabId }) => <CalendarTab userId={userId} tabId={tabId} />,
+  media: ({ userId, tabId }) => <MediaTab userId={userId} tabId={tabId} />,
+}
+
 /** Универсальный рендерер вкладок карточки — строит вкладки ИЗ БД. */
 export function UserTabs({ userId }: { userId: string }) {
   const { t } = useT()
@@ -18,7 +29,12 @@ export function UserTabs({ userId }: { userId: string }) {
       </Shell>
     )
   }
-  if (!tabs || tabs.length === 0) {
+
+  // Показываем только вкладки, у которых есть реальный рендерер — клиент никогда
+  // не видит «мёртвую» вкладку с пустой заглушкой.
+  const known = (tabs ?? []).filter((tab) => tab.key in TAB_RENDERERS)
+
+  if (known.length === 0) {
     return (
       <Shell>
         <p className="px-4 py-6 text-sm text-ink-3">{t('userTabs.empty')}</p>
@@ -26,12 +42,12 @@ export function UserTabs({ userId }: { userId: string }) {
     )
   }
 
-  const current = tabs.find((tab) => tab.key === activeKey) ?? tabs[0]
+  const current = known.find((tab) => tab.key === activeKey) ?? known[0]
 
   return (
     <section className="overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
       <div className="flex flex-wrap gap-1.5 border-b border-line p-2.5 sm:p-3">
-        {tabs.map((tab) => {
+        {known.map((tab) => {
           const isActive = tab.key === current.key
           return (
             <button
@@ -65,17 +81,8 @@ function Shell({ children }: { children: ReactNode }) {
 }
 
 function TabContent({ tab, userId }: { tab: Tab; userId: string }) {
-  const { t } = useT()
-  if (tab.key === 'calendar') {
-    return <CalendarTab userId={userId} tabId={tab.id} />
-  }
-  if (tab.key === 'media') {
-    return <MediaTab userId={userId} tabId={tab.id} />
-  }
-  // Неизвестный ключ вкладки (из БД) — понятный плейсхолдер вместо пустой панели.
-  return (
-    <p className="rounded-[12px] bg-surface-2 px-4 py-8 text-center text-sm text-ink-3">
-      {t('userTabs.placeholder').replace('{title}', tab.title)}
-    </p>
-  )
+  const render = TAB_RENDERERS[tab.key]
+  // known-фильтр в UserTabs гарантирует наличие рендерера; проверка — на всякий.
+  if (!render) return null
+  return <>{render({ userId, tabId: tab.id })}</>
 }

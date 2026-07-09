@@ -4,18 +4,20 @@
 // что вызывающий — администратор.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.46.1'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+const ALLOWED_ORIGINS = [
+  'https://atoevrushd-netizen.github.io',
+  'http://localhost:5173',
+]
 
-function json(payload: unknown, status: number) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
+function cors(req: Request) {
+  const origin = req.headers.get('Origin') ?? ''
+  const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+  return {
+    'Access-Control-Allow-Origin': allow,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  }
 }
 
 // Та же логика, что и в src/lib/loginEmail.ts (Deno не видит src/).
@@ -25,8 +27,14 @@ function normalizeLogin(login: string): string {
 }
 
 Deno.serve(async (req) => {
+  const json = (payload: unknown, status: number) =>
+    new Response(JSON.stringify(payload), {
+      status,
+      headers: { ...cors(req), 'Content-Type': 'application/json' },
+    })
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: cors(req) })
   }
 
   try {

@@ -65,11 +65,17 @@ function Shell({ children }: { children: ReactNode }) {
 }
 
 function TabContent({ tab, userId }: { tab: Tab; userId: string }) {
+  const { t } = useT()
   if (tab.key === 'calendar') {
     return <CalendarTab userId={userId} tabId={tab.id} />
   }
   if (tab.key === 'media') {
     return <MediaTab userId={userId} tabId={tab.id} />
   }
-  return null
+  // Неизвестный ключ вкладки (из БД) — понятный плейсхолдер вместо пустой панели.
+  return (
+    <p className="rounded-[12px] bg-surface-2 px-4 py-8 text-center text-sm text-ink-3">
+      {t('userTabs.placeholder').replace('{title}', tab.title)}
+    </p>
+  )
 }

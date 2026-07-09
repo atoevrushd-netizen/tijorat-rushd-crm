@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 export const BACKUP_TABLES = [
   'profiles',
   'leads',
+  'lead_cards',
   'tabs',
   'tasks',
   'task_links',

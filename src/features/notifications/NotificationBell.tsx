@@ -7,6 +7,7 @@ import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { activityText } from '@/features/activity-log/activityText'
 import { useNotifications, getLastSeen, markSeen } from './useNotifications'
+import { useRealtimeActivity } from './useRealtimeActivity'
 import type { NotificationEvent } from './api'
 
 /** Колокольчик уведомлений в шапке: непрочитанные + лента последних событий. */
@@ -17,6 +18,8 @@ export function NotificationBell() {
   const uid = profile?.id ?? ''
   const isAdmin = role === 'admin' || role === 'developer'
   const { data = [] } = useNotifications()
+  // Мгновенные обновления по Realtime, пока пользователь авторизован.
+  useRealtimeActivity(!!uid)
 
   const [open, setOpen] = useState(false)
   const [lastSeen, setLastSeen] = useState(() => getLastSeen(uid))

@@ -23,8 +23,8 @@ export function markSeen(uid: string): void {
 }
 
 /**
- * Уведомления текущего пользователя. Периодически обновляем (в т.ч. при
- * возврате на вкладку), чтобы админ видел действия лидов почти сразу.
+ * Уведомления текущего пользователя. Мгновенность даёт Realtime
+ * (useRealtimeActivity); опрос оставлен страховкой на случай обрыва сокета.
  */
 export function useNotifications() {
   const { profile } = useAuth()
@@ -33,7 +33,7 @@ export function useNotifications() {
     queryKey: ['notifications', uid],
     queryFn: () => listNotifications(uid as string),
     enabled: !!uid,
-    refetchInterval: 60_000,
+    refetchInterval: 120_000,
     refetchOnWindowFocus: true,
     staleTime: 30_000,
   })

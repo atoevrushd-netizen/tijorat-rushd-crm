@@ -57,6 +57,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.loginError':
       'Логин — бо ҳарфҳои лотинӣ (a-z, рақамҳо), ҳадди ақал 3 аломат. Масалан: malik99',
     'usercard.passwordMinError': 'Парол — на кӯтоҳтар аз 6 аломат',
+    'usercard.phoneError': 'Телефон бояд бо +992 сар шавад',
+    'usercard.genPassword': 'Эҷоди парол',
+    'usercard.passwordCopied': 'Парол нусхабардорӣ шуд',
+    'usercard.passwordGenHint': 'Тугмаро пахш кунед — пароли боэътимод эҷод мешавад',
     'usercard.createError': 'Эҷоди корбар муяссар нашуд',
     'usercard.saveError': 'Сабт кардан муяссар нашуд',
     'usercard.pwdChanged':
@@ -120,6 +124,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.loginError':
       'Логин — латиницей (буквы a-z, цифры), минимум 3 символа. Например: malik99',
     'usercard.passwordMinError': 'Пароль — не короче 6 символов',
+    'usercard.phoneError': 'Телефон должен начинаться с +992',
+    'usercard.genPassword': 'Сгенерировать пароль',
+    'usercard.passwordCopied': 'Пароль скопирован',
+    'usercard.passwordGenHint': 'Нажмите кнопку — сгенерируется надёжный пароль',
     'usercard.createError': 'Не удалось создать пользователя',
     'usercard.saveError': 'Не удалось сохранить',
     'usercard.pwdChanged':

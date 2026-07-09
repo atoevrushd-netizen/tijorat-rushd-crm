@@ -10,14 +10,24 @@ import { TaskStats } from '@/features/tasks/TaskStats'
 import { DeadlineBanner } from '@/features/tasks/DeadlineBanner'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
+import { WelcomeModal } from '@/features/onboarding/WelcomeModal'
+import { useLeadCard } from '@/features/leadcard/useLeadCard'
+import { LEAD_CARD_GROUPS } from '@/features/leadcard/fields'
 
 /** Личный кабинет: градиентный баннер профиля, сводка по задачам, задачи и достижения. */
 export function UserCabinet() {
   const { profile } = useAuth()
   const { t } = useT()
   const [editOpen, setEditOpen] = useState(false)
+  const { data: leadCard } = useLeadCard(profile?.id ?? '')
   if (!profile) return null
   const name = profile.full_name || 'студент'
+
+  // Заполненность бизнес-карты (17 полей) — для индикатора на кнопке «Мои данные».
+  const cardFields = LEAD_CARD_GROUPS.flatMap((g) => g.fields)
+  const filled = leadCard
+    ? cardFields.filter((f) => (leadCard[f] ?? '').toString().trim()).length
+    : 0
 
   return (
     <AppShell title={t('page.cabinet')}>
@@ -74,11 +84,24 @@ export function UserCabinet() {
           </span>
           <div className="min-w-0 flex-1">
             <div className="text-[15px] font-bold text-ink">{t('leadcard.title')}</div>
-            <div className="truncate text-[12.5px] text-ink-3">{t('leadcard.entryHint')}</div>
+            <div className="truncate text-[12.5px] text-ink-3">
+              {filled > 0
+                ? t('leadcard.progress')
+                    .replace('{n}', String(filled))
+                    .replace('{total}', String(cardFields.length))
+                : t('leadcard.entryHint')}
+            </div>
+            {/* Полоса заполненности */}
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+              <div
+                className="h-full rounded-full bg-accent-grad transition-all duration-500 ease-kit"
+                style={{ width: `${Math.round((filled / cardFields.length) * 100)}%` }}
+              />
+            </div>
           </div>
           <ChevronRight
             size={20}
-            className="shrink-0 text-ink-3 transition-colors group-hover:text-accent"
+            className="shrink-0 self-start text-ink-3 transition-colors group-hover:text-accent"
           />
         </Link>
 
@@ -88,6 +111,7 @@ export function UserCabinet() {
       </div>
 
       <SelfEditProfileModal open={editOpen} onClose={() => setEditOpen(false)} />
+      <WelcomeModal />
     </AppShell>
   )
 }

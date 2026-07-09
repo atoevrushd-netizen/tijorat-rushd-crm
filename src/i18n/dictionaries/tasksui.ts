@@ -53,6 +53,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'tasksui.tasksCount': 'Задачаҳо',
     'tasksui.addTask': '+ Задача',
     'tasksui.noTasks': 'Ҳоло задача нест.',
+    'tasksui.allStatuses': 'Ҳамаи вазъиятҳо',
+    'tasksui.allTypes': 'Ҳамаи намудҳо',
+    'tasksui.showMore': 'Бештар нишон додан',
+    'tasksui.noMatch': 'Задачае мувофиқи филтр нест.',
     // TaskStats
     'tasksui.statTotal': 'Ҳамаи задачаҳо',
     'tasksui.statAccepted': 'Қабулшуда',
@@ -111,6 +115,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'tasksui.tasksCount': 'Задач',
     'tasksui.addTask': '+ Задача',
     'tasksui.noTasks': 'Задач пока нет.',
+    'tasksui.allStatuses': 'Все статусы',
+    'tasksui.allTypes': 'Все типы',
+    'tasksui.showMore': 'Показать ещё',
+    'tasksui.noMatch': 'Нет задач по этому фильтру.',
     // TaskStats
     'tasksui.statTotal': 'Всего задач',
     'tasksui.statAccepted': 'Принято',

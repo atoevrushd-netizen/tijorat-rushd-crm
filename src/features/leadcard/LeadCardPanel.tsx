@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
-import { Check, IdCard } from 'lucide-react'
+import { Check, IdCard, Loader2 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useT } from '@/i18n/useT'
+import { useAutosave } from '@/lib/useAutosave'
 import type { LeadCardField } from '@/types'
 import { LEAD_CARD_GROUPS, LEAD_CARD_LABEL } from './fields'
 import { useLeadCard, useUpsertLeadCard } from './useLeadCard'
 
-/** Одно поле карточки: подпись + значение, автосохранение при потере фокуса. */
+/** Одно поле карточки: подпись + значение, автосохранение (debounce + blur). */
 function Field({
   label,
   initial,
@@ -18,34 +18,17 @@ function Field({
   readOnly: boolean
   onSave: (value: string) => Promise<unknown>
 }) {
-  const [value, setValue] = useState(initial)
-  const savedRef = useRef(initial)
-  const [saved, setSaved] = useState(false)
-
-  useEffect(() => {
-    setValue(initial)
-    savedRef.current = initial
-  }, [initial])
-
-  async function blur() {
-    const next = value.trim()
-    if (readOnly || next === savedRef.current) return
-    try {
-      await onSave(next)
-      savedRef.current = next
-      setValue(next)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 1500)
-    } catch {
-      /* ошибку покажет глобальный обработчик мутаций */
-    }
-  }
+  const { value, status, onChange, onBlur } = useAutosave(
+    initial,
+    readOnly ? undefined : onSave,
+  )
 
   return (
     <label className="block">
       <span className="mb-1.5 flex items-center gap-1.5 px-0.5 font-mono text-[10.5px] uppercase tracking-wider text-ink-3">
         {label}
-        {saved && <Check className="h-3 w-3 text-success" />}
+        {status === 'saving' && <Loader2 className="h-3 w-3 animate-spin text-ink-3" />}
+        {status === 'saved' && <Check className="h-3 w-3 text-success" />}
       </span>
       {readOnly ? (
         <div className="rounded-[12px] bg-surface-2 px-3.5 py-2.5 text-[14px] text-ink">
@@ -54,8 +37,8 @@ function Field({
       ) : (
         <input
           value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={blur}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
           placeholder="—"
           className="w-full rounded-[12px] border border-transparent bg-surface-2 px-3.5 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent focus:bg-surface"
         />

@@ -8,6 +8,7 @@ import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { buildBackup, downloadBackup } from './exportData'
 import { Row, Section } from './SettingsUI'
 import { ChangePasswordSection } from './ChangePasswordSection'
+import { ThemeSection } from './ThemeSection'
 
 /** Подробные настройки администратора: профиль + бэкапы/данные. */
 export function AdminSettings() {
@@ -56,6 +57,8 @@ export function AdminSettings() {
         <Row label={t('settings.name')} value={profile?.full_name} />
         <Row label={t('settings.login')} value={profile?.login ?? profile?.email} />
       </Section>
+
+      <ThemeSection />
 
       <ChangePasswordSection />
 

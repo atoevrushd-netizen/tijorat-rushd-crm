@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Check, Loader2 } from 'lucide-react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useT } from '@/i18n/useT'
-
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+import { useAutosave } from '@/lib/useAutosave'
+import { SaveStatusText } from '@/components/ui/SaveStatusText'
 
 /**
  * Один вопрос анкеты: номер, текст и поле ответа.
- * Ответ сохраняется автоматически при потере фокуса (если изменился).
+ * Ответ сохраняется автоматически (debounce во время ввода + при потере фокуса).
  * В режиме readOnly — только показ ответа (для просмотра чужих анкет).
  */
 export function SurveyQuestionField({
@@ -23,18 +22,8 @@ export function SurveyQuestionField({
   onSave?: (answer: string) => Promise<void>
 }) {
   const { t } = useT()
-  const [value, setValue] = useState(initial)
-  const [status, setStatus] = useState<SaveStatus>('idle')
-  const savedRef = useRef(initial)
+  const { value, status, onChange, onBlur } = useAutosave(initial, onSave)
   const areaRef = useRef<HTMLTextAreaElement>(null)
-  const timerRef = useRef<ReturnType<typeof setTimeout>>()
-
-  // Внешнее изменение (сменили лида/тип анкеты) — подхватываем новое значение.
-  useEffect(() => {
-    setValue(initial)
-    savedRef.current = initial
-    setStatus('idle')
-  }, [initial])
 
   const grow = useCallback(() => {
     const el = areaRef.current
@@ -46,22 +35,6 @@ export function SurveyQuestionField({
   useEffect(() => {
     grow()
   }, [grow, value])
-
-  useEffect(() => () => clearTimeout(timerRef.current), [])
-
-  async function handleBlur() {
-    if (!onSave || value === savedRef.current) return
-    setStatus('saving')
-    try {
-      await onSave(value)
-      savedRef.current = value
-      setStatus('saved')
-      clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setStatus('idle'), 2200)
-    } catch {
-      setStatus('error')
-    }
-  }
 
   return (
     <div className="flex gap-3 py-3.5">
@@ -85,26 +58,12 @@ export function SurveyQuestionField({
               ref={areaRef}
               rows={2}
               value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onBlur={handleBlur}
+              onChange={(e) => onChange(e.target.value)}
+              onBlur={onBlur}
               placeholder={t('survey.answerPlaceholder')}
               className="mt-2 w-full resize-none overflow-hidden rounded-[12px] border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
             />
-            <div className="mt-1 h-4 text-[11px]">
-              {status === 'saving' && (
-                <span className="inline-flex items-center gap-1 text-ink-3">
-                  <Loader2 size={12} className="animate-spin" /> {t('survey.saving')}
-                </span>
-              )}
-              {status === 'saved' && (
-                <span className="inline-flex items-center gap-1 text-accent">
-                  <Check size={12} /> {t('survey.saved')}
-                </span>
-              )}
-              {status === 'error' && (
-                <span className="text-danger">{t('survey.saveError')}</span>
-              )}
-            </div>
+            <SaveStatusText status={status} />
           </>
         )}
       </div>

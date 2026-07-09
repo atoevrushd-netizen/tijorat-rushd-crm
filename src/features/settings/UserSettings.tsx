@@ -6,6 +6,7 @@ import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { formatDate } from '@/lib/utils'
 import { Row, Section } from './SettingsUI'
 import { ChangePasswordSection } from './ChangePasswordSection'
+import { ThemeSection } from './ThemeSection'
 
 /** Простые настройки личного кабинета лида: профиль + информация об аккаунте. */
 export function UserSettings() {
@@ -42,6 +43,8 @@ export function UserSettings() {
         />
         {sub && <Row label={t('settings.subscriptionPeriod')} value={sub} />}
       </Section>
+
+      <ThemeSection />
 
       <ChangePasswordSection />
 

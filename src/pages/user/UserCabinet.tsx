@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Pencil } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ChevronRight, IdCard, Pencil } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/features/auth/useAuth'
@@ -8,7 +9,6 @@ import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
 import { DeadlineBanner } from '@/features/tasks/DeadlineBanner'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
-import { LeadCardPanel } from '@/features/leadcard/LeadCardPanel'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 
 /** Личный кабинет: градиентный баннер профиля, сводка по задачам, задачи и достижения. */
@@ -63,7 +63,25 @@ export function UserCabinet() {
         </section>
 
         <DeadlineBanner userId={profile.id} />
-        <LeadCardPanel userId={profile.id} />
+
+        {/* Кнопка-переход в «Мои данные» (бизнес-карта лида) */}
+        <Link
+          to="/my-data"
+          className="group flex items-center gap-4 rounded-[18px] border border-line bg-surface p-5 shadow-sh1 transition-all duration-200 ease-ios hover:border-line-strong hover:shadow-sh2 active:scale-[.99]"
+        >
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-accent-grad text-on-accent shadow-glow">
+            <IdCard size={22} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[15px] font-bold text-ink">{t('leadcard.title')}</div>
+            <div className="truncate text-[12.5px] text-ink-3">{t('leadcard.entryHint')}</div>
+          </div>
+          <ChevronRight
+            size={20}
+            className="shrink-0 text-ink-3 transition-colors group-hover:text-accent"
+          />
+        </Link>
+
         <TaskStats userId={profile.id} />
         <UserTabs userId={profile.id} />
         <AchievementsBlock userId={profile.id} />

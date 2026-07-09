@@ -20,6 +20,7 @@ import { UserTabs } from '@/features/tabs/UserTabs'
 import { ActivityFeed } from '@/features/activity-log/ActivityFeed'
 import { SurveyPanel } from '@/features/survey/SurveyPanel'
 import { RazborPanel } from '@/features/razbor/RazborPanel'
+import { LeadCardPanel } from '@/features/leadcard/LeadCardPanel'
 
 /** Карточка пользователя — «медкарта»: данные, вкладки, достижения, история. */
 export function UserCardPage() {
@@ -144,6 +145,9 @@ export function UserCardPage() {
             </dl>
           </div>
         </section>
+
+        {/* Бизнес-карта «Мои данные» лида (админ/dev видит и может править) */}
+        {user.role === 'user' && <LeadCardPanel userId={user.id} editable />}
 
         {/* Анкеты A/B лида (просмотр админом) */}
         <section className="space-y-3">

@@ -5,6 +5,9 @@ const bundle: Record<Lang, Record<string, string>> = {
   tg: {
     'leadcard.title': 'Маълумоти ман',
     'leadcard.subtitle': 'Кортаи худро пур кунед — сабт худкор аст',
+    'leadcard.name': 'Ном ва насаб',
+    'leadcard.entryHint': 'Кортаи бизнеси шумо — кушоед ва пур кунед',
+    'leadcard.back': '← Ба кабинет',
     'leadcard.groupPersonal': 'Шахсӣ',
     'leadcard.groupBusiness': 'Бизнес',
     'leadcard.groupFinance': 'Молия',
@@ -29,6 +32,9 @@ const bundle: Record<Lang, Record<string, string>> = {
   ru: {
     'leadcard.title': 'Мои данные',
     'leadcard.subtitle': 'Заполните свою карточку — сохраняется автоматически',
+    'leadcard.name': 'Имя и фамилия',
+    'leadcard.entryHint': 'Ваша бизнес-карта — открыть и заполнить',
+    'leadcard.back': '← В кабинет',
     'leadcard.groupPersonal': 'Личное',
     'leadcard.groupBusiness': 'Бизнес',
     'leadcard.groupFinance': 'Финансы',

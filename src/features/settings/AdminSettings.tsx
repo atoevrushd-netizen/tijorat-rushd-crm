@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CalendarClock, Database, Download, ShieldCheck, UserCog } from 'lucide-react'
+import { CalendarClock, Database, Download, UserCog } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { Button } from '@/components/ui/Button'
@@ -9,6 +9,7 @@ import { buildBackup, downloadBackup } from './exportData'
 import { Row, Section } from './SettingsUI'
 import { ChangePasswordSection } from './ChangePasswordSection'
 import { ThemeSection } from './ThemeSection'
+import { ImportSection } from './ImportSection'
 
 /** Подробные настройки администратора: профиль + бэкапы/данные. */
 export function AdminSettings() {
@@ -94,9 +95,7 @@ export function AdminSettings() {
         <p className="mt-3 text-[12px] text-ink-3">{t('settings.backupWarn')}</p>
       </Section>
 
-      <Section icon={<ShieldCheck size={15} />} title={t('settings.importTrash')}>
-        <p className="text-[13px] text-ink-3">{t('settings.importTrashDesc')}</p>
-      </Section>
+      <ImportSection />
 
       <SelfEditProfileModal open={editOpen} onClose={() => setEditOpen(false)} />
     </div>

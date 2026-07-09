@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Inbox } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
+import { canManage } from '@/features/auth/roles'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useT } from '@/i18n/useT'
@@ -13,7 +14,7 @@ import { BulkCreateTaskModal } from './BulkCreateTaskModal'
 export function MediaTab({ userId, tabId }: { userId: string; tabId: string }) {
   const { role, profile } = useAuth()
   const { t } = useT()
-  const isAdmin = role === 'admin'
+  const isAdmin = canManage(role)
   const isOwner = profile?.id === userId
   const { data: tasks, isLoading } = useTasks(userId, tabId)
   const [createOpen, setCreateOpen] = useState(false)

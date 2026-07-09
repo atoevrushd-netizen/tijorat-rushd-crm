@@ -11,7 +11,7 @@ import type { NotificationEvent } from './api'
 
 /** Колокольчик уведомлений в шапке: непрочитанные + лента последних событий. */
 export function NotificationBell() {
-  const { t } = useT()
+  const { t, lang } = useT()
   const { profile, role } = useAuth()
   const navigate = useNavigate()
   const uid = profile?.id ?? ''
@@ -103,7 +103,7 @@ export function NotificationBell() {
                         <span className="min-w-0 flex-1">
                           <span className="block text-[13px] leading-snug text-ink">
                             {isAdmin && subject ? `${subject}: ` : ''}
-                            {activityText(ev, t)}
+                            {activityText(ev, t, lang)}
                           </span>
                           <span className="mt-0.5 block font-mono text-[11px] text-ink-3">
                             {ev.actor?.full_name ? `${ev.actor.full_name} · ` : ''}

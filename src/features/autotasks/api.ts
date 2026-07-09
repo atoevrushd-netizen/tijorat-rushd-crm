@@ -60,7 +60,7 @@ export async function duplicateGroup(
       tab_key: t.tab_key,
       title: t.title,
       task_type: t.task_type,
-      deadline: t.deadline,
+      offset_days: t.offset_days,
       sort_order: t.sort_order,
     }))
     const { error } = await supabase.from('task_templates').insert(copies)
@@ -85,7 +85,7 @@ export async function createTemplate(input: {
   tab_key: string
   title: string
   task_type: string | null
-  deadline: string | null
+  offset_days: number | null
   sort_order: number
 }): Promise<void> {
   const { error } = await supabase.from('task_templates').insert(input)
@@ -94,7 +94,7 @@ export async function createTemplate(input: {
 
 export async function updateTemplate(
   id: string,
-  patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'deadline'>>,
+  patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'offset_days'>>,
 ): Promise<void> {
   const { error } = await supabase.from('task_templates').update(patch).eq('id', id)
   if (error) throw error

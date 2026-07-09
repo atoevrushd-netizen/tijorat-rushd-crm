@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Award, Medal, Trash2, Trophy } from 'lucide-react'
 import { useAuth } from '@/features/auth/useAuth'
+import { canManage } from '@/features/auth/roles'
 import { useT } from '@/i18n/useT'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
@@ -17,7 +18,7 @@ import {
 export function AchievementsBlock({ userId }: { userId: string }) {
   const { t } = useT()
   const { role, profile } = useAuth()
-  const isAdmin = role === 'admin'
+  const isAdmin = canManage(role)
   const { data: items, isLoading } = useAchievements(userId)
   const add = useAddAchievement(userId)
   const del = useDeleteAchievement(userId)

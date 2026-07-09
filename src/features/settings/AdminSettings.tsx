@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { buildBackup, downloadBackup } from './exportData'
 import { Row, Section } from './SettingsUI'
+import { ChangePasswordSection } from './ChangePasswordSection'
 
 /** Подробные настройки администратора: профиль + бэкапы/данные. */
 export function AdminSettings() {
@@ -55,6 +56,8 @@ export function AdminSettings() {
         <Row label={t('settings.name')} value={profile?.full_name} />
         <Row label={t('settings.login')} value={profile?.login ?? profile?.email} />
       </Section>
+
+      <ChangePasswordSection />
 
       <Section icon={<CalendarClock size={15} />} title={t('page.autotasks')}>
         <p className="mb-3 text-[13px] text-ink-2">{t('at.hint')}</p>

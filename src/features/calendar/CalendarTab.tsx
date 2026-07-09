@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Task } from '@/types'
 import { useAuth } from '@/features/auth/useAuth'
+import { canManage } from '@/features/auth/roles'
 import { useUser } from '@/features/users/useUser'
 import { useTasks } from '@/features/tasks/useTasks'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -23,7 +24,7 @@ function sortByTime(tasks: Task[]): Task[] {
  */
 export function CalendarTab({ userId, tabId }: { userId: string; tabId: string }) {
   const { role, profile } = useAuth()
-  const isAdmin = role === 'admin'
+  const isAdmin = canManage(role)
   const isOwner = profile?.id === userId
 
   // Период подписки берём из профиля: у владельца он уже есть в useAuth,

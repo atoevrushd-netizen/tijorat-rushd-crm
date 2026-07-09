@@ -1,4 +1,5 @@
 import type { ActivityEvent } from '@/types'
+import type { Lang } from '@/i18n/types'
 
 /** Функция перевода из useT (ключ, необязательный fallback). */
 type Translate = (key: string, fallback?: string) => string
@@ -11,10 +12,20 @@ function statusLabel(t: Translate, value: unknown): string {
   return fallback
 }
 
-/** Человекочитаемый текст события истории. */
-export function activityText(event: ActivityEvent, t: Translate): string {
+/** Человекочитаемый текст события истории (заголовок задачи — по языку). */
+export function activityText(
+  event: ActivityEvent,
+  t: Translate,
+  lang: Lang = 'ru',
+): string {
   const details = event.details ?? {}
-  const title = typeof details.title === 'string' ? details.title : ''
+  const localized = lang === 'tg' ? details.title_tg : details.title_ru
+  const title =
+    typeof localized === 'string' && localized
+      ? localized
+      : typeof details.title === 'string'
+        ? details.title
+        : ''
 
   if (event.entity_type === 'task') {
     if (event.action === 'created') {

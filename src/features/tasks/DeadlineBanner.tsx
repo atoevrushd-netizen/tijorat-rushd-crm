@@ -3,6 +3,7 @@ import { AlarmClock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import { deadlineState, daysUntil } from '@/lib/deadline'
+import { taskTitle } from '@/lib/taskI18n'
 import type { Task } from '@/types'
 import { useTasks } from './useTasks'
 
@@ -34,7 +35,7 @@ function Pill({ tone, children }: { tone: Tone; children: ReactNode }) {
  * Ничего не рисует, если гореть нечему.
  */
 export function DeadlineBanner({ userId }: { userId: string }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const { data } = useTasks(userId)
   if (!data) return null
 
@@ -93,7 +94,7 @@ export function DeadlineBanner({ userId }: { userId: string }) {
                       overdue.includes(task) ? 'bg-danger' : 'bg-warn',
                     )}
                   />
-                  <span className="truncate text-ink-2">{task.title}</span>
+                  <span className="truncate text-ink-2">{taskTitle(task, lang)}</span>
                   <span className="ml-auto shrink-0 font-mono text-[11px] text-ink-3">
                     {task.deadline}
                   </span>

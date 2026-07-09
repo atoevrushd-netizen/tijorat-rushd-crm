@@ -19,7 +19,7 @@ function eventVisual(event: ActivityEvent): { icon: ReactNode; chip: string } {
 
 /** Лента истории действий по пользователю. */
 export function ActivityFeed({ userId }: { userId: string }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const { data, isLoading } = useActivity(userId)
 
   return (
@@ -55,7 +55,7 @@ export function ActivityFeed({ userId }: { userId: string }) {
                   {v.icon}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm text-ink">{activityText(event, t)}</div>
+                  <div className="text-sm text-ink">{activityText(event, t, lang)}</div>
                   <div className="mt-0.5 text-xs text-ink-3">
                     {event.actor?.full_name || '—'}
                   </div>

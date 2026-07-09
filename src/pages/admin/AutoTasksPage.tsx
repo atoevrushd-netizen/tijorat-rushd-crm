@@ -251,6 +251,10 @@ export function AutoTasksPage() {
                 </span>
               </div>
 
+              <p className="rounded-[10px] bg-info-soft px-3 py-2 text-[12px] leading-snug text-ink-2">
+                {t('at.offsetHint')}
+              </p>
+
               <AddTaskForm
                 onAdd={(v) =>
                   createTemplate.mutate(
@@ -303,21 +307,26 @@ function AddTaskForm({
     tab_key: string
     title: string
     task_type: string | null
-    deadline: string | null
+    offset_days: number | null
   }) => void
 }) {
   const { t } = useT()
   const [title, setTitle] = useState('')
   const [tab, setTab] = useState('calendar')
   const [type, setType] = useState('other')
-  const [date, setDate] = useState('')
+  const [day, setDay] = useState('')
 
   function submit(e: FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
-    onAdd({ tab_key: tab, title: title.trim(), task_type: type, deadline: date || null })
+    onAdd({
+      tab_key: tab,
+      title: title.trim(),
+      task_type: type,
+      offset_days: day === '' ? null : Math.max(0, Number(day) || 0),
+    })
     setTitle('')
-    setDate('')
+    setDay('')
   }
 
   const sel = 'rounded-[10px] border border-line bg-surface px-2 py-2 text-[13px] text-ink outline-none focus:border-accent'
@@ -339,7 +348,17 @@ function AddTaskForm({
         <option value="reels">{t('at.typeReels')}</option>
         <option value="creative">{t('at.typeCreative')}</option>
       </select>
-      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={sel} />
+      <label className="inline-flex items-center gap-1.5 rounded-[10px] border border-line bg-surface px-2.5 py-2 text-[13px] text-ink-2">
+        <span className="text-ink-3">{t('at.dayLabel')}</span>
+        <input
+          type="number"
+          min={0}
+          value={day}
+          onChange={(e) => setDay(e.target.value)}
+          placeholder="—"
+          className="w-14 bg-transparent text-center text-ink outline-none"
+        />
+      </label>
       <Button size="sm" type="submit" leftIcon={<Plus size={15} />}>
         {t('at.addTask')}
       </Button>

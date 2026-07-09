@@ -13,7 +13,7 @@ export function TemplateRow({
   onDelete,
 }: {
   template: TaskTemplate
-  onSave: (patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'deadline'>>) => void
+  onSave: (patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'offset_days'>>) => void
   onDelete: () => void
 }) {
   const { t } = useT()
@@ -45,12 +45,22 @@ export function TemplateRow({
         <option value="reels">{t('at.typeReels')}</option>
         <option value="creative">{t('at.typeCreative')}</option>
       </select>
-      <input
-        type="date"
-        value={template.deadline ?? ''}
-        onChange={(e) => onSave({ deadline: e.target.value || null })}
-        className={SELECT_CLS}
-      />
+      {/* Смещение дедлайна: на какой день от старта лида появится задача */}
+      <label className="inline-flex items-center gap-1.5 rounded-[10px] border border-line bg-surface px-2.5 py-2 text-[13px] text-ink-2">
+        <span className="text-ink-3">{t('at.dayLabel')}</span>
+        <input
+          type="number"
+          min={0}
+          value={template.offset_days ?? ''}
+          onChange={(e) =>
+            onSave({
+              offset_days: e.target.value === '' ? null : Math.max(0, e.target.valueAsNumber || 0),
+            })
+          }
+          placeholder="—"
+          className="w-14 bg-transparent text-center text-ink outline-none"
+        />
+      </label>
       <button
         type="button"
         onClick={onDelete}

@@ -83,7 +83,7 @@ export function useCreateTemplate(groupId: string) {
       tab_key: string
       title: string
       task_type: string | null
-      deadline: string | null
+      offset_days: number | null
       sort_order: number
     }) => createTemplate({ group_id: groupId, ...input }),
     onSuccess: () =>
@@ -96,7 +96,7 @@ export function useUpdateTemplate(groupId: string) {
   return useMutation({
     mutationFn: (v: {
       id: string
-      patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'deadline'>>
+      patch: Partial<Pick<TaskTemplate, 'title' | 'tab_key' | 'task_type' | 'offset_days'>>
     }) => updateTemplate(v.id, v.patch),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: ['autotasks', 'templates', groupId] }),

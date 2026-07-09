@@ -212,6 +212,8 @@ export type TaskTemplate = {
   title: string
   task_type: string | null // 'other' | 'reels' | 'creative'
   deadline: string | null
+  /** Смещение дедлайна в днях от старта лида (0032). null — без срока. */
+  offset_days: number | null
   sort_order: number
   created_at: string
 }

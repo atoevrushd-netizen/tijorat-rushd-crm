@@ -135,7 +135,13 @@ export function UserCardPage() {
               <Field label={t('usercard.fieldRegDate')} value={formatDate(user.registration_date)} />
               <Field
                 label={t('usercard.fieldRole')}
-                value={user.role === 'admin' ? t('common.role.admin') : t('common.role.user')}
+                value={
+                  user.role === 'admin'
+                    ? t('common.role.admin')
+                    : user.role === 'developer'
+                      ? t('common.role.developer')
+                      : t('common.role.user')
+                }
               />
               <Field label={t('usercard.fieldSubStart')} value={formatDate(user.subscription_start)} />
               <Field label={t('usercard.fieldSubEnd')} value={formatDate(user.subscription_end)} />

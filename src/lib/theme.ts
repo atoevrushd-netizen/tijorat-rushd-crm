@@ -12,7 +12,7 @@ function prefersDark(): boolean {
   )
 }
 
-/** Сохранённый выбор (по умолчанию — «как в системе»). */
+/** Сохранённый выбор (по умолчанию — светлая, а не «как в системе»). */
 export function getTheme(): Theme {
   try {
     const s = localStorage.getItem(KEY)
@@ -20,7 +20,7 @@ export function getTheme(): Theme {
   } catch {
     /* localStorage недоступен */
   }
-  return 'system'
+  return 'light'
 }
 
 /** Применить тему к <html> (data-theme) + обновить meta theme-color. */

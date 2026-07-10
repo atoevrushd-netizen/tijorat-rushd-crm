@@ -17,6 +17,7 @@
   --surface-2: #f4f4f8; /* поле ввода / вложенная ячейка */
   --surface-3: #e8e8ef; /* дорожка/трек, tertiary */
   --elevated: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.85); /* липкая шапка — цвет карточки + frost */
 
   --border: rgba(18, 18, 28, 0.07);
   --border-2: rgba(18, 18, 28, 0.14);
@@ -73,6 +74,7 @@
   --surface-2: #1f232c;
   --surface-3: #2b303b;
   --elevated: #1f232c;
+  --header-bg: rgba(23, 26, 33, 0.85); /* липкая шапка — цвет карточки (#171a21) + frost */
 
   --border: rgba(255, 255, 255, 0.09);
   --border-2: rgba(255, 255, 255, 0.17);

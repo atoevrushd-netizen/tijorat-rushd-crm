@@ -136,7 +136,7 @@ export function AppShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[rgba(242,242,247,0.85)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-xl sm:gap-4 sm:pl-8 sm:pr-[112px]">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-line bg-[var(--header-bg)] pb-5 pl-5 pr-[92px] pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-xl sm:gap-4 sm:pl-8 sm:pr-[112px]">
           <div className="min-w-0">
             <h1 className="truncate text-[21px] font-bold tracking-tight text-ink sm:text-[27px]">
               {title}

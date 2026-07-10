@@ -75,21 +75,30 @@ function AdminChat({ desktop }: { desktop: boolean }) {
     if (leadParam) setSelected(leadParam)
   }, [leadParam])
 
+  // Переключение список⇄диалог — это состояние UI, а не навигация: обновляем URL
+  // через replace, чтобы не плодить записи в истории. Тогда кнопка «назад» на
+  // списке выходит из чата (в кабинет), а не возвращает в предыдущий диалог.
   function select(leadId: string) {
     setSelected(leadId)
     setShowInfo(false)
-    setParams((p) => {
-      p.set('lead', leadId)
-      return p
-    })
+    setParams(
+      (p) => {
+        p.set('lead', leadId)
+        return p
+      },
+      { replace: true },
+    )
   }
   function back() {
     setSelected(null)
     setShowInfo(false)
-    setParams((p) => {
-      p.delete('lead')
-      return p
-    })
+    setParams(
+      (p) => {
+        p.delete('lead')
+        return p
+      },
+      { replace: true },
+    )
   }
 
   const item = items.find((i) => i.leadId === selected) ?? null

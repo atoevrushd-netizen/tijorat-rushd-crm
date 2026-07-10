@@ -9,20 +9,23 @@ import { Button } from '@/components/ui/Button'
 import { useT } from '@/i18n/useT'
 import { dayTitle } from '@/lib/dateI18n'
 import { TaskStatusBadge } from '@/features/tasks/TaskStatusBadge'
+import { TaskSubmitButton } from '@/features/tasks/TaskSubmitButton'
 import { useDeleteTask, useSetTaskStatus } from '@/features/tasks/useTasks'
 import type { Task } from '@/types'
 import { EditCalendarTaskModal } from './EditCalendarTaskModal'
 
-/** Панель задач выбранного дня. Админ: создаёт, отмечает «выполнено», редактирует, удаляет. Лид — только смотрит. */
+/** Панель задач выбранного дня. Админ: создаёт, отмечает «выполнено», редактирует, удаляет. Резидент — отмечает свою задачу выполненной (галочка → на проверке). */
 export function DayTasksPanel({
   date,
   tasks,
   isAdmin,
+  isOwner,
   onAdd,
 }: {
   date: string
   tasks: Task[]
   isAdmin: boolean
+  isOwner: boolean
   onAdd: () => void
 }) {
   const { t, lang } = useT()
@@ -86,7 +89,7 @@ export function DayTasksPanel({
                 key={task.id}
                 className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[12px] border border-line bg-surface-2 px-3 py-2.5 transition-colors hover:border-line-strong"
               >
-                {isAdmin && (
+                {isAdmin ? (
                   <button
                     type="button"
                     aria-label={isDone ? t('cal.unmarkDone') : t('cal.markDone')}
@@ -101,6 +104,8 @@ export function DayTasksPanel({
                   >
                     <Check size={14} strokeWidth={3} />
                   </button>
+                ) : (
+                  isOwner && <TaskSubmitButton task={task} />
                 )}
 
                 <span

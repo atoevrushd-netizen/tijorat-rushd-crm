@@ -75,6 +75,7 @@ export function CalendarTab({ userId, tabId }: { userId: string; tabId: string }
           date={selected}
           tasks={dayTasks}
           isAdmin={isAdmin}
+          isOwner={isOwner}
           onAdd={() => setCreateOpen(true)}
         />
       </div>

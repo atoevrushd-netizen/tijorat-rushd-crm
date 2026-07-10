@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -7,6 +7,13 @@ import { useT } from '@/i18n/useT'
 import { GlobalSearch } from '@/features/users/GlobalSearch'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { navForRole } from './nav'
+
+// Позиция активной вкладки на прошлом экране. Живёт на уровне модуля, т.к. у нас
+// нет общего layout — каждая страница монтирует свой AppShell заново, и без этого
+// капля не знала бы, откуда «перетечь».
+let lastNavIndex = -1
+
+const centerPct = (index: number, count: number) => ((index + 0.5) / count) * 100
 
 export type NavItem = {
   to: string
@@ -56,9 +63,25 @@ export function AppShell({
 
   // «Жидкий» таб-бар: центр активной вкладки в % ширины бара.
   const activeIndex = fullNav.findIndex((item) => isActive(item, pathname))
-  const notchX =
-    activeIndex >= 0 ? ((activeIndex + 0.5) / fullNav.length) * 100 : -25
+  const targetX = activeIndex >= 0 ? centerPct(activeIndex, fullNav.length) : -25
   const activeItem = activeIndex >= 0 ? fullNav[activeIndex] : null
+
+  // Направление движения капли (±1) — чтобы наклонять её в сторону перехода.
+  const dir =
+    activeIndex > lastNavIndex ? 1 : activeIndex < lastNavIndex ? -1 : 0
+
+  // Стартуем каплю с прошлой позиции и на следующем кадре едем к новой — так
+  // при переходе на другую страницу она «перетекает», а не прыгает.
+  const startX =
+    lastNavIndex >= 0 && activeIndex >= 0 ? centerPct(lastNavIndex, fullNav.length) : targetX
+  const [renderX, setRenderX] = useState(startX)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setRenderX(targetX))
+    return () => cancelAnimationFrame(id)
+  }, [targetX])
+  useEffect(() => {
+    lastNavIndex = activeIndex
+  }, [activeIndex])
 
   return (
     <div className="flex min-h-full">
@@ -160,14 +183,16 @@ export function AppShell({
       <nav className="fixed inset-x-0 bottom-0 z-30 md:hidden">
         {/* Пузырёк активной вкладки — «выныривает» из выемки бара */}
         <div
-          className="pointer-events-none absolute top-0 z-10 transition-[left] duration-[450ms] ease-[cubic-bezier(.3,1.2,.35,1)]"
-          style={{ left: `${notchX}%` }}
+          className="pointer-events-none absolute top-0 z-10 transition-[left] duration-[520ms] ease-[cubic-bezier(.34,1.32,.44,1)]"
+          style={{ left: `${renderX}%` }}
         >
           <div
+            key={activeItem?.to ?? 'none'}
             className={cn(
-              'flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-[55%] items-center justify-center rounded-full bg-accent-grad text-on-accent shadow-glow transition-opacity duration-200',
+              'drop-liquid flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-[55%] items-center justify-center rounded-full bg-accent-grad text-on-accent shadow-glow transition-opacity duration-200',
               activeItem ? 'opacity-100' : 'opacity-0',
             )}
+            style={{ '--dir': dir } as CSSProperties}
           >
             {activeItem && (
               <span
@@ -183,7 +208,7 @@ export function AppShell({
         {/* Бар с плавно переливающейся выемкой (mask + @property --notch-x) */}
         <div
           className="liquid-bar flex bg-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_rgba(16,24,40,.09)]"
-          style={{ '--notch-x': `${notchX}%` } as CSSProperties}
+          style={{ '--notch-x': `${renderX}%` } as CSSProperties}
         >
           {fullNav.map((item) => {
             const active = isActive(item, pathname)

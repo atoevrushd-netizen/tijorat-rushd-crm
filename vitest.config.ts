@@ -12,5 +12,7 @@ export default defineConfig({
   test: {
     include: ['src/**/*.test.ts'],
     fileParallelism: false,
+    // Полифилл Web Crypto для окружений без него (CI Node 20) — см. vitest.setup.ts.
+    setupFiles: ['./vitest.setup.ts'],
   },
 })

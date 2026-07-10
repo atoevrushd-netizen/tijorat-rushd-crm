@@ -172,7 +172,7 @@
 
 .liquid-bar {
   --notch-x: 50%;
-  transition: --notch-x 0.52s cubic-bezier(0.34, 1.32, 0.44, 1);
+  transition: --notch-x 0.5s cubic-bezier(0.33, 1, 0.68, 1);
   -webkit-mask-image: radial-gradient(
     circle 33px at var(--notch-x) -6px,
     transparent 32px,
@@ -185,34 +185,24 @@
   );
 }
 
-/* Капля активной вкладки: перетекает к новой кнопке и упруго «болтается»,
-   как настоящая капля воды. --dir (±1) наклоняет каплю в сторону движения.
-   Базовый transform (translate -50% / -55%) сохранён во всех кадрах, чтобы
-   после анимации пузырёк остался ровно по центру своей позиции. */
+/* Капля активной вкладки: нежно перетекает к новой кнопке (мягкая пружина
+   позиции) и деликатно вытягивается вдоль движения — как капля воды, без
+   резкого сквоша и тряски (ощущение уровня iOS). Базовый transform
+   (translate -50% / -55%) сохранён во всех кадрах, чтобы после анимации
+   пузырёк остался ровно по центру. */
 @keyframes drop-liquid {
   0% {
     transform: translateX(-50%) translateY(-55%) scale(1);
   }
-  26% {
-    transform: translateX(-50%) translateY(-45%) scaleX(1.44) scaleY(0.66)
-      skewX(calc(var(--dir, 0) * -13deg));
-  }
-  52% {
-    transform: translateX(-50%) translateY(-63%) scaleX(0.78) scaleY(1.24)
-      skewX(calc(var(--dir, 0) * 6deg));
-  }
-  72% {
-    transform: translateX(-50%) translateY(-51%) scaleX(1.14) scaleY(0.9);
-  }
-  88% {
-    transform: translateX(-50%) translateY(-57%) scaleX(0.95) scaleY(1.05);
+  38% {
+    transform: translateX(-50%) translateY(-55%) scaleX(1.09) scaleY(0.92);
   }
   100% {
     transform: translateX(-50%) translateY(-55%) scale(1);
   }
 }
 .drop-liquid {
-  animation: drop-liquid 0.66s cubic-bezier(0.36, 0.05, 0.24, 1);
+  animation: drop-liquid 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   .drop-liquid {

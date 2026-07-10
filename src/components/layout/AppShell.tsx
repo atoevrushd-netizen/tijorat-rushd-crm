@@ -66,10 +66,6 @@ export function AppShell({
   const targetX = activeIndex >= 0 ? centerPct(activeIndex, fullNav.length) : -25
   const activeItem = activeIndex >= 0 ? fullNav[activeIndex] : null
 
-  // Направление движения капли (±1) — чтобы наклонять её в сторону перехода.
-  const dir =
-    activeIndex > lastNavIndex ? 1 : activeIndex < lastNavIndex ? -1 : 0
-
   // Стартуем каплю с прошлой позиции и на следующем кадре едем к новой — так
   // при переходе на другую страницу она «перетекает», а не прыгает.
   const startX =
@@ -183,7 +179,7 @@ export function AppShell({
       <nav className="fixed inset-x-0 bottom-0 z-30 md:hidden">
         {/* Пузырёк активной вкладки — «выныривает» из выемки бара */}
         <div
-          className="pointer-events-none absolute top-0 z-10 transition-[left] duration-[520ms] ease-[cubic-bezier(.34,1.32,.44,1)]"
+          className="pointer-events-none absolute top-0 z-10 transition-[left] duration-[500ms] ease-[cubic-bezier(.33,1,.68,1)]"
           style={{ left: `${renderX}%` }}
         >
           <div
@@ -192,7 +188,6 @@ export function AppShell({
               'drop-liquid flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-[55%] items-center justify-center rounded-full bg-accent-grad text-on-accent shadow-glow transition-opacity duration-200',
               activeItem ? 'opacity-100' : 'opacity-0',
             )}
-            style={{ '--dir': dir } as CSSProperties}
           >
             {activeItem && (
               <span

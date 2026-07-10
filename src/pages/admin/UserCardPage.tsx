@@ -1,10 +1,20 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, KeyRound, Trash2 } from 'lucide-react'
+import {
+  Activity,
+  ChevronLeft,
+  IdCard,
+  KeyRound,
+  ListChecks,
+  MessageSquareText,
+  Trash2,
+  Trophy,
+} from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
+import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/lib/toast'
@@ -152,24 +162,31 @@ export function UserCardPage() {
           </div>
         </section>
 
-        {/* Бизнес-карта «Мои данные» лида (админ/dev видит и может править) */}
-        {user.role === 'user' && <LeadCardPanel userId={user.id} editable />}
-
-        {/* Анкеты A/B лида (просмотр админом) */}
-        <section className="space-y-3">
-          <h2 className="px-1 text-lg font-bold tracking-tight text-ink">{t('survey.title')}</h2>
-          <SurveyPanel userId={user.id} editable={false} />
-        </section>
-
-        {/* «Разбор» лида (просмотр админом) */}
-        <section className="space-y-3">
-          <h2 className="px-1 text-lg font-bold tracking-tight text-ink">{t('page.razbor')}</h2>
-          <RazborPanel userId={user.id} editable={false} />
-        </section>
-
+        {/* Календарь/Медиа — сразу под шапкой (быстрый доступ к задачам) */}
         <UserTabs userId={user.id} />
-        <AchievementsBlock userId={user.id} />
-        <ActivityFeed userId={user.id} />
+
+        {/* Остальные разделы — «шторки», по умолчанию свёрнуты (быстро найти и раскрыть нужное) */}
+        {user.role === 'user' && (
+          <CollapsibleSection title={t('leadcard.title')} icon={<IdCard size={18} />}>
+            <LeadCardPanel userId={user.id} editable />
+          </CollapsibleSection>
+        )}
+
+        <CollapsibleSection title={t('survey.qa')} icon={<MessageSquareText size={18} />}>
+          <SurveyPanel userId={user.id} editable={false} />
+        </CollapsibleSection>
+
+        <CollapsibleSection title={t('page.razbor')} icon={<ListChecks size={18} />}>
+          <RazborPanel userId={user.id} editable={false} />
+        </CollapsibleSection>
+
+        <CollapsibleSection title={t('ach.title')} icon={<Trophy size={18} />}>
+          <AchievementsBlock userId={user.id} bare />
+        </CollapsibleSection>
+
+        <CollapsibleSection title={t('activity.title')} icon={<Activity size={18} />}>
+          <ActivityFeed userId={user.id} bare />
+        </CollapsibleSection>
       </div>
 
       <EditUserModal user={editing ? user : null} onClose={() => setEditing(false)} />

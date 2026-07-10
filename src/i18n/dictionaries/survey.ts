@@ -4,6 +4,7 @@ import type { Lang } from '../types'
 const bundle: Record<Lang, Record<string, string>> = {
   tg: {
     'survey.title': 'Саволҳо',
+    'survey.qa': 'Саволу ҷавоб',
     'survey.hint': 'Ба саволҳо ҷавоб диҳед — ҷавобҳо ба таври худкор сабт мешаванд.',
     'survey.typeA': 'Анкетаи A',
     'survey.typeB': 'Анкетаи B',
@@ -30,6 +31,7 @@ const bundle: Record<Lang, Record<string, string>> = {
   },
   ru: {
     'survey.title': 'Вопросы',
+    'survey.qa': 'Вопросы и ответы',
     'survey.hint': 'Ответьте на вопросы — ответы сохраняются автоматически.',
     'survey.typeA': 'Анкета A',
     'survey.typeB': 'Анкета B',

@@ -17,20 +17,14 @@ function eventVisual(event: ActivityEvent): { icon: ReactNode; chip: string } {
   return { icon: <Activity size={15} />, chip: 'bg-accent-soft text-accent' }
 }
 
-/** Лента истории действий по пользователю. */
-export function ActivityFeed({ userId }: { userId: string }) {
+/** Лента истории действий по пользователю.
+ *  bare — без внешней карточки/заголовка (для вложения в «шторку»). */
+export function ActivityFeed({ userId, bare = false }: { userId: string; bare?: boolean }) {
   const { t, lang } = useT()
   const { data, isLoading } = useActivity(userId)
 
-  return (
-    <section className="rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-accent-soft text-accent">
-          <Activity size={16} />
-        </span>
-        <h2 className="text-[15px] font-bold text-ink">{t('activity.title')}</h2>
-      </div>
-
+  const body = (
+    <>
       {isLoading && <p className="mt-4 text-sm text-ink-3">{t('misc.loading')}</p>}
       {data && data.length === 0 && (
         <p className="mt-4 rounded-[12px] bg-surface-2 py-8 text-center text-sm text-ink-3">
@@ -68,6 +62,20 @@ export function ActivityFeed({ userId }: { userId: string }) {
           })}
         </ul>
       )}
+    </>
+  )
+
+  if (bare) return body
+
+  return (
+    <section className="rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-accent-soft text-accent">
+          <Activity size={16} />
+        </span>
+        <h2 className="text-[15px] font-bold text-ink">{t('activity.title')}</h2>
+      </div>
+      {body}
     </section>
   )
 }

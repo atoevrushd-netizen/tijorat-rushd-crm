@@ -14,8 +14,9 @@ import {
   useDeleteAchievement,
 } from './useAchievements'
 
-/** Блок достижений: просмотр — по правам, добавление — админу. */
-export function AchievementsBlock({ userId }: { userId: string }) {
+/** Блок достижений: просмотр — по правам, добавление — админу.
+ *  bare — без внешней карточки/заголовка (для вложения в «шторку»). */
+export function AchievementsBlock({ userId, bare = false }: { userId: string; bare?: boolean }) {
   const { t } = useT()
   const { role, profile } = useAuth()
   const isAdmin = canManage(role)
@@ -45,15 +46,8 @@ export function AchievementsBlock({ userId }: { userId: string }) {
     )
   }
 
-  return (
-    <section className="rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-accent-soft text-accent">
-          <Trophy size={18} />
-        </span>
-        <h2 className="text-base font-bold text-ink">{t('ach.title')}</h2>
-      </div>
-
+  const body = (
+    <>
       {isLoading && <p className="mt-4 text-sm text-ink-3">{t('misc.loading')}</p>}
       {items && items.length === 0 && (
         <div className="mt-4 flex flex-col items-center gap-2 rounded-[14px] border border-dashed border-line-strong bg-surface-2 px-4 py-8 text-center">
@@ -131,6 +125,20 @@ export function AchievementsBlock({ userId }: { userId: string }) {
           {add.error instanceof Error ? add.error.message : t('ach.addFail')}
         </p>
       )}
+    </>
+  )
+
+  if (bare) return body
+
+  return (
+    <section className="rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-accent-soft text-accent">
+          <Trophy size={18} />
+        </span>
+        <h2 className="text-base font-bold text-ink">{t('ach.title')}</h2>
+      </div>
+      {body}
     </section>
   )
 }

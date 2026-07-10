@@ -1,17 +1,43 @@
-import { useRef, useState, type KeyboardEvent } from 'react'
-import { Send, Smile } from 'lucide-react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { Pencil, Reply, Send, Smile, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import { EMOJIS } from './emoji'
-import { useSendMessage } from './useChat'
+import { useEditMessage, useSendMessage } from './useChat'
+import type { ChatMessage } from './types'
 
-/** Область ввода: текст (Enter — отправить, Shift+Enter — перенос), эмодзи, отправка. */
-export function Composer({ conversationId }: { conversationId: string }) {
+/** Ввод: текст (Enter=отправить, Shift+Enter=перенос), эмодзи, ответ/редактирование. */
+export function Composer({
+  conversationId,
+  replyTo,
+  editing,
+  onClear,
+}: {
+  conversationId: string
+  replyTo: ChatMessage | null
+  editing: ChatMessage | null
+  onClear: () => void
+}) {
   const { t } = useT()
   const send = useSendMessage(conversationId)
+  const edit = useEditMessage(conversationId)
   const [text, setText] = useState('')
   const [emojiOpen, setEmojiOpen] = useState(false)
   const taRef = useRef<HTMLTextAreaElement>(null)
+
+  // При входе в режим редактирования — подставить текст; при выходе — очистить.
+  useEffect(() => {
+    setText(editing?.body ?? '')
+    requestAnimationFrame(() => {
+      taRef.current?.focus()
+      grow()
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing?.id])
+
+  useEffect(() => {
+    if (replyTo) taRef.current?.focus()
+  }, [replyTo])
 
   function grow() {
     const ta = taRef.current
@@ -23,9 +49,14 @@ export function Composer({ conversationId }: { conversationId: string }) {
   function submit() {
     const body = text.trim()
     if (!body) return
-    send.mutate({ body, tempId: crypto.randomUUID() })
+    if (editing) {
+      edit.mutate({ id: editing.id, body })
+    } else {
+      send.mutate({ body, tempId: crypto.randomUUID(), replyToId: replyTo?.id ?? null })
+    }
     setText('')
     setEmojiOpen(false)
+    onClear()
     requestAnimationFrame(() => {
       if (taRef.current) taRef.current.style.height = 'auto'
     })
@@ -36,6 +67,7 @@ export function Composer({ conversationId }: { conversationId: string }) {
       e.preventDefault()
       submit()
     }
+    if (e.key === 'Escape' && (replyTo || editing)) onClear()
   }
 
   function addEmoji(emoji: string) {
@@ -48,6 +80,9 @@ export function Composer({ conversationId }: { conversationId: string }) {
       grow()
     })
   }
+
+  const context = editing ?? replyTo
+  const contextIsEdit = !!editing
 
   return (
     <div className="relative border-t border-line bg-surface px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:px-4">
@@ -63,6 +98,26 @@ export function Composer({ conversationId }: { conversationId: string }) {
               {e}
             </button>
           ))}
+        </div>
+      )}
+
+      {context && (
+        <div className="mb-2 flex items-center gap-2 rounded-[12px] border-l-[3px] border-accent bg-surface-2 py-1.5 pl-2.5 pr-2">
+          {contextIsEdit ? <Pencil size={14} className="flex-none text-accent" /> : <Reply size={14} className="flex-none text-accent" />}
+          <div className="min-w-0 flex-1">
+            <div className="text-[11px] font-semibold text-accent">
+              {contextIsEdit ? t('chat.editing') : t('chat.replyingTo')}
+            </div>
+            <div className="truncate text-[12.5px] text-ink-2">{context.body}</div>
+          </div>
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label={t('common.cancel')}
+            className="flex h-7 w-7 flex-none items-center justify-center rounded-full text-ink-3 hover:bg-surface-3 hover:text-ink"
+          >
+            <X size={16} />
+          </button>
         </div>
       )}
 

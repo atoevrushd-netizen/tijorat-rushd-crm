@@ -6,7 +6,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { ConversationListItem } from './ConversationListItem'
 import { useChatList } from './useChat'
 
-type Filter = 'all' | 'unread' | 'active' | 'inactive'
+type Filter = 'all' | 'unread' | 'pinned' | 'active' | 'inactive' | 'archived'
 
 /** Левая колонка: поиск, быстрые фильтры, список диалогов резидентов. */
 export function ConversationList({
@@ -24,7 +24,12 @@ export function ConversationList({
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase()
     return items.filter((it) => {
+      // Архив показываем только в его фильтре, иначе прячем.
+      if (filter === 'archived') {
+        if (!it.archived) return false
+      } else if (it.archived) return false
       if (filter === 'unread' && it.unread === 0) return false
+      if (filter === 'pinned' && !it.pinned) return false
       if (filter === 'active' && it.status !== 'active') return false
       if (filter === 'inactive' && it.status === 'active') return false
       if (!needle) return true
@@ -39,8 +44,10 @@ export function ConversationList({
   const FILTERS: { key: Filter; label: string }[] = [
     { key: 'all', label: t('chat.filterAll') },
     { key: 'unread', label: t('chat.filterUnread') },
+    { key: 'pinned', label: t('chat.filterPinned') },
     { key: 'active', label: t('chat.filterActive') },
     { key: 'inactive', label: t('chat.filterInactive') },
+    { key: 'archived', label: t('chat.filterArchived') },
   ]
 
   return (

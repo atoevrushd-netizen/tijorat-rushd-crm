@@ -50,4 +50,6 @@ export type ChatListItem = {
   unread: number
   fromMe: boolean
   pinned: boolean
+  archived: boolean
+  muted: boolean
 }

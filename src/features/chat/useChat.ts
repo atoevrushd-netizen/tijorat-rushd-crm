@@ -3,13 +3,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/features/auth/useAuth'
 import {
+  deleteMessage,
+  editMessage,
   ensureConversation,
   getConversation,
   listConversations,
   listLeads,
   listMessages,
   markRead,
+  markUnread,
   sendMessage,
+  updateConversation,
+  type ConversationPatch,
 } from './api'
 import type { ChatListItem, ConversationRow, UiMessage } from './types'
 
@@ -49,6 +54,8 @@ export function useChatList(): { items: ChatListItem[]; isLoading: boolean } {
         unread: c?.unread_for_admin ?? 0,
         fromMe: !!c?.last_sender_id && c.last_sender_id !== lead.id,
         pinned: c?.pinned ?? false,
+        archived: c?.archived ?? false,
+        muted: c?.muted ?? false,
       }
     })
 
@@ -100,9 +107,9 @@ export function useSendMessage(conversationId: string) {
   const key = ['chat', 'messages', conversationId]
 
   return useMutation({
-    mutationFn: ({ body }: { body: string; tempId: string }) =>
-      sendMessage(conversationId, profile?.id as string, body),
-    onMutate: async ({ body, tempId }) => {
+    mutationFn: ({ body, replyToId }: { body: string; tempId: string; replyToId?: string | null }) =>
+      sendMessage(conversationId, profile?.id as string, body, replyToId),
+    onMutate: async ({ body, tempId, replyToId }) => {
       await qc.cancelQueries({ queryKey: key })
       const optimistic: UiMessage = {
         id: tempId,
@@ -110,7 +117,7 @@ export function useSendMessage(conversationId: string) {
         sender_id: profile?.id ?? null,
         body,
         kind: 'text',
-        reply_to_id: null,
+        reply_to_id: replyToId ?? null,
         edited_at: null,
         deleted_at: null,
         created_at: new Date().toISOString(),
@@ -123,8 +130,20 @@ export function useSendMessage(conversationId: string) {
         (old ?? []).map((m) => (m.id === tempId ? { ...m, _status: 'error' } : m)),
       )
     },
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: key })
+    // Заменяем временный пузырь реальной строкой НА МЕСТЕ (без полного рефетча —
+    // иначе параллельные отправки/realtime могут «съесть» ещё не закоммиченные).
+    onSuccess: (data, { tempId }) => {
+      qc.setQueryData<UiMessage[]>(key, (old) => {
+        const arr = old ?? []
+        const idx = arr.findIndex((m) => m.id === tempId)
+        if (idx >= 0) {
+          const copy = arr.slice()
+          copy[idx] = data
+          return copy
+        }
+        if (arr.some((m) => m.id === data.id)) return arr
+        return [...arr, data]
+      })
       void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
       void qc.invalidateQueries({ queryKey: ['chat', 'detail', conversationId] })
     },
@@ -145,6 +164,52 @@ export function useMarkRead() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (conversationId: string) => markRead(conversationId),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] }),
+  })
+}
+
+/** Редактировать сообщение. */
+export function useEditMessage(conversationId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => editMessage(id, body),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'messages', conversationId] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+    },
+  })
+}
+
+/** Удалить сообщение (мягко). */
+export function useDeleteMessage(conversationId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteMessage(id),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'messages', conversationId] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+    },
+  })
+}
+
+/** Изменить флаги диалога (закрепить/архив/без звука) — только админ. */
+export function useUpdateConversation() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, patch }: { id: string; patch: ConversationPatch }) =>
+      updateConversation(id, patch),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'detail'] })
+    },
+  })
+}
+
+/** Отметить диалог непрочитанным (только админ). */
+export function useMarkUnread() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (conversationId: string) => markUnread(conversationId),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] }),
   })
 }

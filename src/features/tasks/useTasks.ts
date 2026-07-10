@@ -7,7 +7,9 @@ import {
   deleteTaskLink,
   listTasks,
   respondToTask,
+  reviewTask,
   setTaskStatus,
+  setTaskSubmitted,
   updateTask,
 } from './api'
 import type { CreateTaskInput, UpdateTaskInput } from './api'
@@ -126,6 +128,51 @@ export function useRespondToTask() {
       accept: boolean
       comment?: string
     }) => respondToTask(taskId, accept, comment),
+    onSuccess: () => void invalidate(),
+  })
+}
+
+/** Резидент отмечает задачу выполненной (→ submitted) или снимает отметку (→ in_progress). */
+export function useSetTaskSubmitted() {
+  const queryClient = useQueryClient()
+  const invalidate = useTasksInvalidator()
+  return useMutation({
+    mutationFn: ({ taskId, submitted }: { taskId: string; submitted: boolean }) =>
+      setTaskSubmitted(taskId, submitted),
+    // Оптимистично: галочка откликается мгновенно; при ошибке откатываем.
+    onMutate: async ({ taskId, submitted }) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      const next: TaskStatus = submitted ? 'submitted' : 'in_progress'
+      const snapshots = queryClient.getQueriesData<Task[]>({ queryKey: ['tasks'] })
+      for (const [key, list] of snapshots) {
+        if (!list) continue
+        queryClient.setQueryData<Task[]>(
+          key,
+          list.map((task) => (task.id === taskId ? { ...task, status: next } : task)),
+        )
+      }
+      return { snapshots }
+    },
+    onError: (_err, _vars, ctx) => {
+      ctx?.snapshots.forEach(([key, list]) => queryClient.setQueryData(key, list))
+    },
+    onSettled: () => void invalidate(),
+  })
+}
+
+/** Админ проверяет отправленную задачу: принять (→ done) или вернуть (→ needs_revision). */
+export function useReviewTask() {
+  const invalidate = useTasksInvalidator()
+  return useMutation({
+    mutationFn: ({
+      taskId,
+      accept,
+      comment,
+    }: {
+      taskId: string
+      accept: boolean
+      comment?: string
+    }) => reviewTask(taskId, accept, comment),
     onSuccess: () => void invalidate(),
   })
 }

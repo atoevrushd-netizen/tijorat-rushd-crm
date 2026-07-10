@@ -32,6 +32,16 @@ export function activityText(
       return t('activity.taskCreated').replace('{title}', title)
     }
     if (event.action === 'status_changed') {
+      // Понятные формулировки для ключевых переходов рабочего процесса задач.
+      if (details.to === 'submitted') {
+        return t('activity.taskSubmitted').replace('{title}', title)
+      }
+      if (details.to === 'done') {
+        return t('activity.taskApproved').replace('{title}', title)
+      }
+      if (details.to === 'needs_revision') {
+        return t('activity.taskRejected').replace('{title}', title)
+      }
       return t('activity.taskStatusChanged')
         .replace('{title}', title)
         .replace('{from}', statusLabel(t, details.from))

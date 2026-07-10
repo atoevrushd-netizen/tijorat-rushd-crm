@@ -8,7 +8,9 @@ import { taskTitle } from '@/lib/taskI18n'
 import { useT } from '@/i18n/useT'
 import { TaskStatusBadge } from './TaskStatusBadge'
 import { TaskAdminControls } from './TaskAdminControls'
+import { TaskReviewControls } from './TaskReviewControls'
 import { TaskOwnerControls } from './TaskOwnerControls'
+import { TaskOwnerCheckbox } from './TaskOwnerCheckbox'
 import { useDeleteTaskLink } from './useTasks'
 
 function typeLabel(type: string | null, t: (key: string, fallback?: string) => string): string {
@@ -28,7 +30,9 @@ export function TaskItem({
 }) {
   const { t, lang } = useT()
   const delLink = useDeleteTaskLink()
-  const canRespond = isOwner && task.status === 'sent_to_user'
+  // Резидент (владелец, не админ) видит галочку/старые кнопки; админ — проверку.
+  const asResident = isOwner && !isAdmin
+  const canRespond = asResident && task.status === 'sent_to_user'
   const dl = deadlineState(task.deadline, task.status)
 
   return (
@@ -133,8 +137,10 @@ export function TaskItem({
         {task.accepted_at && <span>{t('tasksui.accepted')} {formatDate(task.accepted_at)}</span>}
       </div>
 
+      {isAdmin && task.status === 'submitted' && <TaskReviewControls task={task} />}
       {isAdmin && <TaskAdminControls task={task} />}
       {canRespond && <TaskOwnerControls task={task} />}
+      {asResident && task.status !== 'sent_to_user' && <TaskOwnerCheckbox task={task} />}
     </div>
   )
 }

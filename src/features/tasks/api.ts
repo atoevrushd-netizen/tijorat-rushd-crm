@@ -106,3 +106,26 @@ export async function respondToTask(
   })
   if (error) throw error
 }
+
+/** Резидент отмечает свою задачу выполненной (submitted) или снимает отметку. */
+export async function setTaskSubmitted(taskId: string, submitted: boolean): Promise<void> {
+  const { error } = await supabase.rpc('set_task_submitted', {
+    p_task_id: taskId,
+    p_submitted: submitted,
+  })
+  if (error) throw error
+}
+
+/** Админ проверяет отправленную задачу: принять (done) или вернуть (needs_revision). */
+export async function reviewTask(
+  taskId: string,
+  accept: boolean,
+  comment?: string,
+): Promise<void> {
+  const { error } = await supabase.rpc('review_task', {
+    p_task_id: taskId,
+    p_accept: accept,
+    p_comment: comment ?? null,
+  })
+  if (error) throw error
+}

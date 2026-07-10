@@ -4,6 +4,7 @@ import type { Profile, TaskStatus } from '@/types'
 const STATUSES: TaskStatus[] = [
   'not_started',
   'in_progress',
+  'submitted',
   'done',
   'sent_to_user',
   'accepted_by_user',
@@ -41,6 +42,7 @@ type Counts = {
   users_active: number
   not_started: number
   in_progress: number
+  submitted: number
   done: number
   sent_to_user: number
   accepted_by_user: number
@@ -77,6 +79,7 @@ export async function getDashboard(): Promise<DashboardData> {
   const byStatus: Record<TaskStatus, number> = {
     not_started: c.not_started ?? 0,
     in_progress: c.in_progress ?? 0,
+    submitted: c.submitted ?? 0,
     done: c.done ?? 0,
     sent_to_user: c.sent_to_user ?? 0,
     accepted_by_user: c.accepted_by_user ?? 0,
@@ -98,8 +101,8 @@ export async function getDashboard(): Promise<DashboardData> {
     usersActive: c.users_active ?? 0,
     tasksTotal,
     tasksAccepted: byStatus.accepted_by_user,
-    // «В работе» = только незавершённые (done сюда не входит).
-    tasksInProgress: byStatus.in_progress + byStatus.sent_to_user,
+    // «В работе» = незавершённые: в работе, на проверке, отправленные (done не входит).
+    tasksInProgress: byStatus.in_progress + byStatus.submitted + byStatus.sent_to_user,
     tasksByStatus: byStatus,
     recentUsers: (recentUsersRes.data ?? []) as Profile[],
     recentTasks: rows.map((r) => ({

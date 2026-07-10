@@ -15,6 +15,7 @@ const PAGE_SIZE = 12
 const STATUSES: TaskStatus[] = [
   'not_started',
   'in_progress',
+  'submitted',
   'sent_to_user',
   'needs_revision',
   'accepted_by_user',

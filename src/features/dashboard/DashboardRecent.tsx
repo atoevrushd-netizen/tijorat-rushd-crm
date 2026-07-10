@@ -14,6 +14,7 @@ import type { RecentTask } from './api'
 const STATUS_DOT: Record<TaskStatus, string> = {
   not_started: 'bg-ink-3',
   in_progress: 'bg-info',
+  submitted: 'bg-warn',
   done: 'bg-success',
   sent_to_user: 'bg-warn',
   accepted_by_user: 'bg-accent',

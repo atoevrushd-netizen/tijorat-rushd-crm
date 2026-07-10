@@ -83,6 +83,7 @@ export type Tab = {
 export type TaskStatus =
   | 'not_started'
   | 'in_progress'
+  | 'submitted'
   | 'done'
   | 'sent_to_user'
   | 'accepted_by_user'

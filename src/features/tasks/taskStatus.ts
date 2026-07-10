@@ -4,6 +4,7 @@ import type { TaskStatus } from '@/types'
 export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
   not_started: 'Не начато',
   in_progress: 'В работе',
+  submitted: 'На проверке',
   done: 'Готово',
   sent_to_user: 'Отправлено пользователю',
   accepted_by_user: 'Принято пользователем',

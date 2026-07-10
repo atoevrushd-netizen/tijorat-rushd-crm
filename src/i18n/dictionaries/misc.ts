@@ -77,6 +77,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'activity.empty': 'Ҳоло рӯйдод нест.',
     'activity.taskCreated': 'Задачаи «{title}» сохта шуд',
     'activity.taskStatusChanged': 'Ҳолати задачаи «{title}»: {from} → {to}',
+    'activity.taskSubmitted': 'Задачаи «{title}» иҷрошуда қайд шуд — санҷиш лозим',
+    'activity.taskApproved': 'Задачаи «{title}» қабул шуд',
+    'activity.taskRejected': 'Задачаи «{title}» барои ислоҳ баргардонида шуд',
 
     // Уведомления (колокольчик)
     'notif.title': 'Огоҳиҳо',
@@ -186,6 +189,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'activity.empty': 'Пока нет событий.',
     'activity.taskCreated': 'Создана задача «{title}»',
     'activity.taskStatusChanged': 'Статус задачи «{title}»: {from} → {to}',
+    'activity.taskSubmitted': 'Задача «{title}» отмечена выполненной — нужна проверка',
+    'activity.taskApproved': 'Задача «{title}» принята',
+    'activity.taskRejected': 'Задача «{title}» возвращена на доработку',
 
     // Уведомления (колокольчик)
     'notif.title': 'Уведомления',

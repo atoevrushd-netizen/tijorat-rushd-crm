@@ -7,6 +7,7 @@ import {
   BellOff,
   BellRing,
   ExternalLink,
+  Info,
   MailOpen,
   MoreVertical,
   Pin,
@@ -43,6 +44,7 @@ export function ChatThreadPane({
   status,
   isAdmin,
   onBack,
+  onToggleInfo,
 }: {
   leadId: string
   name: string | null
@@ -51,6 +53,7 @@ export function ChatThreadPane({
   status: UserStatus
   isAdmin: boolean
   onBack?: () => void
+  onToggleInfo?: () => void
 }) {
   const { t } = useT()
   const { data: conversationId, isLoading, isError } = useEnsureConversation(leadId)
@@ -87,12 +90,23 @@ export function ChatThreadPane({
             {phone ? ` · ${phone}` : ''}
           </div>
         </div>
+        {isAdmin && onToggleInfo && (
+          <button
+            type="button"
+            onClick={onToggleInfo}
+            aria-label={t('chat.info')}
+            title={t('chat.info')}
+            className="flex h-9 w-9 flex-none items-center justify-center rounded-[11px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-accent"
+          >
+            <Info size={19} />
+          </button>
+        )}
         {isAdmin && (
           <Link
             to={`/admin/users/${leadId}`}
             aria-label={t('chat.openCard')}
             title={t('chat.openCard')}
-            className="flex h-9 w-9 flex-none items-center justify-center rounded-[11px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-accent"
+            className="hidden h-9 w-9 flex-none items-center justify-center rounded-[11px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-accent sm:flex"
           >
             <ExternalLink size={18} />
           </Link>

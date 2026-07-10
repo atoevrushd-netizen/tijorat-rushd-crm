@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { MessagesSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useMediaQuery } from '@/lib/useMediaQuery'
 import { AppShell } from '@/components/layout/AppShell'
 import { useAuth } from '@/features/auth/useAuth'
 import { canManage } from '@/features/auth/roles'
 import { useT } from '@/i18n/useT'
 import { ConversationList } from '@/features/chat/ConversationList'
 import { ChatThreadPane } from '@/features/chat/ChatThreadPane'
+import { ChatInfoPanel } from '@/features/chat/ChatInfoPanel'
 import { useChatList, useChatRealtime } from '@/features/chat/useChat'
 
 /** Раздел «Чат»: админ — список+диалог; резидент — свой диалог с админами. */
@@ -51,6 +53,10 @@ function AdminChat() {
   const [params, setParams] = useSearchParams()
   const leadParam = params.get('lead')
   const [selected, setSelected] = useState<string | null>(leadParam)
+  const [showInfo, setShowInfo] = useState(false)
+  // Инфопанель — колонкой только когда хватает ширины (иначе сжала бы переписку),
+  // иначе выезжающим оверлеем. Рендерим ОДИН экземпляр (одно состояние заметки).
+  const wideEnough = useMediaQuery('(min-width: 1400px)')
 
   // Открытие конкретного диалога по ?lead=<id> (например, из карточки резидента).
   useEffect(() => {
@@ -59,6 +65,7 @@ function AdminChat() {
 
   function select(leadId: string) {
     setSelected(leadId)
+    setShowInfo(false)
     setParams((p) => {
       p.set('lead', leadId)
       return p
@@ -66,6 +73,7 @@ function AdminChat() {
   }
   function back() {
     setSelected(null)
+    setShowInfo(false)
     setParams((p) => {
       p.delete('lead')
       return p
@@ -98,6 +106,7 @@ function AdminChat() {
               status={item.status}
               isAdmin
               onBack={back}
+              onToggleInfo={() => setShowInfo((v) => !v)}
             />
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
@@ -109,7 +118,24 @@ function AdminChat() {
             </div>
           )}
         </div>
+
+        {/* Инфопанель как колонка — только на очень широком экране (есть место) */}
+        {wideEnough && showInfo && item && (
+          <div className="w-[320px] flex-none border-l border-line">
+            <ChatInfoPanel leadId={item.leadId} onClose={() => setShowInfo(false)} />
+          </div>
+        )}
       </div>
+
+      {/* Иначе — выезжающий оверлей справа (единственный экземпляр панели) */}
+      {!wideEnough && showInfo && item && (
+        <div className="fixed inset-0 z-40">
+          <div className="absolute inset-0 animate-fade-in bg-black/30" onClick={() => setShowInfo(false)} />
+          <div className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] animate-sheet-right border-l border-line bg-surface shadow-sh2">
+            <ChatInfoPanel leadId={item.leadId} onClose={() => setShowInfo(false)} />
+          </div>
+        </div>
+      )}
     </AppShell>
   )
 }

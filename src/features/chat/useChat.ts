@@ -13,9 +13,12 @@ import {
   markRead,
   markUnread,
   sendMessage,
+  setLeadNote,
+  setLeadStatus,
   updateConversation,
   type ConversationPatch,
 } from './api'
+import type { Profile, UserStatus } from '@/types'
 import type { ChatListItem, ConversationRow, UiMessage } from './types'
 
 /** Диалоги из представления (админ — все, лид — свой). */
@@ -212,6 +215,40 @@ export function useMarkUnread() {
     mutationFn: (conversationId: string) => markUnread(conversationId),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] }),
   })
+}
+
+/**
+ * Сменить статус лида из чата. Статус меняем ОПТИМИСТИЧНО в кэше профиля
+ * (без рефетча ['user', leadId]) — иначе рефетч сбросил бы недописанную заметку.
+ * Списки чата обновляем (там показан статус-точка).
+ */
+export function useSetLeadStatus(leadId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (status: UserStatus) => setLeadStatus(leadId, status),
+    onMutate: (status: UserStatus) => {
+      qc.setQueryData<Profile>(['user', leadId], (old) => (old ? { ...old, status } : old))
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'leads'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+    },
+  })
+}
+
+/**
+ * Сохранить внутреннюю заметку. Кэш профиля синхронизируем на месте
+ * (setQueryData, без рефетча) — так `initial` заметки не расходится с БД и
+ * позднейшие обновления не сбрасывают набранный текст.
+ */
+export function useSetLeadNote(leadId: string) {
+  const qc = useQueryClient()
+  return async (note: string) => {
+    await setLeadNote(leadId, note)
+    qc.setQueryData<Profile>(['user', leadId], (old) =>
+      old ? { ...old, admin_comment: note.trim() || null } : old,
+    )
+  }
 }
 
 /**

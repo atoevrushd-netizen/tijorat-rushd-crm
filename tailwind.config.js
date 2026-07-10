@@ -86,6 +86,10 @@ export default {
           from: { transform: 'translateY(100%)' },
           to: { transform: 'translateY(0)' },
         },
+        sheetRight: {
+          from: { transform: 'translateX(100%)' },
+          to: { transform: 'translateX(0)' },
+        },
         shimmer: {
           '100%': { backgroundPosition: '-200% 0' },
         },
@@ -104,6 +108,7 @@ export default {
         pop: 'pop .32s cubic-bezier(.34,1.56,.64,1) backwards',
         'fade-in': 'fadeIn .25s ease backwards',
         'sheet-up': 'sheetUp .34s cubic-bezier(.32,.72,0,1) backwards',
+        'sheet-right': 'sheetRight .3s cubic-bezier(.32,.72,0,1) backwards',
         shimmer: 'shimmer 1.4s linear infinite',
         'ring-pulse': 'ringPulse 1.8s cubic-bezier(.2,.8,.2,1) infinite',
         'bar-grow': 'barGrow .6s cubic-bezier(.2,.8,.2,1) both',

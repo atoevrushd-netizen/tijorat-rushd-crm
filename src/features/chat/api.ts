@@ -124,3 +124,18 @@ export async function markUnread(conversationId: string): Promise<void> {
   const { error } = await supabase.rpc('chat_mark_unread', { p_conversation: conversationId })
   if (error) throw error
 }
+
+/** Сменить статус лида из чата (RLS: только админ на строке резидента). */
+export async function setLeadStatus(leadId: string, status: UserStatus): Promise<void> {
+  const { error } = await supabase.from('profiles').update({ status }).eq('id', leadId)
+  if (error) throw error
+}
+
+/** Внутренняя заметка о лиде (поле admin_comment, видят только админы). */
+export async function setLeadNote(leadId: string, note: string): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ admin_comment: note.trim() || null })
+    .eq('id', leadId)
+  if (error) throw error
+}

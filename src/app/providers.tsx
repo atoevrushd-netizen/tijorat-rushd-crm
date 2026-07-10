@@ -33,9 +33,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <LanguageProvider>
         <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <AuthProvider>{children}</AuthProvider>
+          {/* Внутри Router — переключатель языка использует useLocation (прячется на моб. чате) */}
+          <LanguageToggle />
         </BrowserRouter>
-        {/* Глобальный переключатель языка — всегда в правом верхнем углу */}
-        <LanguageToggle />
         <Toaster />
         <ConfirmDialog />
       </LanguageProvider>

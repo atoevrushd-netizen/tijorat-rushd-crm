@@ -60,6 +60,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.internalNote': 'Қайди дохилӣ (танҳо барои админҳо)',
     'chat.internalNotePlaceholder': 'Қайд дар бораи резидент…',
     'chat.openFullCard': 'Кушодани корти пурра',
+    'chat.supportTitle': 'Маъмурият',
   },
   ru: {
     'nav.chat': 'Чат',
@@ -119,6 +120,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.internalNote': 'Внутренняя заметка (только для админов)',
     'chat.internalNotePlaceholder': 'Заметка о резиденте…',
     'chat.openFullCard': 'Открыть полную карточку',
+    'chat.supportTitle': 'Администрация',
   },
 }
 

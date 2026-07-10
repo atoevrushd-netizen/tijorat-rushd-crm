@@ -1,4 +1,6 @@
+import { useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useMediaQuery } from '@/lib/useMediaQuery'
 import { useT } from './useT'
 import { LANGS, LANG_LABEL, LANG_SHORT } from './types'
 
@@ -6,10 +8,17 @@ import { LANGS, LANG_LABEL, LANG_SHORT } from './types'
  * Переключатель языка (ТҶ | РУ) — сегментированный тумблер с плавно
  * скользящим индикатором. Зафиксирован в правом верхнем углу и присутствует
  * на всех экранах (в т.ч. на странице входа), всегда на одном месте.
+ * Скрыт на полноэкранном мобильном чате — там он перекрыл бы шапку диалога.
  */
 export function LanguageToggle() {
   const { lang, setLang, t } = useT()
+  const { pathname } = useLocation()
+  // Тот же порог, что и полноэкранный моб. чат в ChatPage (min-width:768px),
+  // чтобы не было «мёртвой зоны» на дробной ширине ~767.5px.
+  const desktop = useMediaQuery('(min-width: 768px)')
   const activeIndex = LANGS.indexOf(lang)
+
+  if (!desktop && pathname.startsWith('/chat')) return null
 
   return (
     <div
@@ -17,7 +26,7 @@ export function LanguageToggle() {
       role="group"
       aria-label={t('common.language')}
     >
-      <div className="relative flex rounded-full border border-line bg-[rgba(255,255,255,.85)] p-[3px] shadow-sh1 backdrop-blur-md">
+      <div className="relative flex rounded-full border border-line bg-[var(--header-bg)] p-[3px] shadow-sh1 backdrop-blur-md">
         {/* Скользящий индикатор активного языка */}
         <span
           aria-hidden

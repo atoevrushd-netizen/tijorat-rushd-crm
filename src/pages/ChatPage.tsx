@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { MessagesSquare } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useNavigate, useSearchParams, type NavigateFunction } from 'react-router-dom'
+import { ArrowLeft, MessagesSquare } from 'lucide-react'
 import { useMediaQuery } from '@/lib/useMediaQuery'
 import { AppShell } from '@/components/layout/AppShell'
 import { useAuth } from '@/features/auth/useAuth'
@@ -12,53 +11,66 @@ import { ChatThreadPane } from '@/features/chat/ChatThreadPane'
 import { ChatInfoPanel } from '@/features/chat/ChatInfoPanel'
 import { useChatList, useChatRealtime } from '@/features/chat/useChat'
 
-/** Раздел «Чат»: админ — список+диалог; резидент — свой диалог с админами. */
+/** Выйти из чата: назад по истории, а если чат открыт первым (deep-link/refresh)
+ *  — на главную (иначе на телефоне без нижнего меню выйти было бы некуда). */
+function exitChat(navigate: NavigateFunction) {
+  const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
+  if (idx > 0) navigate(-1)
+  else navigate('/')
+}
+
+/** Раздел «Чат». На телефоне — отдельное полноэкранное окно (без нижнего меню
+ *  и общей шапки, только кнопка «назад»); на ПК/планшете — внутри каркаса. */
 export function ChatPage() {
   const { profile, role } = useAuth()
   const isAdmin = canManage(role)
-
+  const desktop = useMediaQuery('(min-width: 768px)')
   useChatRealtime(!!profile?.id)
-
   if (!profile) return null
-  if (!isAdmin) return <LeadChat />
-
-  return <AdminChat />
+  return isAdmin ? <AdminChat desktop={desktop} /> : <LeadChat desktop={desktop} />
 }
 
-/** Резидент: единственный диалог с администраторами. */
-function LeadChat() {
+/** Резидент: один диалог с администраторами. */
+function LeadChat({ desktop }: { desktop: boolean }) {
   const { t } = useT()
   const { profile } = useAuth()
+  const navigate = useNavigate()
   if (!profile) return null
+
+  const pane = (
+    <ChatThreadPane
+      leadId={profile.id}
+      name={t('chat.supportTitle')}
+      photo={null}
+      phone={null}
+      status={profile.status}
+      isAdmin={false}
+      onBack={!desktop ? () => exitChat(navigate) : undefined}
+    />
+  )
+
+  if (!desktop) return <div className="flex h-[100dvh] flex-col bg-surface">{pane}</div>
+
   return (
     <AppShell title={t('page.chat')}>
       <div className="h-[calc(100dvh-14rem)] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1 md:h-[calc(100dvh-9.5rem)]">
-        <ChatThreadPane
-          leadId={profile.id}
-          name={profile.full_name}
-          photo={profile.photo_url}
-          phone={profile.phone}
-          status={profile.status}
-          isAdmin={false}
-        />
+        {pane}
       </div>
     </AppShell>
   )
 }
 
 /** Админ/разработчик: список резидентов + выбранный диалог. */
-function AdminChat() {
+function AdminChat({ desktop }: { desktop: boolean }) {
   const { t } = useT()
   const { items } = useChatList()
+  const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const leadParam = params.get('lead')
   const [selected, setSelected] = useState<string | null>(leadParam)
   const [showInfo, setShowInfo] = useState(false)
-  // Инфопанель — колонкой только когда хватает ширины (иначе сжала бы переписку),
-  // иначе выезжающим оверлеем. Рендерим ОДИН экземпляр (одно состояние заметки).
   const wideEnough = useMediaQuery('(min-width: 1400px)')
 
-  // Открытие конкретного диалога по ?lead=<id> (например, из карточки резидента).
   useEffect(() => {
     if (leadParam) setSelected(leadParam)
   }, [leadParam])
@@ -82,33 +94,68 @@ function AdminChat() {
 
   const item = items.find((i) => i.leadId === selected) ?? null
 
+  const infoOverlay =
+    showInfo && item ? (
+      <div className="fixed inset-0 z-50">
+        <div className="absolute inset-0 animate-fade-in bg-black/30" onClick={() => setShowInfo(false)} />
+        <div className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] animate-sheet-right border-l border-line bg-surface shadow-sh2">
+          <ChatInfoPanel leadId={item.leadId} onClose={() => setShowInfo(false)} />
+        </div>
+      </div>
+    ) : null
+
+  const thread = item ? (
+    <ChatThreadPane
+      leadId={item.leadId}
+      name={item.name}
+      photo={item.photo}
+      phone={item.phone}
+      status={item.status}
+      isAdmin
+      onBack={back}
+      onToggleInfo={() => setShowInfo((v) => !v)}
+    />
+  ) : null
+
+  // ── Телефон: полноэкранное окно, список ⇄ диалог, только кнопка «назад» ──
+  if (!desktop) {
+    return (
+      <div className="flex h-[100dvh] flex-col bg-surface">
+        {!item ? (
+          <>
+            <div className="flex items-center gap-1 border-b border-line px-2 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))]">
+              <button
+                type="button"
+                onClick={() => exitChat(navigate)}
+                aria-label={t('chat.back')}
+                className="flex h-10 w-10 flex-none items-center justify-center rounded-[12px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+              >
+                <ArrowLeft size={21} />
+              </button>
+              <span className="text-[18px] font-bold text-ink">{t('page.chat')}</span>
+            </div>
+            <div className="min-h-0 flex-1">
+              <ConversationList selectedLeadId={selected} onSelect={select} />
+            </div>
+          </>
+        ) : (
+          thread
+        )}
+        {infoOverlay}
+      </div>
+    )
+  }
+
+  // ── ПК/планшет: внутри каркаса, список + диалог (+ инфопанель) ──
   return (
     <AppShell title={t('page.chat')}>
-      <div className="flex h-[calc(100dvh-14rem)] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1 md:h-[calc(100dvh-9.5rem)]">
-        {/* Список: на мобильном скрыт, когда открыт диалог */}
-        <div
-          className={cn(
-            'w-full flex-col border-r border-line md:flex md:w-[340px] md:flex-none',
-            selected ? 'hidden md:flex' : 'flex',
-          )}
-        >
+      <div className="flex h-[calc(100dvh-9.5rem)] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
+        <div className="flex w-[340px] flex-none flex-col border-r border-line">
           <ConversationList selectedLeadId={selected} onSelect={select} />
         </div>
 
-        {/* Диалог: на мобильном показан, когда выбран */}
-        <div className={cn('min-w-0 flex-1', selected ? 'flex' : 'hidden md:flex')}>
-          {item ? (
-            <ChatThreadPane
-              leadId={item.leadId}
-              name={item.name}
-              photo={item.photo}
-              phone={item.phone}
-              status={item.status}
-              isAdmin
-              onBack={back}
-              onToggleInfo={() => setShowInfo((v) => !v)}
-            />
-          ) : (
+        <div className="flex min-w-0 flex-1">
+          {thread ?? (
             <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
               <span className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-accent-soft text-accent">
                 <MessagesSquare size={28} />
@@ -119,7 +166,6 @@ function AdminChat() {
           )}
         </div>
 
-        {/* Инфопанель как колонка — только на очень широком экране (есть место) */}
         {wideEnough && showInfo && item && (
           <div className="w-[320px] flex-none border-l border-line">
             <ChatInfoPanel leadId={item.leadId} onClose={() => setShowInfo(false)} />
@@ -127,15 +173,7 @@ function AdminChat() {
         )}
       </div>
 
-      {/* Иначе — выезжающий оверлей справа (единственный экземпляр панели) */}
-      {!wideEnough && showInfo && item && (
-        <div className="fixed inset-0 z-40">
-          <div className="absolute inset-0 animate-fade-in bg-black/30" onClick={() => setShowInfo(false)} />
-          <div className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] animate-sheet-right border-l border-line bg-surface shadow-sh2">
-            <ChatInfoPanel leadId={item.leadId} onClose={() => setShowInfo(false)} />
-          </div>
-        </div>
-      )}
+      {!wideEnough && infoOverlay}
     </AppShell>
   )
 }

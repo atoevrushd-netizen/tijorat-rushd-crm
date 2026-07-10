@@ -4,6 +4,7 @@ import {
   FileText,
   IdCard,
   LayoutDashboard,
+  MessageCircle,
   Settings,
   Terminal,
   Users,
@@ -23,6 +24,7 @@ export const devNavItem: NavItem = {
 export const adminNav: NavItem[] = [
   { to: '/admin', labelKey: 'nav.dashboard', icon: <LayoutDashboard size={15} /> },
   { to: '/admin/users', labelKey: 'nav.users', match: '/admin/users', icon: <Users size={15} /> },
+  { to: '/chat', labelKey: 'nav.chat', match: '/chat', icon: <MessageCircle size={15} /> },
   { to: '/answers', labelKey: 'nav.answers', match: '/answers', icon: <ClipboardList size={15} /> },
   { to: '/admin/auto-tasks', labelKey: 'nav.autotasks', icon: <CalendarClock size={15} /> },
   { to: '/settings', labelKey: 'nav.settings', icon: <Settings size={15} /> },
@@ -32,6 +34,7 @@ export const adminNav: NavItem[] = [
  * поэтому раздела «Ответы всех» здесь нет — он только у админа. */
 export const userNav: NavItem[] = [
   { to: '/cabinet', labelKey: 'nav.myCabinet', icon: <LayoutDashboard size={15} /> },
+  { to: '/chat', labelKey: 'nav.chat', match: '/chat', icon: <MessageCircle size={15} /> },
   { to: '/my-data', labelKey: 'nav.myData', icon: <IdCard size={15} /> },
   { to: '/survey', labelKey: 'nav.mySurvey', icon: <ClipboardList size={15} /> },
   { to: '/razbor', labelKey: 'nav.razbor', icon: <FileText size={15} /> },

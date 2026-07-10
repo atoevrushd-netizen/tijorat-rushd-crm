@@ -41,6 +41,9 @@ const RazborPage = lazy(() =>
 const SettingsPage = lazy(() =>
   import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
+const ChatPage = lazy(() =>
+  import('@/pages/ChatPage').then((m) => ({ default: m.ChatPage })),
+)
 const AnswersListPage = lazy(() =>
   import('@/pages/AnswersListPage').then((m) => ({ default: m.AnswersListPage })),
 )
@@ -59,6 +62,8 @@ export function AppRouter() {
           <Route path="/" element={<HomeRedirect />} />
           {/* Настройки доступны и админу, и лиду — содержимое зависит от роли */}
           <Route path="/settings" element={<SettingsPage />} />
+          {/* Чат: админ ↔ резидент. Содержимое зависит от роли (список/один диалог) */}
+          <Route path="/chat" element={<ChatPage />} />
 
           <Route element={<RequireRole role="admin" />}>
             <Route path="/admin" element={<DashboardPage />} />

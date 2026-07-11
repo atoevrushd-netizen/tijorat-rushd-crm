@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Search, MessageSquareOff } from 'lucide-react'
+import { Megaphone, Search, MessageSquareOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import { Spinner } from '@/components/ui/Spinner'
 import { ConversationListItem } from './ConversationListItem'
+import { BroadcastModal } from './BroadcastModal'
 import { useChatList } from './useChat'
 
 type Filter = 'all' | 'unread' | 'pinned' | 'active' | 'inactive' | 'archived'
@@ -20,6 +21,7 @@ export function ConversationList({
   const { items, isLoading } = useChatList()
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
+  const [bcOpen, setBcOpen] = useState(false)
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -53,14 +55,25 @@ export function ConversationList({
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-line p-3">
-        <div className="relative">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t('chat.searchPlaceholder')}
-            className="w-full rounded-[13px] bg-surface-2 py-2.5 pl-9 pr-3 text-[13.5px] text-ink outline-none transition placeholder:text-ink-3 focus:ring-2 focus:ring-accent-ring"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t('chat.searchPlaceholder')}
+              className="w-full rounded-[13px] bg-surface-2 py-2.5 pl-9 pr-3 text-[13.5px] text-ink outline-none transition placeholder:text-ink-3 focus:ring-2 focus:ring-accent-ring"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setBcOpen(true)}
+            aria-label={t('bc.title')}
+            title={t('bc.title')}
+            className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] bg-accent-grad text-on-accent shadow-glow transition-all duration-150 ease-ios hover:brightness-[1.06] active:scale-90"
+          >
+            <Megaphone size={18} />
+          </button>
         </div>
         <div className="mt-2.5 flex gap-1.5 overflow-x-auto pb-0.5">
           {FILTERS.map((f) => (
@@ -102,6 +115,8 @@ export function ConversationList({
           ))
         )}
       </div>
+
+      <BroadcastModal open={bcOpen} onClose={() => setBcOpen(false)} />
     </div>
   )
 }

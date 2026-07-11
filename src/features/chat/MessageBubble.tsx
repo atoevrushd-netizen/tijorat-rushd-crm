@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, CheckCheck, Clock3, Copy, MoreVertical, Pencil, Reply, RotateCw, Trash2 } from 'lucide-react'
+import { Check, CheckCheck, Clock3, Copy, Megaphone, MoreVertical, Pencil, Reply, RotateCw, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
@@ -87,6 +87,19 @@ export function MessageBubble({
             <span className="line-clamp-2 break-words">
               {repliedTo.deleted_at ? t('chat.messageDeleted') : repliedTo.body}
             </span>
+          </div>
+        )}
+
+        {/* Метку «Рассылка» видит только админ — резиденту незачем знать, что
+            сообщение массовое (для него это обычное личное сообщение). */}
+        {message.broadcast_id && isAdmin && (
+          <div
+            className={cn(
+              'mb-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide',
+              mine ? 'text-white/80' : 'text-accent',
+            )}
+          >
+            <Megaphone size={11} /> {t('bc.badge')}
           </div>
         )}
 

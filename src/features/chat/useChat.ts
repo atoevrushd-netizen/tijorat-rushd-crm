@@ -10,9 +10,13 @@ import {
   listConversations,
   listLeads,
   listMessages,
+  audienceCount,
   getSignedUrl,
+  listBroadcasts,
   markRead,
   markUnread,
+  resendBroadcast,
+  sendBroadcast,
   sendFileMessage,
   sendMessage,
   setLeadNote,
@@ -21,6 +25,7 @@ import {
   type ConversationPatch,
   type UploadedFile,
 } from './api'
+import type { Audience } from './types'
 import type { Profile, UserStatus } from '@/types'
 import type { ChatListItem, ConversationRow, FileMeta, UiMessage } from './types'
 
@@ -132,6 +137,7 @@ export function useSendMessage(conversationId: string) {
         attachment_size: null,
         attachment_mime: null,
         attachment_meta: null,
+        broadcast_id: null,
         _status: 'sending',
       }
       qc.setQueryData<UiMessage[]>(key, (old) => [...(old ?? []), optimistic])
@@ -300,27 +306,83 @@ export function useSetLeadNote(leadId: string) {
   }
 }
 
+/** История рассылок со статистикой. */
+export function useBroadcasts(enabled: boolean) {
+  return useQuery({ queryKey: ['chat', 'broadcasts'], queryFn: listBroadcasts, enabled })
+}
+
 /**
- * Realtime: любые изменения chat_messages/chat_conversations обновляют списки и
- * открытую ленту. RLS фильтрует, что клиент реально получает (лид — только своё).
+ * Кол-во получателей аудитории (для предпросмотра). Для «выбранных» считаем на
+ * клиенте (по размеру набора) — потому вызывающий отключает запрос через enabled,
+ * чтобы не бить RPC на каждый клик по чекбоксу.
+ */
+export function useAudienceCount(audience: Audience, leadIds: string[], enabled = true) {
+  return useQuery({
+    queryKey: ['chat', 'audience', audience, leadIds.slice().sort().join(',')],
+    queryFn: () => audienceCount(audience, leadIds),
+    enabled,
+  })
+}
+
+/** Отправить рассылку. */
+export function useSendBroadcast() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ audience, leadIds, body }: { audience: Audience; leadIds: string[]; body: string }) =>
+      sendBroadcast(audience, leadIds, body),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'broadcasts'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+    },
+  })
+}
+
+/** Повторить недоставленным. */
+export function useResendBroadcast() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => resendBroadcast(id),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'broadcasts'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+    },
+  })
+}
+
+/**
+ * Realtime: изменения chat_messages/chat_conversations обновляют списки и ленту.
+ * RLS фильтрует, что клиент реально получает (лид — только своё). Рассылка
+ * вставляет N сообщений одной транзакцией → ~2N событий, поэтому:
+ *  - ленту сообщений инвалидируем ТОЧЕЧНО по затронутому диалогу (открытая лента
+ *    не рефетчится зря — соседние диалоги неактивны и просто помечаются stale);
+ *  - списки (conversations/detail) коалесцируем — один рефреш на всплеск.
  */
 export function useChatRealtime(enabled: boolean): void {
   const qc = useQueryClient()
   useEffect(() => {
     if (!enabled) return
+    let listTimer: ReturnType<typeof setTimeout> | null = null
+    const bumpLists = () => {
+      if (listTimer) return
+      listTimer = setTimeout(() => {
+        listTimer = null
+        void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+        void qc.invalidateQueries({ queryKey: ['chat', 'detail'] })
+      }, 250)
+    }
     const ch = supabase
       .channel('chat_stream')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_messages' }, () => {
-        void qc.invalidateQueries({ queryKey: ['chat', 'messages'] })
-        void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
-        void qc.invalidateQueries({ queryKey: ['chat', 'detail'] })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_messages' }, (payload) => {
+        const cid = (payload.new as { conversation_id?: string } | null)?.conversation_id
+        if (cid) void qc.invalidateQueries({ queryKey: ['chat', 'messages', cid] })
+        bumpLists()
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_conversations' }, () => {
-        void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
-        void qc.invalidateQueries({ queryKey: ['chat', 'detail'] })
+        bumpLists()
       })
       .subscribe()
     return () => {
+      if (listTimer) clearTimeout(listTimer)
       void supabase.removeChannel(ch)
     }
   }, [enabled, qc])

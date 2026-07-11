@@ -16,10 +16,29 @@ export type ChatMessage = {
   attachment_size: number | null
   attachment_mime: string | null
   attachment_meta: FileMeta | null
+  broadcast_id: string | null
 }
 
 /** Метаданные вложения (для голосовых: длительность и пики звуковой волны). */
 export type FileMeta = { duration?: number; peaks?: number[] }
+
+/** Аудитория массовой рассылки. */
+export type Audience = 'all' | 'active' | 'inactive' | 'selected'
+
+/** Строка представления chat_broadcast_view (рассылка + статистика). */
+export type BroadcastRow = {
+  id: string
+  author_id: string | null
+  body: string
+  audience: Audience
+  recipient_count: number
+  status: 'sending' | 'done' | 'partial'
+  created_at: string
+  author_name: string | null
+  delivered: number
+  errors: number
+  read_count: number
+}
 
 /** Сообщение с клиентским статусом отправки (оптимистичные/ошибочные). */
 export type UiMessage = ChatMessage & { _status?: 'sending' | 'error' }

@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { UserStatus } from '@/types'
-import type { ChatMessage, ConversationRow, FileMeta } from './types'
+import type { Audience, BroadcastRow, ChatMessage, ConversationRow, FileMeta } from './types'
 
 /** Все диалоги (для админа — все, для лида — свой). */
 export async function listConversations(): Promise<ConversationRow[]> {
@@ -206,6 +206,51 @@ export async function sendFileMessage(
     .single()
   if (error) throw error
   return data as ChatMessage
+}
+
+// ── Массовые рассылки ───────────────────────────────────────────────────────
+
+/** Сколько получателей у выбранной аудитории (для предпросмотра). */
+export async function audienceCount(audience: Audience, leadIds: string[]): Promise<number> {
+  const { data, error } = await supabase.rpc('broadcast_audience_count', {
+    p_audience: audience,
+    p_lead_ids: leadIds,
+  })
+  if (error) throw error
+  return (data as number) ?? 0
+}
+
+/** Отправить рассылку. Возвращает id и счётчики доставки. */
+export async function sendBroadcast(
+  audience: Audience,
+  leadIds: string[],
+  body: string,
+): Promise<{ id: string; delivered: number; errors: number }> {
+  const { data, error } = await supabase.rpc('send_broadcast', {
+    p_audience: audience,
+    p_lead_ids: leadIds,
+    p_body: body,
+  })
+  if (error) throw error
+  return data as { id: string; delivered: number; errors: number }
+}
+
+/** Повторно отправить тем, кому не доставлено. */
+export async function resendBroadcast(id: string): Promise<{ resent: number; errors: number }> {
+  const { data, error } = await supabase.rpc('resend_broadcast', { p_broadcast: id })
+  if (error) throw error
+  return data as { resent: number; errors: number }
+}
+
+/** История рассылок со статистикой. */
+export async function listBroadcasts(): Promise<BroadcastRow[]> {
+  const { data, error } = await supabase
+    .from('chat_broadcast_view')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50)
+  if (error) throw error
+  return (data ?? []) as BroadcastRow[]
 }
 
 /**

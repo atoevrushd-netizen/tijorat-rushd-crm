@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Archive,
@@ -12,6 +12,7 @@ import {
   MoreVertical,
   Pin,
   PinOff,
+  Upload,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
@@ -59,15 +60,52 @@ export function ChatThreadPane({
   const { data: conversationId, isLoading, isError } = useEnsureConversation(leadId)
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null)
   const [editing, setEditing] = useState<ChatMessage | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const dragCount = useRef(0)
 
-  // Смена диалога — сбросить режимы ответа/правки.
+  // Смена диалога — сбросить режимы ответа/правки/вложение.
   useEffect(() => {
     setReplyTo(null)
     setEditing(null)
+    setPendingFile(null)
   }, [leadId])
 
+  const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes('Files')
+  function onDragEnter(e: React.DragEvent) {
+    if (!hasFiles(e)) return
+    e.preventDefault()
+    dragCount.current += 1
+    setDragging(true)
+  }
+  function onDragLeave(e: React.DragEvent) {
+    if (!hasFiles(e)) return
+    dragCount.current -= 1
+    if (dragCount.current <= 0) setDragging(false)
+  }
+  function onDrop(e: React.DragEvent) {
+    if (!hasFiles(e)) return
+    e.preventDefault()
+    dragCount.current = 0
+    setDragging(false)
+    const f = e.dataTransfer?.files?.[0]
+    if (f) setPendingFile(f)
+  }
+
   return (
-    <div className="flex h-full min-w-0 flex-col bg-bg-grad">
+    <div
+      className="relative flex h-full min-w-0 flex-col bg-bg-grad"
+      onDragEnter={onDragEnter}
+      onDragOver={(e) => hasFiles(e) && e.preventDefault()}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+    >
+      {dragging && conversationId && (
+        <div className="pointer-events-none absolute inset-2 z-30 flex flex-col items-center justify-center gap-2 rounded-[18px] border-2 border-dashed border-accent bg-accent-soft/70 backdrop-blur-sm">
+          <Upload size={30} className="text-accent" />
+          <p className="text-[14px] font-bold text-accent">{t('chat.dropHere')}</p>
+        </div>
+      )}
       <div className="flex items-center gap-3 border-b border-line bg-surface px-3 pb-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] sm:px-4">
         {onBack && (
           <button
@@ -133,6 +171,7 @@ export function ChatThreadPane({
             }}
             onStartEdit={(m) => {
               setReplyTo(null)
+              setPendingFile(null)
               setEditing(m)
             }}
           />
@@ -141,6 +180,8 @@ export function ChatThreadPane({
             conversationId={conversationId}
             replyTo={replyTo}
             editing={editing}
+            pendingFile={pendingFile}
+            onPendingFileChange={setPendingFile}
             onClear={() => {
               setReplyTo(null)
               setEditing(null)

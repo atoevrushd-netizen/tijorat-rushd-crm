@@ -11,6 +11,10 @@ export type ChatMessage = {
   edited_at: string | null
   deleted_at: string | null
   created_at: string
+  attachment_path: string | null
+  attachment_name: string | null
+  attachment_size: number | null
+  attachment_mime: string | null
 }
 
 /** Сообщение с клиентским статусом отправки (оптимистичные/ошибочные). */

@@ -61,6 +61,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.internalNotePlaceholder': 'Қайд дар бораи резидент…',
     'chat.openFullCard': 'Кушодани корти пурра',
     'chat.supportTitle': 'Маъмурият',
+    'chat.file': 'Файл',
+    'chat.fileError': 'Боркунии файл нашуд',
+    'chat.attach': 'Замима кардани файл',
+    'chat.captionPlaceholder': 'Тавзеҳ илова кунед…',
+    'chat.uploadError': 'Фиристодани файл нашуд',
+    'chat.dropHere': 'Файлро барои замима раҳо кунед',
   },
   ru: {
     'nav.chat': 'Чат',
@@ -121,6 +127,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.internalNotePlaceholder': 'Заметка о резиденте…',
     'chat.openFullCard': 'Открыть полную карточку',
     'chat.supportTitle': 'Администрация',
+    'chat.file': 'Файл',
+    'chat.fileError': 'Не удалось загрузить файл',
+    'chat.attach': 'Прикрепить файл',
+    'chat.captionPlaceholder': 'Добавьте подпись…',
+    'chat.uploadError': 'Не удалось отправить файл',
+    'chat.dropHere': 'Отпустите файл, чтобы прикрепить',
   },
 }
 

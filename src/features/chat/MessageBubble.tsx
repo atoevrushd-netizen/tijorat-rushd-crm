@@ -3,6 +3,7 @@ import { Check, CheckCheck, Clock3, Copy, MoreVertical, Pencil, Reply, RotateCw,
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
+import { Attachment } from './Attachment'
 import { timeHM } from './chatFormat'
 import type { ChatMessage, UiMessage } from './types'
 
@@ -88,9 +89,17 @@ export function MessageBubble({
           </div>
         )}
 
-        <div className="whitespace-pre-wrap break-words text-[14.5px] leading-relaxed">
-          {message.body}
-        </div>
+        {message.attachment_path && (
+          <div className={cn(message.body ? 'mb-1.5' : '')}>
+            <Attachment message={message} mine={mine} />
+          </div>
+        )}
+
+        {message.body && (
+          <div className="whitespace-pre-wrap break-words text-[14.5px] leading-relaxed">
+            {message.body}
+          </div>
+        )}
         <div
           className={cn(
             'mt-0.5 flex items-center justify-end gap-1 text-[10.5px]',

@@ -10,13 +10,16 @@ import {
   listConversations,
   listLeads,
   listMessages,
+  getSignedUrl,
   markRead,
   markUnread,
+  sendFileMessage,
   sendMessage,
   setLeadNote,
   setLeadStatus,
   updateConversation,
   type ConversationPatch,
+  type UploadedFile,
 } from './api'
 import type { Profile, UserStatus } from '@/types'
 import type { ChatListItem, ConversationRow, UiMessage } from './types'
@@ -124,6 +127,10 @@ export function useSendMessage(conversationId: string) {
         edited_at: null,
         deleted_at: null,
         created_at: new Date().toISOString(),
+        attachment_path: null,
+        attachment_name: null,
+        attachment_size: null,
+        attachment_mime: null,
         _status: 'sending',
       }
       qc.setQueryData<UiMessage[]>(key, (old) => [...(old ?? []), optimistic])
@@ -150,6 +157,35 @@ export function useSendMessage(conversationId: string) {
       void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
       void qc.invalidateQueries({ queryKey: ['chat', 'detail', conversationId] })
     },
+  })
+}
+
+/** Отправить сообщение-вложение (после успешной загрузки файла). */
+export function useSendFileMessage(conversationId: string) {
+  const qc = useQueryClient()
+  const { profile } = useAuth()
+  return useMutation({
+    mutationFn: ({ att, caption }: { att: UploadedFile; caption?: string }) =>
+      sendFileMessage(conversationId, profile?.id as string, att, caption),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['chat', 'messages', conversationId] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'detail', conversationId] })
+    },
+  })
+}
+
+/** Подписанная ссылка на файл. TTL 6ч; пере-подписываем при возврате на вкладку/сети,
+ *  чтобы долго открытый чат не «протух». downloadName → скачивание вместо inline. */
+export function useSignedUrl(path: string | null, downloadName?: string) {
+  return useQuery({
+    queryKey: ['chat', 'file', path, downloadName ?? null],
+    queryFn: () => getSignedUrl(path as string, downloadName),
+    enabled: !!path,
+    staleTime: 5 * 60 * 60_000,
+    gcTime: 6 * 60 * 60_000,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   })
 }
 

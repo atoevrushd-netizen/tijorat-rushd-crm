@@ -139,3 +139,82 @@ export async function setLeadNote(leadId: string, note: string): Promise<void> {
     .eq('id', leadId)
   if (error) throw error
 }
+
+export type UploadedFile = { path: string; name: string; size: number; mime: string }
+
+/**
+ * Загрузка файла в приватный бакет 'chat' с ПРОГРЕССОМ и отменой (через XHR —
+ * supabase-js не отдаёт прогресс). Путь: {conversationId}/{uuid}.{ext}.
+ */
+export async function uploadChatFile(
+  conversationId: string,
+  file: File,
+  onProgress: (fraction: number) => void,
+  signal?: AbortSignal,
+): Promise<UploadedFile> {
+  const dot = file.name.lastIndexOf('.')
+  const ext = dot > 0 ? file.name.slice(dot) : ''
+  const path = `${conversationId}/${crypto.randomUUID()}${ext}`
+  const { data } = await supabase.auth.getSession()
+  const token = data.session?.access_token
+  const base = import.meta.env.VITE_SUPABASE_URL
+
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${base}/storage/v1/object/chat/${path}`)
+    xhr.setRequestHeader('authorization', `Bearer ${token}`)
+    xhr.setRequestHeader('x-upsert', 'false')
+    if (file.type) xhr.setRequestHeader('content-type', file.type)
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total)
+    }
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300
+        ? resolve()
+        : reject(new Error(`upload_failed_${xhr.status}`))
+    xhr.onerror = () => reject(new Error('upload_failed'))
+    xhr.onabort = () => reject(new DOMException('aborted', 'AbortError'))
+    if (signal) signal.addEventListener('abort', () => xhr.abort())
+    xhr.send(file)
+  })
+
+  return { path, name: file.name, size: file.size, mime: file.type || 'application/octet-stream' }
+}
+
+/** Сообщение-вложение (kind='file') с опциональной подписью. */
+export async function sendFileMessage(
+  conversationId: string,
+  senderId: string,
+  att: UploadedFile,
+  caption?: string,
+): Promise<ChatMessage> {
+  const { data, error } = await supabase
+    .from('chat_messages')
+    .insert({
+      conversation_id: conversationId,
+      sender_id: senderId,
+      body: caption?.trim() || null,
+      kind: 'file',
+      attachment_path: att.path,
+      attachment_name: att.name,
+      attachment_size: att.size,
+      attachment_mime: att.mime,
+    })
+    .select('*')
+    .single()
+  if (error) throw error
+  return data as ChatMessage
+}
+
+/**
+ * Подписанная ссылка на файл (приватный бакет; RLS пускает участников).
+ * downloadName != null → Content-Disposition: attachment (файл скачивается, а не
+ * открывается встроенно) — защита от inline HTML/SVG. TTL 6ч.
+ */
+export async function getSignedUrl(path: string, downloadName?: string): Promise<string> {
+  const { data, error } = await supabase.storage
+    .from('chat')
+    .createSignedUrl(path, 21600, downloadName ? { download: downloadName } : undefined)
+  if (error) throw error
+  return data.signedUrl
+}

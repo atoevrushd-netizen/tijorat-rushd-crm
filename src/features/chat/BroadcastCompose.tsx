@@ -108,7 +108,7 @@ export function BroadcastCompose({ onSent }: { onSent: () => void }) {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder={t('chat.searchPlaceholder')}
+              placeholder={t('chat.pickerSearchPlaceholder')}
               className="w-full rounded-[10px] bg-surface-2 py-2 pl-8 pr-2 text-[13px] text-ink outline-none placeholder:text-ink-3"
             />
           </div>

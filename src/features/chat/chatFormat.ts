@@ -1,3 +1,13 @@
+import type { ChatMessage } from './types'
+
+/** Краткий текст сообщения (текст, либо метка файла/голосового) — для баннеров/предпросмотра. */
+export function messagePreview(m: ChatMessage, t: (k: string) => string): string {
+  if (m.deleted_at) return t('chat.messageDeleted')
+  if (m.kind === 'voice') return `🎙 ${t('chat.recordVoice')}`
+  if (m.kind === 'file') return `📎 ${m.body || m.attachment_name || t('chat.file')}`
+  return m.body || t('chat.file')
+}
+
 /** Время сообщения ЧЧ:ММ. */
 export function timeHM(iso: string): string {
   const d = new Date(iso)

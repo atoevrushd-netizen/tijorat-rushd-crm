@@ -265,3 +265,46 @@ export async function getSignedUrl(path: string, downloadName?: string): Promise
   if (error) throw error
   return data.signedUrl
 }
+
+// ── Закрепление и пересылка ─────────────────────────────────────────────────
+
+/** Закрепить/открепить сообщение (RLS: только админ). */
+export async function pinMessage(id: string, pin: boolean): Promise<void> {
+  const { error } = await supabase.rpc('pin_message', { p_msg: id, p_pin: pin })
+  if (error) throw error
+}
+
+/**
+ * Переслать сообщение резидентам. Для каждого лида получаем/создаём диалог; если
+ * есть вложение — копируем объект в папку диалога-получателя (storage.copy), чтобы
+ * путь остался привязан к нему (storage RLS). Затем один RPC создаёт копии.
+ * Возвращает число доставленных копий.
+ */
+export async function forwardMessage(source: ChatMessage, leadIds: string[]): Promise<number> {
+  const targets: { conv: string; path: string | null }[] = []
+  const copied: string[] = [] // для отката: удалить осиротевшие копии при ошибке
+  try {
+    for (const leadId of leadIds) {
+      const conv = await ensureConversation(leadId)
+      let path: string | null = null
+      if (source.attachment_path) {
+        const dot = source.attachment_path.lastIndexOf('.')
+        const ext = dot > 0 ? source.attachment_path.slice(dot) : ''
+        const dst = `${conv}/${crypto.randomUUID()}${ext}`
+        const { error: copyErr } = await supabase.storage.from('chat').copy(source.attachment_path, dst)
+        if (copyErr) throw copyErr
+        copied.push(dst)
+        path = dst
+      }
+      targets.push({ conv, path })
+    }
+    const { data, error } = await supabase.rpc('forward_message', { p_source: source.id, p_targets: targets })
+    if (error) throw error
+    return (data as number) ?? 0
+  } catch (e) {
+    // Ни одной строки не создано (RPC атомарен), но копии файлов уже могли лечь —
+    // подчищаем, чтобы не копить «сирот» в приватном бакете.
+    if (copied.length) await supabase.storage.from('chat').remove(copied).catch(() => {})
+    throw e
+  }
+}

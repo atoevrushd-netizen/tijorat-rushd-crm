@@ -17,6 +17,10 @@ export type ChatMessage = {
   attachment_mime: string | null
   attachment_meta: FileMeta | null
   broadcast_id: string | null
+  pinned_at: string | null
+  pinned_by: string | null
+  forwarded_from_msg: string | null
+  forwarded_from_name: string | null
 }
 
 /** Метаданные вложения (для голосовых: длительность и пики звуковой волны). */

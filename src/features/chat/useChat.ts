@@ -6,6 +6,7 @@ import {
   deleteMessage,
   editMessage,
   ensureConversation,
+  forwardMessage,
   getConversation,
   listConversations,
   listLeads,
@@ -15,6 +16,7 @@ import {
   listBroadcasts,
   markRead,
   markUnread,
+  pinMessage,
   resendBroadcast,
   sendBroadcast,
   sendFileMessage,
@@ -27,7 +29,7 @@ import {
 } from './api'
 import type { Audience } from './types'
 import type { Profile, UserStatus } from '@/types'
-import type { ChatListItem, ConversationRow, FileMeta, UiMessage } from './types'
+import type { ChatListItem, ChatMessage, ConversationRow, FileMeta, UiMessage } from './types'
 
 /** Диалоги из представления (админ — все, лид — свой). */
 export function useConversations() {
@@ -138,6 +140,10 @@ export function useSendMessage(conversationId: string) {
         attachment_mime: null,
         attachment_meta: null,
         broadcast_id: null,
+        pinned_at: null,
+        pinned_by: null,
+        forwarded_from_msg: null,
+        forwarded_from_name: null,
         _status: 'sending',
       }
       qc.setQueryData<UiMessage[]>(key, (old) => [...(old ?? []), optimistic])
@@ -346,6 +352,25 @@ export function useResendBroadcast() {
       void qc.invalidateQueries({ queryKey: ['chat', 'broadcasts'] })
       void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })
     },
+  })
+}
+
+/** Закрепить/открепить сообщение (обновляет ленту диалога). */
+export function usePinMessage(conversationId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, pin }: { id: string; pin: boolean }) => pinMessage(id, pin),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['chat', 'messages', conversationId] }),
+  })
+}
+
+/** Переслать сообщение резидентам (копии в их диалоги). */
+export function useForwardMessage() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ source, leadIds }: { source: ChatMessage; leadIds: string[] }) =>
+      forwardMessage(source, leadIds),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['chat', 'conversations'] }),
   })
 }
 

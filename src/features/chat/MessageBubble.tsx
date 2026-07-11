@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, CheckCheck, Clock3, Copy, Megaphone, MoreVertical, Pencil, Reply, RotateCw, Trash2 } from 'lucide-react'
+import { Check, CheckCheck, Clock3, Copy, CornerUpRight, Megaphone, MoreVertical, Pencil, Pin, PinOff, Reply, RotateCw, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
@@ -15,25 +15,34 @@ export function MessageBubble({
   isAdmin,
   read,
   repliedTo,
+  domId,
+  highlighted,
   onRetry,
   onReply,
   onEdit,
   onDelete,
+  onForward,
+  onPin,
 }: {
   message: UiMessage
   mine: boolean
   isAdmin: boolean
   read: boolean
   repliedTo: ChatMessage | null
+  domId?: string
+  highlighted?: boolean
   onRetry?: () => void
   onReply: () => void
   onEdit: () => void
   onDelete: () => void
+  onForward?: () => void
+  onPin?: () => void
 }) {
   const { t } = useT()
   const [menu, setMenu] = useState(false)
   const status = message._status
   const deleted = !!message.deleted_at
+  const pinned = !!message.pinned_at
 
   function copy() {
     if (message.body) {
@@ -57,7 +66,7 @@ export function MessageBubble({
   const canDelete = (mine || isAdmin) && !status
 
   return (
-    <div className={cn('group flex w-full items-end gap-1', mine ? 'justify-end' : 'justify-start')}>
+    <div id={domId} className={cn('group flex w-full items-end gap-1', mine ? 'justify-end' : 'justify-start')}>
       {/* Кнопка меню слева от своих пузырей */}
       {mine && !status && (
         <MenuButton open={menu} setOpen={setMenu} align="right">
@@ -65,6 +74,9 @@ export function MessageBubble({
             t={t}
             onReply={() => { onReply(); setMenu(false) }}
             onCopy={message.body ? copy : undefined}
+            onForward={onForward ? () => { onForward(); setMenu(false) } : undefined}
+            onPin={onPin ? () => { onPin(); setMenu(false) } : undefined}
+            pinned={pinned}
             onEdit={canEdit ? () => { onEdit(); setMenu(false) } : undefined}
             onDelete={canDelete ? () => { onDelete(); setMenu(false) } : undefined}
           />
@@ -73,8 +85,9 @@ export function MessageBubble({
 
       <div
         className={cn(
-          'relative max-w-[78%] animate-rise rounded-[18px] px-3.5 py-2 shadow-sh1 sm:max-w-[68%]',
+          'relative max-w-[78%] animate-rise rounded-[18px] px-3.5 py-2 shadow-sh1 transition-shadow sm:max-w-[68%]',
           mine ? 'rounded-br-[6px] bg-accent-grad text-on-accent' : 'rounded-bl-[6px] bg-surface text-ink',
+          highlighted && 'ring-2 ring-accent',
         )}
       >
         {repliedTo && (
@@ -87,6 +100,19 @@ export function MessageBubble({
             <span className="line-clamp-2 break-words">
               {repliedTo.deleted_at ? t('chat.messageDeleted') : repliedTo.body}
             </span>
+          </div>
+        )}
+
+        {/* Пометка пересланного (видят все). Имя автора-источника НЕ показываем:
+            копия лежит в чужом диалоге и раскрыла бы личность другого лида. */}
+        {message.forwarded_from_msg && (
+          <div
+            className={cn(
+              'mb-1 flex items-center gap-1 text-[11px] font-semibold',
+              mine ? 'text-white/85' : 'text-accent',
+            )}
+          >
+            <CornerUpRight size={12} /> {t('chat.forwardedLabel')}
           </div>
         )}
 
@@ -124,6 +150,7 @@ export function MessageBubble({
             mine ? 'text-white/75' : 'text-ink-3',
           )}
         >
+          {pinned && <Pin size={11} className="opacity-80" />}
           {message.edited_at && <span>{t('chat.edited')}</span>}
           <span>{timeHM(message.created_at)}</span>
           {mine && status === 'sending' && <Clock3 size={13} />}
@@ -143,6 +170,9 @@ export function MessageBubble({
             t={t}
             onReply={() => { onReply(); setMenu(false) }}
             onCopy={message.body ? copy : undefined}
+            onForward={onForward ? () => { onForward(); setMenu(false) } : undefined}
+            onPin={onPin ? () => { onPin(); setMenu(false) } : undefined}
+            pinned={pinned}
             onEdit={undefined}
             onDelete={isAdmin ? () => { onDelete(); setMenu(false) } : undefined}
           />
@@ -197,12 +227,18 @@ function MenuItems({
   t,
   onReply,
   onCopy,
+  onForward,
+  onPin,
+  pinned,
   onEdit,
   onDelete,
 }: {
   t: (k: string) => string
   onReply: () => void
   onCopy?: () => void
+  onForward?: () => void
+  onPin?: () => void
+  pinned?: boolean
   onEdit?: () => void
   onDelete?: () => void
 }) {
@@ -212,6 +248,17 @@ function MenuItems({
       <button type="button" onClick={onReply} className={cls}>
         <Reply size={15} /> {t('chat.reply')}
       </button>
+      {onForward && (
+        <button type="button" onClick={onForward} className={cls}>
+          <CornerUpRight size={15} /> {t('chat.forward')}
+        </button>
+      )}
+      {onPin && (
+        <button type="button" onClick={onPin} className={cls}>
+          {pinned ? <PinOff size={15} /> : <Pin size={15} />}
+          {pinned ? t('chat.unpinMessage') : t('chat.pinMessage')}
+        </button>
+      )}
       {onCopy && (
         <button type="button" onClick={onCopy} className={cls}>
           <Copy size={15} /> {t('chat.copy')}

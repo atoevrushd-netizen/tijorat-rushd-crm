@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { FileText, Paperclip, Pencil, Reply, Send, Smile, X } from 'lucide-react'
+import { FileText, Mic, Paperclip, Pencil, Reply, Send, Smile, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
@@ -7,6 +7,8 @@ import { EMOJIS } from './emoji'
 import { formatSize } from './fileType'
 import { uploadChatFile, type UploadedFile } from './api'
 import { useEditMessage, useSendFileMessage, useSendMessage } from './useChat'
+import { VoiceRecorderBar } from './VoiceRecorderBar'
+import type { VoiceResult } from './useVoiceRecorder'
 import type { ChatMessage } from './types'
 
 /** Ввод: текст, эмодзи, ответ/правка, вложение файла (загрузка с прогрессом). */
@@ -34,15 +36,55 @@ export function Composer({
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [thumb, setThumb] = useState<string | null>(null)
+  const [recording, setRecording] = useState(false)
+  const [sendingVoice, setSendingVoice] = useState(false)
   const taRef = useRef<HTMLTextAreaElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const abortRef = useRef<AbortController | null>(null)
-  // Уже загруженный файл — чтобы повтор после сбоя отправки НЕ грузил заново (без «сирот»).
+  const voiceAbortRef = useRef<AbortController | null>(null)
+  // Уже загруженные файл/голос — чтобы повтор после сбоя отправки НЕ грузил заново (без «сирот»).
   const uploadedRef = useRef<{ file: File; att: UploadedFile } | null>(null)
+  const voiceUploadedRef = useRef<{ result: VoiceResult; att: UploadedFile } | null>(null)
 
-  // Прервать незавершённую загрузку при размонтировании (смена диалога) — иначе
+  // Прервать незавершённые загрузки при размонтировании (смена диалога) — иначе
   // «зависшая» отправка ушла бы в старый диалог.
-  useEffect(() => () => abortRef.current?.abort(), [])
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+      voiceAbortRef.current?.abort()
+    },
+    [],
+  )
+
+  async function handleVoiceSend(r: VoiceResult) {
+    setSendingVoice(true)
+    const ctrl = new AbortController()
+    voiceAbortRef.current = ctrl
+    try {
+      // Повтор после сбоя: файл уже загружен — не грузим второй раз.
+      let att = voiceUploadedRef.current?.result === r ? voiceUploadedRef.current.att : null
+      if (!att) {
+        const ext = r.mime.includes('mp4') ? 'm4a' : r.mime.includes('ogg') ? 'ogg' : 'webm'
+        const file = new File([r.blob], `voice-${Date.now()}.${ext}`, { type: r.mime })
+        att = await uploadChatFile(conversationId, file, () => {}, ctrl.signal)
+        voiceUploadedRef.current = { result: r, att }
+      }
+      await sendFile.mutateAsync({
+        att,
+        kind: 'voice',
+        meta: { duration: r.duration, peaks: r.peaks },
+        replyToId: replyTo?.id ?? null,
+      })
+      voiceUploadedRef.current = null
+      setRecording(false)
+      onClear()
+    } catch (e) {
+      if (!(e instanceof DOMException && e.name === 'AbortError')) toast.error(t('chat.uploadError'))
+    } finally {
+      setSendingVoice(false)
+      voiceAbortRef.current = null
+    }
+  }
 
   // Режим редактирования — подставить текст.
   useEffect(() => {
@@ -96,7 +138,11 @@ export function Composer({
           att = await uploadChatFile(conversationId, pendingFile, setProgress, ctrl.signal)
           uploadedRef.current = { file: pendingFile, att }
         }
-        await sendFile.mutateAsync({ att, caption: text.trim() || undefined })
+        await sendFile.mutateAsync({
+          att,
+          caption: text.trim() || undefined,
+          replyToId: replyTo?.id ?? null,
+        })
         uploadedRef.current = null
         setText('')
         setEmojiOpen(false)
@@ -155,6 +201,8 @@ export function Composer({
 
   const context = editing ?? replyTo
   const contextIsEdit = !!editing
+  // Правая кнопка: «отправить» если есть текст/файл/правка, иначе — «микрофон».
+  const showSend = !!editing || !!text.trim() || !!pendingFile
 
   return (
     <div className="relative border-t border-line bg-surface px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:px-4">
@@ -173,7 +221,7 @@ export function Composer({
         </div>
       )}
 
-      {context && (
+      {!recording && context && (
         <div className="mb-2 flex items-center gap-2 rounded-[12px] border-l-[3px] border-accent bg-surface-2 py-1.5 pl-2.5 pr-2">
           {contextIsEdit ? <Pencil size={14} className="flex-none text-accent" /> : <Reply size={14} className="flex-none text-accent" />}
           <div className="min-w-0 flex-1">
@@ -194,7 +242,7 @@ export function Composer({
       )}
 
       {/* Выбранный файл — до отправки: имя, размер, прогресс, отмена */}
-      {pendingFile && (
+      {!recording && pendingFile && (
         <div className="mb-2 flex items-center gap-2.5 rounded-[12px] border border-line bg-surface-2 p-2">
           {thumb ? (
             <img src={thumb} alt="" className="h-11 w-11 flex-none rounded-[9px] object-cover" />
@@ -236,53 +284,72 @@ export function Composer({
         }}
       />
 
-      <div className="flex items-end gap-1.5 sm:gap-2">
-        <button
-          type="button"
-          onClick={() => setEmojiOpen((v) => !v)}
-          aria-label={t('chat.emoji')}
-          className={cn(
-            'flex h-10 w-10 flex-none items-center justify-center rounded-[13px] transition-colors',
-            emojiOpen ? 'bg-accent-soft text-accent' : 'text-ink-3 hover:bg-surface-2 hover:text-ink',
-          )}
-        >
-          <Smile size={20} />
-        </button>
-
-        {!editing && (
+      {recording ? (
+        <VoiceRecorderBar
+          onSend={handleVoiceSend}
+          onCancel={() => setRecording(false)}
+          sending={sendingVoice}
+        />
+      ) : (
+        <div className="flex items-end gap-1.5 sm:gap-2">
           <button
             type="button"
-            onClick={() => fileRef.current?.click()}
-            aria-label={t('chat.attach')}
-            className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            onClick={() => setEmojiOpen((v) => !v)}
+            aria-label={t('chat.emoji')}
+            className={cn(
+              'flex h-10 w-10 flex-none items-center justify-center rounded-[13px] transition-colors',
+              emojiOpen ? 'bg-accent-soft text-accent' : 'text-ink-3 hover:bg-surface-2 hover:text-ink',
+            )}
           >
-            <Paperclip size={20} />
+            <Smile size={20} />
           </button>
-        )}
 
-        <textarea
-          ref={taRef}
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value)
-            grow()
-          }}
-          onKeyDown={onKey}
-          rows={1}
-          placeholder={pendingFile ? t('chat.captionPlaceholder') : t('chat.messagePlaceholder')}
-          className="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-[16px] bg-surface-2 px-3.5 py-2.5 text-[14.5px] leading-relaxed text-ink outline-none transition placeholder:text-ink-3 focus:ring-2 focus:ring-accent-ring"
-        />
+          {!editing && (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              aria-label={t('chat.attach')}
+              className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            >
+              <Paperclip size={20} />
+            </button>
+          )}
 
-        <button
-          type="button"
-          onClick={() => void submit()}
-          disabled={uploading || (!text.trim() && !pendingFile)}
-          aria-label={t('chat.send')}
-          className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] bg-accent-grad text-on-accent shadow-glow transition-all duration-150 ease-ios hover:brightness-[1.06] active:scale-90 disabled:opacity-40 disabled:shadow-none"
-        >
-          <Send size={18} />
-        </button>
-      </div>
+          <textarea
+            ref={taRef}
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value)
+              grow()
+            }}
+            onKeyDown={onKey}
+            rows={1}
+            placeholder={pendingFile ? t('chat.captionPlaceholder') : t('chat.messagePlaceholder')}
+            className="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-[16px] bg-surface-2 px-3.5 py-2.5 text-[14.5px] leading-relaxed text-ink outline-none transition placeholder:text-ink-3 focus:ring-2 focus:ring-accent-ring"
+          />
+
+          {showSend ? (
+            <button
+              type="button"
+              onClick={() => void submit()}
+              disabled={uploading}
+              aria-label={t('chat.send')}
+              className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] bg-accent-grad text-on-accent shadow-glow transition-all duration-150 ease-ios hover:brightness-[1.06] active:scale-90 disabled:opacity-40 disabled:shadow-none"
+            >
+              <Send size={18} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setRecording(true)}
+              aria-label={t('chat.recordVoice')}
+              className="flex h-10 w-10 flex-none items-center justify-center rounded-[13px] bg-accent-grad text-on-accent shadow-glow transition-all duration-150 ease-ios hover:brightness-[1.06] active:scale-90"
+            >
+              <Mic size={19} />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

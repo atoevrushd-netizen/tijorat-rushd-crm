@@ -22,7 +22,7 @@ import {
   type UploadedFile,
 } from './api'
 import type { Profile, UserStatus } from '@/types'
-import type { ChatListItem, ConversationRow, UiMessage } from './types'
+import type { ChatListItem, ConversationRow, FileMeta, UiMessage } from './types'
 
 /** Диалоги из представления (админ — все, лид — свой). */
 export function useConversations() {
@@ -131,6 +131,7 @@ export function useSendMessage(conversationId: string) {
         attachment_name: null,
         attachment_size: null,
         attachment_mime: null,
+        attachment_meta: null,
         _status: 'sending',
       }
       qc.setQueryData<UiMessage[]>(key, (old) => [...(old ?? []), optimistic])
@@ -160,13 +161,25 @@ export function useSendMessage(conversationId: string) {
   })
 }
 
-/** Отправить сообщение-вложение (после успешной загрузки файла). */
+/** Отправить сообщение-вложение (файл или голосовое) после успешной загрузки. */
 export function useSendFileMessage(conversationId: string) {
   const qc = useQueryClient()
   const { profile } = useAuth()
   return useMutation({
-    mutationFn: ({ att, caption }: { att: UploadedFile; caption?: string }) =>
-      sendFileMessage(conversationId, profile?.id as string, att, caption),
+    mutationFn: ({
+      att,
+      caption,
+      kind,
+      meta,
+      replyToId,
+    }: {
+      att: UploadedFile
+      caption?: string
+      kind?: 'file' | 'voice'
+      meta?: FileMeta
+      replyToId?: string | null
+    }) =>
+      sendFileMessage(conversationId, profile?.id as string, att, { caption, kind, meta, replyToId }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['chat', 'messages', conversationId] })
       void qc.invalidateQueries({ queryKey: ['chat', 'conversations'] })

@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { UserStatus } from '@/types'
-import type { ChatMessage, ConversationRow } from './types'
+import type { ChatMessage, ConversationRow, FileMeta } from './types'
 
 /** Все диалоги (для админа — все, для лида — свой). */
 export async function listConversations(): Promise<ConversationRow[]> {
@@ -181,24 +181,26 @@ export async function uploadChatFile(
   return { path, name: file.name, size: file.size, mime: file.type || 'application/octet-stream' }
 }
 
-/** Сообщение-вложение (kind='file') с опциональной подписью. */
+/** Сообщение-вложение: файл (kind='file') или голосовое (kind='voice'). */
 export async function sendFileMessage(
   conversationId: string,
   senderId: string,
   att: UploadedFile,
-  caption?: string,
+  opts?: { caption?: string; kind?: 'file' | 'voice'; meta?: FileMeta; replyToId?: string | null },
 ): Promise<ChatMessage> {
   const { data, error } = await supabase
     .from('chat_messages')
     .insert({
       conversation_id: conversationId,
       sender_id: senderId,
-      body: caption?.trim() || null,
-      kind: 'file',
+      body: opts?.caption?.trim() || null,
+      kind: opts?.kind ?? 'file',
+      reply_to_id: opts?.replyToId ?? null,
       attachment_path: att.path,
       attachment_name: att.name,
       attachment_size: att.size,
       attachment_mime: att.mime,
+      attachment_meta: opts?.meta ?? null,
     })
     .select('*')
     .single()

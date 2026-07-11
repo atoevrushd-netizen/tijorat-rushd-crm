@@ -67,6 +67,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.captionPlaceholder': 'Тавзеҳ илова кунед…',
     'chat.uploadError': 'Фиристодани файл нашуд',
     'chat.dropHere': 'Файлро барои замима раҳо кунед',
+    'chat.recordVoice': 'Паёми овозӣ',
+    'chat.micDenied': 'Дастрасӣ ба микрофон нест',
+    'chat.pause': 'Таваққуф',
+    'chat.resume': 'Идома',
+    'chat.stopRec': 'Истодан',
+    'chat.deleteRec': 'Нест кардани сабт',
   },
   ru: {
     'nav.chat': 'Чат',
@@ -133,6 +139,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'chat.captionPlaceholder': 'Добавьте подпись…',
     'chat.uploadError': 'Не удалось отправить файл',
     'chat.dropHere': 'Отпустите файл, чтобы прикрепить',
+    'chat.recordVoice': 'Голосовое сообщение',
+    'chat.micDenied': 'Нет доступа к микрофону',
+    'chat.pause': 'Пауза',
+    'chat.resume': 'Продолжить',
+    'chat.stopRec': 'Остановить',
+    'chat.deleteRec': 'Удалить запись',
   },
 }
 

@@ -15,7 +15,11 @@ export type ChatMessage = {
   attachment_name: string | null
   attachment_size: number | null
   attachment_mime: string | null
+  attachment_meta: FileMeta | null
 }
+
+/** Метаданные вложения (для голосовых: длительность и пики звуковой волны). */
+export type FileMeta = { duration?: number; peaks?: number[] }
 
 /** Сообщение с клиентским статусом отправки (оптимистичные/ошибочные). */
 export type UiMessage = ChatMessage & { _status?: 'sending' | 'error' }

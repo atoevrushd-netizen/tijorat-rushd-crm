@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { Attachment } from './Attachment'
+import { VoicePlayer } from './VoicePlayer'
 import { timeHM } from './chatFormat'
 import type { ChatMessage, UiMessage } from './types'
 
@@ -91,7 +92,11 @@ export function MessageBubble({
 
         {message.attachment_path && (
           <div className={cn(message.body ? 'mb-1.5' : '')}>
-            <Attachment message={message} mine={mine} />
+            {message.kind === 'voice' ? (
+              <VoicePlayer message={message} mine={mine} />
+            ) : (
+              <Attachment message={message} mine={mine} />
+            )}
           </div>
         )}
 

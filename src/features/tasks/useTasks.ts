@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type QueryClient, type QueryKey } from '@tanstack/react-query'
 import {
   addTaskLink,
   createTask,
@@ -13,7 +13,7 @@ import {
   updateTask,
 } from './api'
 import type { CreateTaskInput, UpdateTaskInput } from './api'
-import type { Task, TaskStatus } from '@/types'
+import type { TaskStatus } from '@/types'
 
 export function useTasks(userId: string, tabId?: string) {
   return useQuery({
@@ -30,6 +30,35 @@ function useTasksInvalidator() {
     void queryClient.invalidateQueries({ queryKey: ['activity'] })
     void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
   }
+}
+
+type StatusSnapshot = { key: QueryKey; status: TaskStatus }[]
+
+/**
+ * Оптимистично меняем статус ОДНОЙ задачи во всех кэшах ['tasks'] (списки задач и
+ * «Повестку дня») и запоминаем прежний статус ТОЛЬКО этой задачи — чтобы откат при
+ * ошибке не затирал параллельные правки соседних строк (только их id восстановит).
+ */
+async function optimisticStatus(qc: QueryClient, taskId: string, next: TaskStatus): Promise<StatusSnapshot> {
+  await qc.cancelQueries({ queryKey: ['tasks'] })
+  const prev: StatusSnapshot = []
+  for (const [key, list] of qc.getQueriesData<{ id: string; status: TaskStatus }[]>({ queryKey: ['tasks'] })) {
+    if (!Array.isArray(list)) continue
+    const found = list.find((t) => t.id === taskId)
+    if (found) prev.push({ key, status: found.status })
+    qc.setQueryData(
+      key,
+      list.map((t) => (t.id === taskId ? { ...t, status: next } : t)),
+    )
+  }
+  return prev
+}
+function rollbackStatus(qc: QueryClient, taskId: string, prev: StatusSnapshot | undefined) {
+  prev?.forEach(({ key, status }) =>
+    qc.setQueryData(key, (cur) =>
+      Array.isArray(cur) ? cur.map((t: { id: string }) => (t.id === taskId ? { ...t, status } : t)) : cur,
+    ),
+  )
 }
 
 export function useCreateTask() {
@@ -54,23 +83,9 @@ export function useSetTaskStatus() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
       setTaskStatus(id, status),
-    // Оптимистично: сразу меняем статус в кэше, чтобы галочка/бейдж откликались
-    // мгновенно, не дожидаясь ответа сети. При ошибке откатываем.
-    onMutate: async ({ id, status }) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] })
-      const snapshots = queryClient.getQueriesData<Task[]>({ queryKey: ['tasks'] })
-      for (const [key, list] of snapshots) {
-        if (!list) continue
-        queryClient.setQueryData<Task[]>(
-          key,
-          list.map((task) => (task.id === id ? { ...task, status } : task)),
-        )
-      }
-      return { snapshots }
-    },
-    onError: (_err, _vars, ctx) => {
-      ctx?.snapshots.forEach(([key, list]) => queryClient.setQueryData(key, list))
-    },
+    // Оптимистично: статус откликается мгновенно; при ошибке откатываем только эту задачу.
+    onMutate: async ({ id, status }) => ({ prev: await optimisticStatus(queryClient, id, status), taskId: id }),
+    onError: (_err, _vars, ctx) => rollbackStatus(queryClient, ctx?.taskId ?? '', ctx?.prev),
     onSettled: () => void invalidate(),
   })
 }
@@ -139,29 +154,19 @@ export function useSetTaskSubmitted() {
   return useMutation({
     mutationFn: ({ taskId, submitted }: { taskId: string; submitted: boolean }) =>
       setTaskSubmitted(taskId, submitted),
-    // Оптимистично: галочка откликается мгновенно; при ошибке откатываем.
-    onMutate: async ({ taskId, submitted }) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] })
-      const next: TaskStatus = submitted ? 'submitted' : 'in_progress'
-      const snapshots = queryClient.getQueriesData<Task[]>({ queryKey: ['tasks'] })
-      for (const [key, list] of snapshots) {
-        if (!list) continue
-        queryClient.setQueryData<Task[]>(
-          key,
-          list.map((task) => (task.id === taskId ? { ...task, status: next } : task)),
-        )
-      }
-      return { snapshots }
-    },
-    onError: (_err, _vars, ctx) => {
-      ctx?.snapshots.forEach(([key, list]) => queryClient.setQueryData(key, list))
-    },
+    // Оптимистично: галочка откликается мгновенно; при ошибке откатываем только эту задачу.
+    onMutate: async ({ taskId, submitted }) => ({
+      prev: await optimisticStatus(queryClient, taskId, submitted ? 'submitted' : 'in_progress'),
+      taskId,
+    }),
+    onError: (_err, _vars, ctx) => rollbackStatus(queryClient, ctx?.taskId ?? '', ctx?.prev),
     onSettled: () => void invalidate(),
   })
 }
 
 /** Админ проверяет отправленную задачу: принять (→ done) или вернуть (→ needs_revision). */
 export function useReviewTask() {
+  const queryClient = useQueryClient()
   const invalidate = useTasksInvalidator()
   return useMutation({
     mutationFn: ({
@@ -173,6 +178,13 @@ export function useReviewTask() {
       accept: boolean
       comment?: string
     }) => reviewTask(taskId, accept, comment),
-    onSuccess: () => void invalidate(),
+    // Оптимистично: галочка/бейдж откликаются мгновенно (в т.ч. в «Повестке дня»);
+    // при ошибке откатываем только эту задачу (соседние правки не трогаем).
+    onMutate: async ({ taskId, accept }) => ({
+      prev: await optimisticStatus(queryClient, taskId, accept ? 'done' : 'needs_revision'),
+      taskId,
+    }),
+    onError: (_err, _vars, ctx) => rollbackStatus(queryClient, ctx?.taskId ?? '', ctx?.prev),
+    onSettled: () => void invalidate(),
   })
 }

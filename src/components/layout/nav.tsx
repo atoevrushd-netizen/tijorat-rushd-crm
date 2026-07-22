@@ -1,5 +1,6 @@
 import {
   CalendarClock,
+  CalendarDays,
   ClipboardList,
   FileText,
   IdCard,
@@ -23,6 +24,7 @@ export const devNavItem: NavItem = {
 /** Навигация админ-разделов. Подписи — ключи перевода (см. i18n/dictionaries/nav). */
 export const adminNav: NavItem[] = [
   { to: '/admin', labelKey: 'nav.dashboard', icon: <LayoutDashboard size={15} /> },
+  { to: '/admin/agenda', labelKey: 'nav.agenda', match: '/admin/agenda', icon: <CalendarDays size={15} /> },
   { to: '/admin/users', labelKey: 'nav.users', match: '/admin/users', icon: <Users size={15} /> },
   { to: '/chat', labelKey: 'nav.chat', match: '/chat', icon: <MessageCircle size={15} /> },
   { to: '/answers', labelKey: 'nav.answers', match: '/answers', icon: <ClipboardList size={15} /> },

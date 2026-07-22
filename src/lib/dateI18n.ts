@@ -31,7 +31,7 @@ export function weekdaysShort(lang: Lang): string[] {
   return lang === 'tg' ? TG_WEEKDAYS_SHORT : RU_WEEKDAYS_SHORT
 }
 
-/** 'YYYY-MM-DD' → «29 июля, среда» / «29 Июл, чоршанбе». */
+/** 'YYYY-MM-DD' → «среда, 29 июля» / «29 Июл, чоршанбе» (порядок задаёт локаль). */
 export function dayTitle(dateStr: string, lang: Lang): string {
   const d = new Date(dateStr + 'T00:00:00')
   if (lang === 'tg') {
@@ -42,6 +42,21 @@ export function dayTitle(dateStr: string, lang: Lang): string {
     month: 'long',
     weekday: 'long',
   }).format(d)
+}
+
+/**
+ * 'YYYY-MM-DD' → раздельно дата и день недели (без опоры на порядок слов в строке:
+ * ru-RU выдаёт «среда, 29 июля», tg — «29 Июл, чоршанбе»). Для крупной даты + подписи.
+ */
+export function dayParts(dateStr: string, lang: Lang): { date: string; weekday: string } {
+  const d = new Date(dateStr + 'T00:00:00')
+  if (lang === 'tg') {
+    return { date: `${d.getDate()} ${TG_MONTHS[d.getMonth()]}`, weekday: TG_WEEKDAYS_FULL[mondayIndex(d)] }
+  }
+  return {
+    date: new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' }).format(d),
+    weekday: new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(d),
+  }
 }
 
 /** «вторник, 3 июля» (для приветствия на дашборде). */

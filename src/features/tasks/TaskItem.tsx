@@ -134,7 +134,11 @@ export function TaskItem({
       <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11.5px] text-ink-3">
         <span>{t('tasksui.created')} {formatDate(task.created_at)}</span>
         {task.sent_at && <span>{t('tasksui.sent')} {formatDate(task.sent_at)}</span>}
-        {task.accepted_at && <span>{t('tasksui.accepted')} {formatDate(task.accepted_at)}</span>}
+        {/* Показываем «принято» только когда задача реально в принятом состоянии —
+            иначе после отмены приёмки (done→submitted) остаётся ложная метка. */}
+        {task.accepted_at && (task.status === 'done' || task.status === 'accepted_by_user') && (
+          <span>{t('tasksui.accepted')} {formatDate(task.accepted_at)}</span>
+        )}
       </div>
 
       {isAdmin && task.status === 'submitted' && <TaskReviewControls task={task} />}

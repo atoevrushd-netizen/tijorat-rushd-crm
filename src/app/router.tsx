@@ -23,6 +23,9 @@ const UserCardPage = lazy(() =>
 const AutoTasksPage = lazy(() =>
   import('@/pages/admin/AutoTasksPage').then((m) => ({ default: m.AutoTasksPage })),
 )
+const AgendaPage = lazy(() =>
+  import('@/pages/admin/AgendaPage').then((m) => ({ default: m.AgendaPage })),
+)
 const DevPage = lazy(() =>
   import('@/pages/admin/DevPage').then((m) => ({ default: m.DevPage })),
 )
@@ -67,6 +70,7 @@ export function AppRouter() {
 
           <Route element={<RequireRole role="admin" />}>
             <Route path="/admin" element={<DashboardPage />} />
+            <Route path="/admin/agenda" element={<AgendaPage />} />
             <Route path="/admin/users" element={<AdminDashboard />} />
             <Route path="/admin/auto-tasks" element={<AutoTasksPage />} />
             <Route path="/admin/users/:id" element={<UserCardPage />} />

@@ -45,10 +45,9 @@ export function shiftMonth(month: string, delta: number): string {
   return monthStart(d)
 }
 
-/** Ключ месяца задачи: period_month → 'YYYY-MM-01'; иначе из deadline; иначе null. */
+/** Ключ месяца задачи: только помесячные (period_month). Старые дневные (null) — вне вида. */
 export function taskMonth(task: Task): string | null {
-  const src = task.period_month ?? task.deadline
-  return src ? src.slice(0, 7) + '-01' : null
+  return task.period_month ? task.period_month.slice(0, 7) + '-01' : null
 }
 
 /** Сгруппировать задачи пользователя по месяцу. */

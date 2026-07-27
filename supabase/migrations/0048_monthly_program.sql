@@ -8,9 +8,10 @@
 --   • Старые задачи НЕ трогаем (только бэкфилл period_month из deadline — чтобы попали в помесячный вид).
 
 -- ── 1) Месяц задачи ─────────────────────────────────────────────────────────
+-- period_month заполняется ТОЛЬКО у новых помесячных задач. Старые дневные задачи
+-- остаются с period_month = null: их сохраняем в БД, но в новом помесячном виде не
+-- показываем (он фильтрует по period_month). Так «старое оставим», а вид чистый.
 alter table public.tasks add column if not exists period_month date;
-update public.tasks set period_month = date_trunc('month', deadline)::date
-  where period_month is null and deadline is not null;
 create index if not exists tasks_period_month_idx on public.tasks (user_id, period_month);
 
 -- ── 2) Деактивация резидента ────────────────────────────────────────────────

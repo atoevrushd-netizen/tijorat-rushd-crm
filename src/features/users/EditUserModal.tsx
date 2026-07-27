@@ -15,6 +15,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useUpdateUser } from './useUpdateUser'
+import { planPeriod } from './planPeriod'
 
 const EMPTY = {
   full_name: '',
@@ -24,6 +25,7 @@ const EMPTY = {
   admin_comment: '',
   subscription_start: '',
   subscription_end: '',
+  plan_months: '',
 }
 
 export function EditUserModal({
@@ -49,6 +51,7 @@ export function EditUserModal({
       admin_comment: user.admin_comment ?? '',
       subscription_start: user.subscription_start ?? '',
       subscription_end: user.subscription_end ?? '',
+      plan_months: user.plan_months ? String(user.plan_months) : '',
     })
     setFile(null)
     setPreview(null)
@@ -75,6 +78,22 @@ export function EditUserModal({
     setPreview(f ? URL.createObjectURL(f) : null)
   }
 
+  // Выбор плана авто-заполняет период подписки; даты потом можно поправить вручную.
+  function onPlanChange(e: ChangeEvent<HTMLSelectElement>) {
+    const val = e.target.value
+    if (!val) {
+      setForm((f) => ({ ...f, plan_months: '' }))
+      return
+    }
+    const { start, end } = planPeriod(Number(val))
+    setForm((f) => ({
+      ...f,
+      plan_months: val,
+      subscription_start: start,
+      subscription_end: end,
+    }))
+  }
+
   function close() {
     update.reset()
     onClose()
@@ -94,6 +113,7 @@ export function EditUserModal({
           admin_comment: form.admin_comment.trim() || null,
           subscription_start: form.subscription_start || null,
           subscription_end: form.subscription_end || null,
+          plan_months: form.plan_months ? Number(form.plan_months) : null,
         },
         file,
       },
@@ -134,6 +154,14 @@ export function EditUserModal({
             <option value="paused">{t('userStatus.paused')}</option>
             <option value="archived">{t('userStatus.archived')}</option>
           </Select>
+        </Labeled>
+        <Labeled label={t('usercard.fieldPlan')}>
+          <Select value={form.plan_months} onChange={onPlanChange}>
+            <option value="">{t('usercard.planNone')}</option>
+            <option value="3">{t('usercard.plan3')}</option>
+            <option value="6">{t('usercard.plan6')}</option>
+          </Select>
+          <p className="mt-1 text-[11px] leading-snug text-ink-3">{t('usercard.planHint')}</p>
         </Labeled>
         <div className="grid grid-cols-2 gap-3">
           <Labeled label={t('usercard.fieldSubStart')}>

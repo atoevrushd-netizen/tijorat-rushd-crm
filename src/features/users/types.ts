@@ -7,6 +7,8 @@ export type UsersQuery = {
   pageSize: number
   /** true — показывать «Корзину» (удалённых), false/undefined — активных. */
   trashed?: boolean
+  /** Фильтр по метке плана: 3 | 6 месяцев; undefined — все. */
+  plan?: number
 }
 
 /** Страница списка пользователей. */

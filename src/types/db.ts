@@ -25,6 +25,8 @@ export type Profile = {
   /** Период сотрудничества (подписки) лида — задаёт админ. */
   subscription_start: string | null
   subscription_end: string | null
+  /** Тип подписки как «метка»: 3 | 6 месяцев | null (не задан) — 0051. */
+  plan_months?: number | null
   registration_date: string
   created_at: string
   updated_at: string

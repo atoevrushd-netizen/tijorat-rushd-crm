@@ -29,6 +29,7 @@ import { useRegenerateMonthly, useSetResidentActive } from '@/features/users/use
 import { EditUserModal } from '@/features/users/EditUserModal'
 import { SetPasswordModal } from '@/features/users/SetPasswordModal'
 import { PasswordField } from '@/features/users/PasswordField'
+import { PlanBadge } from '@/features/users/PlanBadge'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { ActivityFeed } from '@/features/activity-log/ActivityFeed'
@@ -91,6 +92,7 @@ export function UserCardPage() {
                     {user.full_name || '—'}
                   </h2>
                   <StatusBadge status={user.status} />
+                  <PlanBadge months={user.plan_months} />
                   {user.deactivated_at && (
                     <span className="rounded-full bg-danger-soft px-2.5 py-0.5 text-[11.5px] font-semibold text-danger">
                       {t('usercard.deactivatedBadge')}

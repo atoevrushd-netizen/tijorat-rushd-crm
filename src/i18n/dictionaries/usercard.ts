@@ -78,6 +78,16 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.deactivatedBadge': 'Ғайрифаъол',
     'usercard.generateTasks': 'Задачаҳо аз рӯи обуна',
     'usercard.tasksCreated': '{n} задача сохта шуд',
+    // Метка плана подписки (0051)
+    'usercard.fieldPlan': 'Навъи обуна',
+    'usercard.planNone': '— бе метка —',
+    'usercard.plan3': '3 моҳа',
+    'usercard.plan6': '6 моҳа',
+    'usercard.plan3Short': '3 моҳ',
+    'usercard.plan6Short': '6 моҳ',
+    'usercard.planAll': 'Ҳама',
+    'usercard.planHint':
+      'Ҳангоми интихоби план давраи обуна худкор пур мешавад (метавонед онро тағйир диҳед).',
   },
   ru: {
     // Подписи полей карточки
@@ -155,6 +165,16 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.deactivatedBadge': 'Деактивирован',
     'usercard.generateTasks': 'Создать задачи по подписке',
     'usercard.tasksCreated': 'Создано задач: {n}',
+    // Метка плана подписки (0051)
+    'usercard.fieldPlan': 'Тип подписки',
+    'usercard.planNone': '— без метки —',
+    'usercard.plan3': '3 месяца',
+    'usercard.plan6': '6 месяцев',
+    'usercard.plan3Short': '3 мес',
+    'usercard.plan6Short': '6 мес',
+    'usercard.planAll': 'Все',
+    'usercard.planHint':
+      'При выборе плана период подписки заполнится автоматически (можно изменить).',
   },
 }
 

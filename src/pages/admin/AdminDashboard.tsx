@@ -34,12 +34,13 @@ export function AdminDashboard() {
   const [page, setPage] = useState(1)
   const [createOpen, setCreateOpen] = useState(false)
   const [showTrash, setShowTrash] = useState(false)
+  const [plan, setPlan] = useState<number | undefined>(undefined)
   const [exporting, setExporting] = useState(false)
   const debouncedSearch = useDebouncedValue(search, 300)
 
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch, showTrash])
+  }, [debouncedSearch, showTrash, plan])
 
   // Экспорт текущего среза лидов (с учётом поиска/«Корзины») в CSV для Excel.
   async function exportCsv() {
@@ -68,6 +69,8 @@ export function AdminDashboard() {
     page,
     pageSize: PAGE_SIZE,
     trashed: showTrash,
+    // В «Корзине» фильтр по плану не применяем — показываем все удалённые.
+    plan: showTrash ? undefined : plan,
   })
 
   return (
@@ -102,6 +105,35 @@ export function AdminDashboard() {
           {t('users.exportCsv')}
         </Button>
       </div>
+
+      {!showTrash && (
+        <div className="mb-4 inline-flex rounded-[13px] border border-line bg-surface p-1 shadow-sh1">
+          {(
+            [
+              { value: undefined, label: t('usercard.planAll') },
+              { value: 3, label: t('usercard.plan3Short') },
+              { value: 6, label: t('usercard.plan6Short') },
+            ] as const
+          ).map((tab) => {
+            const active = plan === tab.value
+            return (
+              <button
+                key={tab.label}
+                type="button"
+                onClick={() => setPlan(tab.value)}
+                className={
+                  'rounded-[10px] px-4 py-1.5 text-[13px] font-semibold transition-colors ' +
+                  (active
+                    ? 'bg-accent-soft text-accent'
+                    : 'text-ink-3 hover:bg-surface-2 hover:text-ink')
+                }
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
 
       {isLoading && (
         <div className="space-y-2.5 rounded-[18px] border border-line bg-surface p-4 shadow-sh1">

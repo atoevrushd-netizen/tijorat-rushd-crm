@@ -10,6 +10,7 @@ export async function listUsers({
   page,
   pageSize,
   trashed = false,
+  plan,
 }: UsersQuery): Promise<UsersPage> {
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
@@ -22,6 +23,7 @@ export async function listUsers({
   query = trashed
     ? query.not('deleted_at', 'is', null)
     : query.is('deleted_at', null)
+  if (plan) query = query.eq('plan_months', plan)
   query = query.order('registration_date', { ascending: false }).range(from, to)
 
   const filter = buildSearchFilter(search)
@@ -155,6 +157,8 @@ export type UpdateUserInput = {
   photo_url?: string | null
   subscription_start?: string | null
   subscription_end?: string | null
+  /** Метка плана: 3 | 6 месяцев | null (снять метку) — 0051. */
+  plan_months?: number | null
 }
 
 /** Загрузить фото в Storage (bucket `avatars`) и вернуть публичный URL. */

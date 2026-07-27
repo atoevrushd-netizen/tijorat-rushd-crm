@@ -10,6 +10,8 @@ import { generatePassword } from '@/lib/generatePassword'
 import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useCreateUser } from './useCreateUser'
+import { useUpdateUser } from './useUpdateUser'
+import { planPeriod } from './planPeriod'
 
 const PHONE_PREFIX = '+992 '
 
@@ -20,6 +22,7 @@ const EMPTY = {
   password: '',
   business_direction: '',
   status: 'active' as UserStatus,
+  plan_months: '',
 }
 
 export function CreateUserModal({
@@ -31,6 +34,7 @@ export function CreateUserModal({
 }) {
   const { t } = useT()
   const createUser = useCreateUser()
+  const update = useUpdateUser()
   const [form, setForm] = useState(EMPTY)
   const [clientError, setClientError] = useState<string | null>(null)
 
@@ -87,7 +91,25 @@ export function CreateUserModal({
         status: form.status,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (created) => {
+          // Если выбран план — проставляем метку и период подписки (это запускает
+          // серверный триггер помесячной авто-выдачи). Ошибку не роняем на UI:
+          // лид уже создан, план можно задать в настройках.
+          if (form.plan_months) {
+            const { start, end } = planPeriod(Number(form.plan_months))
+            try {
+              await update.mutateAsync({
+                id: created.id,
+                patch: {
+                  plan_months: Number(form.plan_months),
+                  subscription_start: start,
+                  subscription_end: end,
+                },
+              })
+            } catch {
+              /* метку/период можно задать позже в настройках лида */
+            }
+          }
           toast.success(t('common.created'))
           setForm(EMPTY)
           onClose()
@@ -167,6 +189,14 @@ export function CreateUserModal({
             <option value="paused">{t('userStatus.paused')}</option>
             <option value="archived">{t('userStatus.archived')}</option>
           </Select>
+        </Labeled>
+        <Labeled label={t('usercard.fieldPlan')}>
+          <Select value={form.plan_months} onChange={field('plan_months')}>
+            <option value="">{t('usercard.planNone')}</option>
+            <option value="3">{t('usercard.plan3')}</option>
+            <option value="6">{t('usercard.plan6')}</option>
+          </Select>
+          <p className="mt-1 text-[11px] leading-snug text-ink-3">{t('usercard.planHint')}</p>
         </Labeled>
 
         {(clientError || createUser.isError) && (

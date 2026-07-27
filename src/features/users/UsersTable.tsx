@@ -3,6 +3,7 @@ import type { Profile } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { formatDate } from '@/lib/utils'
+import { PlanBadge } from './PlanBadge'
 
 /** Список пользователей: карточки на телефоне, таблица на планшете/десктопе. */
 export function UsersTable({
@@ -43,6 +44,7 @@ export function UsersTable({
                   {user.phone || '—'}
                 </div>
               </div>
+              <PlanBadge months={user.plan_months} />
               <StatusBadge status={user.status} />
               <ChevronRight className="h-4 w-4 shrink-0 text-ink-3" />
             </button>
@@ -58,6 +60,7 @@ export function UsersTable({
               <tr>
                 <th className="px-5 py-3 font-medium">Пользователь</th>
                 <th className="px-5 py-3 font-medium">Телефон</th>
+                <th className="px-5 py-3 font-medium">План</th>
                 <th className="px-5 py-3 font-medium">Статус</th>
                 <th className="px-5 py-3 font-medium">Регистрация</th>
               </tr>
@@ -86,6 +89,9 @@ export function UsersTable({
                   </td>
                   <td className="px-5 py-3.5 font-mono text-ink-2">
                     {user.phone || '—'}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <PlanBadge months={user.plan_months} />
                   </td>
                   <td className="px-5 py-3.5">
                     <StatusBadge status={user.status} />

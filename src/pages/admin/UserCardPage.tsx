@@ -2,11 +2,14 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   Activity,
+  CalendarPlus,
   ChevronLeft,
   IdCard,
   KeyRound,
   ListChecks,
   MessageSquareText,
+  Power,
+  PowerOff,
   Trash2,
   Trophy,
 } from 'lucide-react'
@@ -22,6 +25,7 @@ import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
 import { useSoftDeleteUser } from '@/features/users/useUsers'
+import { useRegenerateMonthly, useSetResidentActive } from '@/features/users/useResidentLifecycle'
 import { EditUserModal } from '@/features/users/EditUserModal'
 import { SetPasswordModal } from '@/features/users/SetPasswordModal'
 import { PasswordField } from '@/features/users/PasswordField'
@@ -39,6 +43,8 @@ export function UserCardPage() {
   const { t } = useT()
   const { data: user, isLoading } = useUser(id)
   const del = useSoftDeleteUser()
+  const setActive = useSetResidentActive()
+  const regen = useRegenerateMonthly()
   const [editing, setEditing] = useState(false)
   const [pwdOpen, setPwdOpen] = useState(false)
 
@@ -85,6 +91,11 @@ export function UserCardPage() {
                     {user.full_name || '—'}
                   </h2>
                   <StatusBadge status={user.status} />
+                  {user.deactivated_at && (
+                    <span className="rounded-full bg-danger-soft px-2.5 py-0.5 text-[11.5px] font-semibold text-danger">
+                      {t('usercard.deactivatedBadge')}
+                    </span>
+                  )}
                 </div>
                 <p className="mt-1 text-sm text-ink-2">
                   {user.business_direction || t('usercard.noDirection')}
@@ -135,6 +146,40 @@ export function UserCardPage() {
                 >
                   <span className="hidden sm:inline">{t('usercard.delete')}</span>
                 </Button>
+                {user.role === 'user' && (
+                  <Button
+                    variant={user.deactivated_at ? 'primary' : 'secondary'}
+                    aria-label={user.deactivated_at ? t('usercard.activate') : t('usercard.deactivate')}
+                    title={user.deactivated_at ? t('usercard.activate') : t('usercard.deactivate')}
+                    leftIcon={user.deactivated_at ? <Power size={16} /> : <PowerOff size={16} />}
+                    loading={setActive.isPending}
+                    onClick={async () => {
+                      const activating = !!user.deactivated_at
+                      if (!activating) {
+                        const ok = await confirm({
+                          message: t('usercard.deactivateConfirm').replace(
+                            '{name}',
+                            user.full_name || t('usercard.userFallbackGenitive'),
+                          ),
+                          danger: true,
+                          confirmLabel: t('usercard.deactivate'),
+                        })
+                        if (!ok) return
+                      }
+                      setActive.mutate(
+                        { leadId: user.id, active: activating },
+                        {
+                          onSuccess: () =>
+                            toast.success(activating ? t('usercard.activated') : t('usercard.deactivatedToast')),
+                        },
+                      )
+                    }}
+                  >
+                    <span className="hidden sm:inline">
+                      {user.deactivated_at ? t('usercard.activate') : t('usercard.deactivate')}
+                    </span>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -161,6 +206,25 @@ export function UserCardPage() {
             </dl>
           </div>
         </section>
+
+        {/* Создать помесячные задачи по периоду подписки (0048) */}
+        {user.role === 'user' && (
+          <div className="flex justify-end">
+            <Button
+              variant="secondary"
+              leftIcon={<CalendarPlus size={16} />}
+              loading={regen.isPending}
+              onClick={() =>
+                regen.mutate(user.id, {
+                  onSuccess: (n) =>
+                    toast.success(t('usercard.tasksCreated').replace('{n}', String(n))),
+                })
+              }
+            >
+              {t('usercard.generateTasks')}
+            </Button>
+          </div>
+        )}
 
         {/* Календарь/Медиа — сразу под шапкой (быстрый доступ к задачам) */}
         <UserTabs userId={user.id} />

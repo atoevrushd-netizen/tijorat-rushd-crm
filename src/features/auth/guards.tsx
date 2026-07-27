@@ -3,12 +3,15 @@ import type { UserRole } from '@/types'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { useAuth } from './useAuth'
 import { NoProfileScreen } from './NoProfileScreen'
+import { DeactivatedScreen } from './DeactivatedScreen'
 
-/** Пускает только авторизованных; иначе — на страницу входа. */
+/** Пускает только авторизованных; иначе — на страницу входа.
+ *  Деактивированный резидент входит, но видит экран «доступ завершён» (0048). */
 export function RequireAuth() {
-  const { status } = useAuth()
+  const { status, role, profile } = useAuth()
   if (status === 'loading') return <FullPageSpinner />
   if (status === 'unauthenticated') return <Navigate to="/login" replace />
+  if (role === 'user' && profile?.deactivated_at) return <DeactivatedScreen />
   return <Outlet />
 }
 

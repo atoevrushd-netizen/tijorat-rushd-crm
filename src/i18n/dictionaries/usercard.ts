@@ -68,6 +68,16 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.pwdSetHint':
       'Барои «{name}» пароли нав таъин кунед. Он фавран дар корти корбар намоён мешавад.',
     'usercard.pwdError': 'Иваз кардани парол муяссар нашуд',
+    // Деактивация + помесячные задачи (0048)
+    'usercard.deactivate': 'Ғайрифаъол кардан',
+    'usercard.activate': 'Фаъол кардан',
+    'usercard.deactivateConfirm':
+      '«{name}»-ро ғайрифаъол кунам? Резидент вориди система мешавад, вале ба кабинет дастрасӣ нахоҳад дошт.',
+    'usercard.deactivatedToast': 'Резидент ғайрифаъол карда шуд',
+    'usercard.activated': 'Резидент фаъол карда шуд',
+    'usercard.deactivatedBadge': 'Ғайрифаъол',
+    'usercard.generateTasks': 'Задачаҳо аз рӯи обуна',
+    'usercard.tasksCreated': '{n} задача сохта шуд',
   },
   ru: {
     // Подписи полей карточки
@@ -135,6 +145,16 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.pwdSetHint':
       'Задайте новый пароль для «{name}». Он сразу отобразится в карточке пользователя.',
     'usercard.pwdError': 'Не удалось сменить пароль',
+    // Деактивация + помесячные задачи (0048)
+    'usercard.deactivate': 'Деактивировать',
+    'usercard.activate': 'Активировать',
+    'usercard.deactivateConfirm':
+      'Деактивировать «{name}»? Резидент сможет войти, но доступ к кабинету будет закрыт.',
+    'usercard.deactivatedToast': 'Резидент деактивирован',
+    'usercard.activated': 'Резидент активирован',
+    'usercard.deactivatedBadge': 'Деактивирован',
+    'usercard.generateTasks': 'Создать задачи по подписке',
+    'usercard.tasksCreated': 'Создано задач: {n}',
   },
 }
 

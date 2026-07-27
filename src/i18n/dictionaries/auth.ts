@@ -18,6 +18,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'auth.showPassword': 'Намоиши парол',
     'auth.hidePassword': 'Пинҳон кардани парол',
     'auth.tagline': 'CRM барои идораи лидҳо ва вазифаҳо',
+    'deactivated.title': 'Дастрасии шумо баста шудааст',
+    'deactivated.text': 'Барномаи шумо ба анҷом расид. Барои маълумот бо маъмурият дар тамос шавед.',
+    'deactivated.signOut': 'Баромадан',
   },
   ru: {
     'auth.subtitle': 'Вход в систему',
@@ -35,6 +38,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'auth.showPassword': 'Показать пароль',
     'auth.hidePassword': 'Скрыть пароль',
     'auth.tagline': 'CRM для управления лидами и задачами',
+    'deactivated.title': 'Ваш доступ завершён',
+    'deactivated.text': 'Ваша программа завершена. По вопросам обратитесь к администрации.',
+    'deactivated.signOut': 'Выйти',
   },
 }
 

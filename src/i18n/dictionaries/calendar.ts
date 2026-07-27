@@ -27,6 +27,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'cal.monthDone': 'Моҳ пурра иҷро шуд',
     'cal.monthFuture': 'Ҳанӯз оғоз нашудааст',
     'cal.daysLeft': 'Боқӣ {n} рӯз',
+    'cal.lastDay': 'Рӯзи охирин',
     'cal.monthPast': 'Моҳ ба охир расид',
   },
   ru: {
@@ -54,6 +55,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'cal.monthDone': 'Месяц полностью выполнен',
     'cal.monthFuture': 'Ещё не начался',
     'cal.daysLeft': 'Осталось {n} дн.',
+    'cal.lastDay': 'Последний день',
     'cal.monthPast': 'Месяц завершён',
   },
 }

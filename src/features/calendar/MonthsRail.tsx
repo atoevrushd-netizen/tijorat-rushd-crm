@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import { ProgressRing } from './ProgressRing'
@@ -15,6 +15,12 @@ export function MonthsRail({
   onSelect: (key: string) => void
 }) {
   const { t } = useT()
+  const activeRef = useRef<HTMLButtonElement | null>(null)
+  // Прокручиваем выбранный месяц в зону видимости рельса (в т.ч. при авто-выборе).
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
+  }, [selectedKey])
+
   return (
     <div className="overflow-x-auto pb-1">
       <div className="flex min-w-min items-start gap-0">
@@ -26,6 +32,7 @@ export function MonthsRail({
               {i > 0 && <span className="mt-[27px] h-[3px] w-5 flex-none rounded-full bg-line sm:w-8" />}
               <button
                 type="button"
+                ref={selected ? activeRef : undefined}
                 onClick={() => onSelect(mo.key)}
                 className="flex flex-none flex-col items-center gap-1.5 px-0.5"
               >

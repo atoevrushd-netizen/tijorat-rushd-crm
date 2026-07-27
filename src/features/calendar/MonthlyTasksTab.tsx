@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
@@ -23,10 +23,31 @@ export function MonthlyTasksTab({ userId, tabId }: { userId: string; tabId: stri
   const isAdmin = canManage(role)
   const { data: tasks, isLoading } = useTasks(userId, tabId)
 
-  const months = useMemo(() => buildMonthSummaries(tasks ?? [], new Date()), [tasks])
+  // Следим за сменой календарного дня — иначе прогресс месяца/«осталось дней» замерзают,
+  // если вкладку не закрывать через полночь/смену месяца.
+  const [todayKey, setTodayKey] = useState(() => new Date().toDateString())
+  useEffect(() => {
+    const id = setInterval(() => {
+      const k = new Date().toDateString()
+      setTodayKey((prev) => (prev === k ? prev : k))
+    }, 60_000)
+    return () => clearInterval(id)
+  }, [])
+
+  const months = useMemo(
+    () => buildMonthSummaries(tasks ?? [], new Date()),
+    // todayKey намеренно в зависимостях: заставляет пересчитать new Date() при смене дня.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tasks, todayKey],
+  )
   const defaultKey = useMemo(() => {
     if (months.length === 0) return null
-    return (months.find((m) => m.state === 'current') ?? months[months.length - 1]).key
+    const current = months.find((m) => m.state === 'current')
+    if (current) return current.key
+    // Нет текущего месяца (подписка в будущем или пропуск) — открываем ближайший к сегодня.
+    const lastPast = [...months].reverse().find((m) => m.state === 'past')
+    const firstFuture = months.find((m) => m.state === 'future')
+    return (lastPast ?? firstFuture ?? months[months.length - 1]).key
   }, [months])
   const [picked, setPicked] = useState<string | null>(null)
   const activeKey = (picked && months.some((m) => m.key === picked) ? picked : defaultKey) ?? ''
@@ -66,8 +87,8 @@ function CategoryList({ tasks, isAdmin }: { tasks: Task[]; isAdmin: boolean }) {
         const name = cat ? (lang === 'tg' ? cat.tg : cat.ru) : t('cal.otherCategory')
         const done = items.filter(isTaskDone).length
         return (
-          <section key={idx} className="overflow-hidden rounded-[16px] border border-line bg-surface shadow-sh1">
-            <header className="flex items-center gap-2.5 border-b border-line bg-surface-2 px-4 py-2.5">
+          <section key={idx} className="overflow-hidden rounded-[16px] border border-line bg-surface-2 shadow-sh1">
+            <header className="flex items-center gap-2.5 border-b border-line bg-surface-3 px-4 py-2.5">
               {Icon && (
                 <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-accent-soft text-accent">
                   <Icon size={17} />
@@ -119,12 +140,16 @@ function TaskRow({ task, isAdmin, label }: { task: Task; isAdmin: boolean; label
           <Check size={15} strokeWidth={3} />
         </button>
       ) : (
+        // Резидент — только просмотр: КРУГ (не квадрат-чекбокс), чтобы не читался как кликабельный.
         <span
           aria-label={done ? t('cal.doneLabel') : t('cal.notDoneLabel')}
           title={done ? t('cal.doneLabel') : t('cal.notDoneLabel')}
-          className={cn(box, done ? 'border-success bg-success text-white' : 'border-line-strong text-transparent')}
+          className={cn(
+            'flex h-7 w-7 flex-none items-center justify-center rounded-full',
+            done ? 'bg-success-soft text-success' : 'text-ink-3',
+          )}
         >
-          <Check size={15} strokeWidth={3} />
+          {done ? <Check size={15} strokeWidth={3} /> : <span className="h-1.5 w-1.5 rounded-full bg-ink-3/50" />}
         </span>
       )}
     </li>

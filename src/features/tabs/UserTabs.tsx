@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import type { Tab } from '@/types'
 import { useT } from '@/i18n/useT'
-import { MediaTab } from '@/features/tasks/MediaTab'
 import { MonthlyTasksTab } from '@/features/calendar/MonthlyTasksTab'
 import { useActiveTabs } from './useTabs'
 
@@ -11,9 +10,10 @@ import { useActiveTabs } from './useTabs'
  * БД (таблица `tabs`), но КОНТЕНТ появляется только если под ключ есть рендерер.
  * Новый домен (продажи, KPI…) = строка в БД + запись здесь — без переписывания.
  */
+// Единый месячный вид: «Рилс»/«Креатив» и остальное — категории внутри «Календаря».
+// Старая вкладка «Медиа / Контент» упразднена (её задачи остаются в БД, но не показываются).
 const TAB_RENDERERS: Record<string, (props: { userId: string; tabId: string }) => ReactNode> = {
   calendar: ({ userId, tabId }) => <MonthlyTasksTab userId={userId} tabId={tabId} />,
-  media: ({ userId, tabId }) => <MediaTab userId={userId} tabId={tabId} />,
 }
 
 /** Универсальный рендерер вкладок карточки — строит вкладки ИЗ БД. */
@@ -46,25 +46,28 @@ export function UserTabs({ userId }: { userId: string }) {
 
   return (
     <section className="overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
-      <div className="flex flex-wrap gap-1.5 border-b border-line p-2.5 sm:p-3">
-        {known.map((tab) => {
-          const isActive = tab.key === current.key
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveKey(tab.key)}
-              className={
-                isActive
-                  ? 'rounded-[11px] bg-accent-grad px-3.5 py-2 text-sm font-semibold text-on-accent shadow-glow'
-                  : 'rounded-[11px] px-3.5 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink'
-              }
-            >
-              {tab.title}
-            </button>
-          )
-        })}
-      </div>
+      {/* Панель вкладок показываем только если их несколько (сейчас вкладка одна). */}
+      {known.length > 1 && (
+        <div className="flex flex-wrap gap-1.5 border-b border-line p-2.5 sm:p-3">
+          {known.map((tab) => {
+            const isActive = tab.key === current.key
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveKey(tab.key)}
+                className={
+                  isActive
+                    ? 'rounded-[11px] bg-accent-grad px-3.5 py-2 text-sm font-semibold text-on-accent shadow-glow'
+                    : 'rounded-[11px] px-3.5 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink'
+                }
+              >
+                {tab.title}
+              </button>
+            )
+          })}
+        </div>
+      )}
       <div className="p-4 sm:p-5">
         <TabContent tab={current} userId={userId} />
       </div>

@@ -100,7 +100,8 @@ export async function getDashboard(): Promise<DashboardData> {
     usersTotal: c.users_total ?? 0,
     usersActive: c.users_active ?? 0,
     tasksTotal,
-    tasksAccepted: byStatus.accepted_by_user,
+    // «Выполнено» = done (чекбокс админа, помесячная модель) + accepted_by_user (старый флоу).
+    tasksAccepted: byStatus.done + byStatus.accepted_by_user,
     // «В работе» = незавершённые: в работе, на проверке, отправленные (done не входит).
     tasksInProgress: byStatus.in_progress + byStatus.submitted + byStatus.sent_to_user,
     tasksByStatus: byStatus,

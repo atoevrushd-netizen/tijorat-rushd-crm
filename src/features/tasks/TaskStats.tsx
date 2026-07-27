@@ -52,7 +52,10 @@ function StatTile({
 export function TaskStats({ userId }: { userId: string }) {
   const { t } = useT()
   const { data } = useTasks(userId)
-  const c = taskCounts(data ?? [])
+  // Считаем только помесячные задачи (period_month) — ровно то, что резидент видит
+  // в помесячном виде. Старые дневные задачи (period_month = null) скрыты и в сводку
+  // не входят, иначе кольцо и цифры не совпадали бы с календарём.
+  const c = taskCounts((data ?? []).filter((task) => task.period_month))
   const pct = c.total ? Math.round((c.accepted / c.total) * 100) : 0
 
   // Сегменты распределения (в сумме = total): принято / в процессе / правка / не начато.

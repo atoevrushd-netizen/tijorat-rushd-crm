@@ -3,6 +3,7 @@ import type { Profile } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { formatDate } from '@/lib/utils'
+import { useT } from '@/i18n/useT'
 import { PlanBadge } from './PlanBadge'
 
 /** Список пользователей: карточки на телефоне, таблица на планшете/десктопе. */
@@ -13,13 +14,14 @@ export function UsersTable({
   users: Profile[]
   onRowClick?: (user: Profile) => void
 }) {
+  const { t } = useT()
   if (users.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-[18px] border border-line bg-surface px-6 py-14 text-center shadow-sh1">
         <span className="flex h-12 w-12 items-center justify-center rounded-[15px] bg-accent-soft text-accent">
           <UsersIcon className="h-6 w-6" />
         </span>
-        <p className="text-sm font-medium text-ink-2">Пользователи не найдены</p>
+        <p className="text-sm font-medium text-ink-2">{t('users.emptyList')}</p>
       </div>
     )
   }
@@ -58,11 +60,11 @@ export function UsersTable({
           <table className="w-full text-left text-sm">
             <thead className="border-b border-line bg-surface-2/60 font-mono text-[11px] uppercase tracking-[.1em] text-ink-3">
               <tr>
-                <th className="px-5 py-3 font-medium">Пользователь</th>
-                <th className="px-5 py-3 font-medium">Телефон</th>
-                <th className="px-5 py-3 font-medium">План</th>
-                <th className="px-5 py-3 font-medium">Статус</th>
-                <th className="px-5 py-3 font-medium">Регистрация</th>
+                <th className="px-5 py-3 font-medium">{t('users.colUser')}</th>
+                <th className="px-5 py-3 font-medium">{t('users.colPhone')}</th>
+                <th className="px-5 py-3 font-medium">{t('users.colPlan')}</th>
+                <th className="px-5 py-3 font-medium">{t('users.colStatus')}</th>
+                <th className="px-5 py-3 font-medium">{t('users.colRegistered')}</th>
               </tr>
             </thead>
             <tbody>

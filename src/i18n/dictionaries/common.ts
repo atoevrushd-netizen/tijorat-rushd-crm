@@ -16,6 +16,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'common.created': 'Эҷод шуд',
     'common.deleted': 'Нест карда шуд',
     'common.language': 'Забон',
+    'common.pagTotal': 'Ҳамагӣ:',
+    'common.pagPrev': 'Қафо',
+    'common.pagNext': 'Пеш',
   },
   ru: {
     'common.menu': 'Меню',
@@ -31,6 +34,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'common.created': 'Создано',
     'common.deleted': 'Удалено',
     'common.language': 'Язык',
+    'common.pagTotal': 'Всего:',
+    'common.pagPrev': 'Назад',
+    'common.pagNext': 'Вперёд',
   },
 }
 

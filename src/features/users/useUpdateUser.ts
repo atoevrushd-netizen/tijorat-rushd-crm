@@ -11,6 +11,9 @@ export function useUpdateUser() {
       // важно: обновить и карточку пользователя (иначе шапка показывает старые данные)
       void queryClient.invalidateQueries({ queryKey: ['user', variables.id] })
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      // изменение периода подписки серверным триггером создаёт помесячные задачи —
+      // обновляем список задач, чтобы календарь на карточке сразу их показал.
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] })
     },
   })
 }

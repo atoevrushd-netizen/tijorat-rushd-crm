@@ -7,7 +7,6 @@ import { useAuth } from '@/features/auth/useAuth'
 import { useT } from '@/i18n/useT'
 import { UserTabs } from '@/features/tabs/UserTabs'
 import { TaskStats } from '@/features/tasks/TaskStats'
-import { DeadlineBanner } from '@/features/tasks/DeadlineBanner'
 import { AchievementsBlock } from '@/features/achievements/AchievementsBlock'
 import { SelfEditProfileModal } from '@/features/users/SelfEditProfileModal'
 import { WelcomeModal } from '@/features/onboarding/WelcomeModal'
@@ -21,7 +20,7 @@ export function UserCabinet() {
   const [editOpen, setEditOpen] = useState(false)
   const { data: leadCard } = useLeadCard(profile?.id ?? '')
   if (!profile) return null
-  const name = profile.full_name || 'студент'
+  const name = profile.full_name || profile.login || t('common.userFallback')
 
   // Заполненность бизнес-карты (17 полей) — для индикатора на кнопке «Мои данные».
   const cardFields = LEAD_CARD_GROUPS.flatMap((g) => g.fields)
@@ -71,8 +70,6 @@ export function UserCabinet() {
             </button>
           </div>
         </section>
-
-        <DeadlineBanner userId={profile.id} />
 
         {/* Кнопка-переход в «Мои данные» (бизнес-карта лида) */}
         <Link

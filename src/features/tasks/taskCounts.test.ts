@@ -45,8 +45,8 @@ describe('taskCounts', () => {
     ]
     expect(taskCounts(tasks)).toEqual({
       total: 6,
-      accepted: 1,
-      inProgress: 3, // in_progress + done + sent_to_user
+      accepted: 2, // done + accepted_by_user
+      inProgress: 2, // in_progress + sent_to_user
       needsRevision: 1,
       notStarted: 1,
     })

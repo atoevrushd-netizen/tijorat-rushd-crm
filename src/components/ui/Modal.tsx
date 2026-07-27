@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { useT } from '@/i18n/useT'
 
 type ModalProps = {
   open: boolean
@@ -15,6 +16,7 @@ type ModalProps = {
  * Прокручивается оверлей, окно приподнято. Esc — закрыть, фон не скроллится.
  */
 export function Modal({ open, onClose, title, children }: ModalProps) {
+  const { t } = useT()
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -48,7 +50,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Закрыть"
+            aria-label={t('common.close')}
             className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-surface-2 text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink active:scale-90"
           >
             <X size={17} />

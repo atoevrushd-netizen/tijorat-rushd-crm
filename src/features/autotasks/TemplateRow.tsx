@@ -64,7 +64,7 @@ export function TemplateRow({
       <button
         type="button"
         onClick={onDelete}
-        aria-label="Удалить"
+        aria-label={t('usercard.delete')}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-ink-3 transition-colors hover:bg-danger-soft hover:text-danger"
       >
         <Trash2 size={16} />

@@ -66,3 +66,50 @@ export function groupByMonth(tasks: Task[]): Record<string, Task[]> {
 export function isTaskDone(task: Task): boolean {
   return task.status === 'done' || task.status === 'accepted_by_user'
 }
+
+/** Сводка по одному месяцу программы (для визуализации «путь по месяцам»). */
+export type MonthSummary = {
+  key: string // 'YYYY-MM-01'
+  index: number // номер месяца в программе (1-based)
+  tasks: Task[]
+  done: number
+  total: number
+  state: 'past' | 'current' | 'future'
+  /** Доля прошедших дней месяца (0..1): у прошедших = 1, у будущих = 0. */
+  timeProgress: number
+  /** Осталось дней в текущем месяце (для остальных — 0). */
+  daysLeft: number
+}
+
+/** Кол-во дней в месяце по ключу 'YYYY-MM-01'. */
+function daysInMonth(key: string): number {
+  const [y, m] = key.split('-').map(Number)
+  return new Date(y, m, 0).getDate()
+}
+
+/**
+ * Построить сводки месяцев из задач резидента (по порядку). «Месяц» = календарный
+ * месяц с задачами; прогресс времени заполняется по дням, длина месяца — в днях.
+ */
+export function buildMonthSummaries(tasks: Task[], today: Date): MonthSummary[] {
+  const groups = groupByMonth(tasks)
+  const curKey = monthStart(today)
+  return Object.keys(groups)
+    .sort()
+    .map((key, i) => {
+      const items = groups[key]
+      const state: MonthSummary['state'] = key === curKey ? 'current' : key < curKey ? 'past' : 'future'
+      const dim = daysInMonth(key)
+      const day = today.getDate()
+      return {
+        key,
+        index: i + 1,
+        tasks: items,
+        done: items.filter(isTaskDone).length,
+        total: items.length,
+        state,
+        timeProgress: state === 'past' ? 1 : state === 'future' ? 0 : Math.min(1, day / dim),
+        daysLeft: state === 'current' ? Math.max(0, dim - day) : 0,
+      }
+    })
+}

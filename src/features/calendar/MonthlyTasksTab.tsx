@@ -1,78 +1,45 @@
 import { useMemo, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { taskTitle } from '@/lib/taskI18n'
-import { monthYear } from '@/lib/dateI18n'
 import { useT } from '@/i18n/useT'
 import { useAuth } from '@/features/auth/useAuth'
 import { canManage } from '@/features/auth/roles'
 import { useTasks, useSetTaskStatus } from '@/features/tasks/useTasks'
 import { Skeleton } from '@/components/ui/Skeleton'
 import type { Task } from '@/types'
-import { TASK_CATEGORIES, categoryIndex, groupByMonth, isTaskDone, monthStart, shiftMonth } from './monthly'
+import { MonthsRail } from './MonthsRail'
+import { MonthHero } from './MonthHero'
+import { TASK_CATEGORIES, buildMonthSummaries, categoryIndex, isTaskDone } from './monthly'
 
 /**
- * Вкладка «Календарь» (помесячный вид, 0048): переключатель месяцев + задачи месяца
- * по категориям. Чекбоксы ставит ТОЛЬКО админ (бинарно: сделано/не сделано);
- * резидент видит статус, но не может кликать.
+ * Вкладка «Календарь» → путь по месяцам (0048). Без сетки дней: сверху рельс месяцев
+ * (кольца прогресса), крупная карточка выбранного месяца с дневной «загрузкой», ниже —
+ * задачи месяца по категориям. Чекбоксы ставит ТОЛЬКО админ; резидент видит статус.
  */
 export function MonthlyTasksTab({ userId, tabId }: { userId: string; tabId: string }) {
   const { role } = useAuth()
   const isAdmin = canManage(role)
   const { data: tasks, isLoading } = useTasks(userId, tabId)
-  const [month, setMonth] = useState(() => monthStart(new Date()))
 
-  const byMonth = useMemo(() => groupByMonth(tasks ?? []), [tasks])
-  const monthTasks = byMonth[month] ?? []
+  const months = useMemo(() => buildMonthSummaries(tasks ?? [], new Date()), [tasks])
+  const defaultKey = useMemo(() => {
+    if (months.length === 0) return null
+    return (months.find((m) => m.state === 'current') ?? months[months.length - 1]).key
+  }, [months])
+  const [picked, setPicked] = useState<string | null>(null)
+  const activeKey = (picked && months.some((m) => m.key === picked) ? picked : defaultKey) ?? ''
+  const selected = months.find((m) => m.key === activeKey) ?? null
 
-  if (isLoading) return <Skeleton className="h-[420px] w-full" />
+  if (isLoading) return <Skeleton className="h-[460px] w-full" />
+  if (months.length === 0) return <EmptyMonth isAdmin={isAdmin} />
 
   return (
     <div className="space-y-4">
-      <MonthHeader month={month} tasks={monthTasks} onShift={(d) => setMonth((m) => shiftMonth(m, d))} />
-      {monthTasks.length === 0 ? (
-        <EmptyMonth isAdmin={isAdmin} />
-      ) : (
-        <CategoryList tasks={monthTasks} isAdmin={isAdmin} />
-      )}
-    </div>
-  )
-}
-
-/** Шапка месяца (океановый градиент) + прогресс выполнения. */
-function MonthHeader({ month, tasks, onShift }: { month: string; tasks: Task[]; onShift: (d: number) => void }) {
-  const { t, lang } = useT()
-  const [y, m] = month.split('-').map(Number)
-  const label = monthYear(new Date(y, m - 1, 1), lang)
-  const done = tasks.filter(isTaskDone).length
-  const total = tasks.length
-  const pct = total ? Math.round((done / total) * 100) : 0
-
-  return (
-    <div className="rounded-[20px] bg-accent-grad p-3 text-on-accent shadow-glow sm:p-4">
-      <div className="flex items-center gap-2">
-        <Circle onClick={() => onShift(-1)} label={t('cal.prevMonth')}>
-          <ChevronLeft size={20} />
-        </Circle>
-        <div className="min-w-0 flex-1 text-center text-[18px] font-extrabold capitalize leading-tight sm:text-[20px]">
-          {label}
-        </div>
-        <Circle onClick={() => onShift(1)} label={t('cal.nextMonth')}>
-          <ChevronRight size={20} />
-        </Circle>
-      </div>
-      {total > 0 && (
-        <div className="mt-3">
-          <div className="mb-1 flex items-center justify-between text-[12px] font-semibold text-white/90">
-            <span>{t('cal.monthProgress')}</span>
-            <span>{done} / {total}</span>
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-white/25">
-            <div className="h-full rounded-full bg-white transition-all duration-300" style={{ width: `${pct}%` }} />
-          </div>
-        </div>
-      )}
+      <MonthsRail months={months} selectedKey={activeKey} onSelect={setPicked} />
+      {selected && <MonthHero month={selected} />}
+      {selected && <CategoryList tasks={selected.tasks} isAdmin={isAdmin} />}
     </div>
   )
 }
@@ -80,7 +47,6 @@ function MonthHeader({ month, tasks, onShift }: { month: string; tasks: Task[]; 
 /** Задачи месяца, сгруппированные по категориям (в порядке программы). */
 function CategoryList({ tasks, isAdmin }: { tasks: Task[]; isAdmin: boolean }) {
   const { t, lang } = useT()
-  // Группируем по индексу категории (неизвестные типы — в общий «Прочее» в конце).
   const groups = useMemo(() => {
     const map = new Map<number, Task[]>()
     for (const task of tasks) {
@@ -124,18 +90,11 @@ function CategoryList({ tasks, isAdmin }: { tasks: Task[]; isAdmin: boolean }) {
   )
 }
 
-/** Строка задачи: название + чекбокс (админ) / индикатор статуса (резидент). */
+/** Строка задачи: название + чекбокс (админ) / индикатор (резидент — только просмотр). */
 function TaskRow({ task, isAdmin, label }: { task: Task; isAdmin: boolean; label: string }) {
   const { t } = useT()
   const setStatus = useSetTaskStatus()
   const done = isTaskDone(task)
-
-  function toggle() {
-    setStatus.mutate(
-      { id: task.id, status: done ? 'not_started' : 'done' },
-      { onSuccess: () => toast.success(t('common.saved')) },
-    )
-  }
 
   const box = 'flex h-7 w-7 flex-none items-center justify-center rounded-[8px] border-2 transition-all duration-150 ease-ios'
   return (
@@ -146,7 +105,12 @@ function TaskRow({ task, isAdmin, label }: { task: Task; isAdmin: boolean; label
       {isAdmin ? (
         <button
           type="button"
-          onClick={toggle}
+          onClick={() =>
+            setStatus.mutate(
+              { id: task.id, status: done ? 'not_started' : 'done' },
+              { onSuccess: () => toast.success(t('common.saved')) },
+            )
+          }
           disabled={setStatus.isPending}
           aria-label={done ? t('cal.unmarkDone') : t('cal.markDone')}
           title={done ? t('cal.unmarkDone') : t('cal.markDone')}
@@ -174,18 +138,5 @@ function EmptyMonth({ isAdmin }: { isAdmin: boolean }) {
       <p className="text-[14px] font-semibold text-ink">{t('cal.monthEmpty')}</p>
       {isAdmin && <p className="mt-1 text-[12.5px] text-ink-3">{t('cal.monthEmptyAdmin')}</p>}
     </div>
-  )
-}
-
-function Circle({ onClick, label, children }: { onClick: () => void; label: string; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-white/15 text-on-accent transition-all duration-150 ease-ios hover:bg-white/25 active:scale-90"
-    >
-      {children}
-    </button>
   )
 }

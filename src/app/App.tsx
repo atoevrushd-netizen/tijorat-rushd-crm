@@ -7,7 +7,7 @@ import { MaintenancePage } from '@/app/MaintenancePage'
 // (база Supabase и данные НЕ затрагиваются). Чтобы снова включить приложение —
 // поставить false и запушить (или откатить коммит паузы). Тип boolean задан явно,
 // чтобы код приложения ниже не считался недостижимым.
-const PAUSED: boolean = true
+const PAUSED: boolean = false
 
 export function App() {
   if (PAUSED) return <MaintenancePage />

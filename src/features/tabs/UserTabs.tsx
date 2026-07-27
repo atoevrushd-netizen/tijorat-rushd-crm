@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import type { Tab } from '@/types'
 import { useT } from '@/i18n/useT'
 import { MediaTab } from '@/features/tasks/MediaTab'
-import { CalendarTab } from '@/features/calendar/CalendarTab'
+import { MonthlyTasksTab } from '@/features/calendar/MonthlyTasksTab'
 import { useActiveTabs } from './useTabs'
 
 /**
@@ -12,7 +12,7 @@ import { useActiveTabs } from './useTabs'
  * Новый домен (продажи, KPI…) = строка в БД + запись здесь — без переписывания.
  */
 const TAB_RENDERERS: Record<string, (props: { userId: string; tabId: string }) => ReactNode> = {
-  calendar: ({ userId, tabId }) => <CalendarTab userId={userId} tabId={tabId} />,
+  calendar: ({ userId, tabId }) => <MonthlyTasksTab userId={userId} tabId={tabId} />,
   media: ({ userId, tabId }) => <MediaTab userId={userId} tabId={tabId} />,
 }
 

@@ -30,6 +30,8 @@ export type Profile = {
   updated_at: string
   /** Мягкое удаление: непусто = лид в «Корзине». */
   deleted_at: string | null
+  /** Деактивация: непусто = резидент завершил программу, доступ заблокирован (0048). */
+  deactivated_at?: string | null
 }
 
 /** Лид (таблица public.leads). */
@@ -109,6 +111,8 @@ export type Task = {
   title_tg?: string | null
   task_type: string | null
   status: TaskStatus
+  /** Месяц задачи (1-е число месяца) — помесячная модель (0048). null у старых дневных. */
+  period_month?: string | null
   deadline: string | null
   /** Время дня выполнения (для календаря), 'HH:MM:SS' | null. */
   due_time: string | null

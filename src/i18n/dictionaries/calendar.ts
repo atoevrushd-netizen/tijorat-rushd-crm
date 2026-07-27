@@ -16,6 +16,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'cal.editTask': 'Задачаро таҳрир кардан',
     'cal.deleteTask': 'Задачаро нест кардан',
     'cal.deleteTaskConfirm': 'Задачаро нест кунам? Амал бебозгашт аст.',
+    'cal.monthProgress': 'Иҷрошуда',
+    'cal.otherCategory': 'Дигар',
+    'cal.doneLabel': 'Иҷро шуд',
+    'cal.notDoneLabel': 'Ҳанӯз иҷро нашуд',
+    'cal.monthEmpty': 'Барои ин моҳ задача нест',
+    'cal.monthEmptyAdmin': 'Давраи обунаро таъин кунед ва «Задачаҳоро сохтан»-ро дар корти резидент пахш кунед.',
   },
   ru: {
     'cal.prevMonth': 'Предыдущий месяц',
@@ -31,6 +37,12 @@ const bundle: Record<Lang, Record<string, string>> = {
     'cal.editTask': 'Редактировать задачу',
     'cal.deleteTask': 'Удалить задачу',
     'cal.deleteTaskConfirm': 'Удалить задачу? Действие необратимо.',
+    'cal.monthProgress': 'Выполнено',
+    'cal.otherCategory': 'Прочее',
+    'cal.doneLabel': 'Выполнено',
+    'cal.notDoneLabel': 'Ещё не выполнено',
+    'cal.monthEmpty': 'На этот месяц задач нет',
+    'cal.monthEmptyAdmin': 'Задайте период подписки и нажмите «Создать задачи» в карточке резидента.',
   },
 }
 

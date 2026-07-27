@@ -41,11 +41,14 @@ export function AppShell({
   subtitle,
   action,
   children,
+  bleed,
 }: {
   title: string
   subtitle?: string
   action?: ReactNode
   children: ReactNode
+  /** Растянуть контент на всю ширину (без max-width и лишних отступов) — для чата. */
+  bleed?: boolean
 }) {
   const { profile, role, signOut } = useAuth()
   const { pathname } = useLocation()
@@ -170,7 +173,12 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1180px] px-5 pt-7 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:px-8 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+        <main
+          className={cn(
+            'w-full pt-7 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:pb-[max(1.75rem,env(safe-area-inset-bottom))]',
+            bleed ? 'px-3 sm:px-5' : 'mx-auto max-w-[1180px] px-5 sm:px-8',
+          )}
+        >
           <div className="animate-rise">{children}</div>
         </main>
       </div>

@@ -21,8 +21,9 @@ export function MonthsRail({
     activeRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
   }, [selectedKey])
 
+  // py-2 + px-1 — чтобы кольцо и подсветка выбранного не обрезались краями прокрутки.
   return (
-    <div className="overflow-x-auto pb-1">
+    <div className="overflow-x-auto px-1 py-2">
       <div className="flex min-w-min items-start gap-0">
         {months.map((mo, i) => {
           const complete = mo.total > 0 && mo.done === mo.total

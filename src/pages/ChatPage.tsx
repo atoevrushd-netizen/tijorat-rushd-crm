@@ -52,8 +52,8 @@ function LeadChat({ desktop }: { desktop: boolean }) {
   if (!desktop) return <div className="flex h-[100dvh] flex-col bg-surface">{pane}</div>
 
   return (
-    <AppShell title={t('page.chat')}>
-      <div className="h-[calc(100dvh-14rem)] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1 md:h-[calc(100dvh-9.5rem)]">
+    <AppShell title={t('page.chat')} bleed>
+      <div className="h-[calc(100dvh-14rem)] overflow-hidden rounded-[18px] bg-surface md:h-[calc(100dvh-8.5rem)]">
         {pane}
       </div>
     </AppShell>
@@ -157,8 +157,8 @@ function AdminChat({ desktop }: { desktop: boolean }) {
 
   // ── ПК/планшет: внутри каркаса, список + диалог (+ инфопанель) ──
   return (
-    <AppShell title={t('page.chat')}>
-      <div className="flex h-[calc(100dvh-9.5rem)] overflow-hidden rounded-[18px] border border-line bg-surface shadow-sh1">
+    <AppShell title={t('page.chat')} bleed>
+      <div className="flex h-[calc(100dvh-8.5rem)] overflow-hidden rounded-[18px] bg-surface">
         <div className="flex w-[340px] flex-none flex-col border-r border-line">
           <ConversationList selectedLeadId={selected} onSelect={select} />
         </div>

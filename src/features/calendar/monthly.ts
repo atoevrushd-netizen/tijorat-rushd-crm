@@ -1,9 +1,25 @@
-import { BarChart3, Film, Gift, GraduationCap, Palette, Trophy, Users, Utensils, type LucideIcon } from 'lucide-react'
+import {
+  BarChart3,
+  Database,
+  Film,
+  Gift,
+  GraduationCap,
+  Package,
+  Palette,
+  ScrollText,
+  Target,
+  Trophy,
+  UserCheck,
+  Users,
+  Utensils,
+  type LucideIcon,
+} from 'lucide-react'
 import type { Task } from '@/types'
 
 /**
- * Помесячная программа (0048): фиксированные категории задач месяца.
- * Порядок и подписи — единый источник для вкладки «Календарь» (помесячный вид).
+ * Помесячная программа (0048, наборы v2 — 0053): фиксированные категории задач месяца.
+ * Порядок и подписи — единый источник для вкладки «Календарь» (помесячный вид) и
+ * выпадающего списка в инструменте «Назначить задачу». task_type в БД = поле type.
  */
 export type TaskCategory = {
   type: string
@@ -13,14 +29,19 @@ export type TaskCategory = {
 }
 
 export const TASK_CATEGORIES: TaskCategory[] = [
+  { type: 'packaging', ru: 'Упаковка и анализ Inst и FB', tg: 'Бастабандӣ ва таҳлили Inst ва FB', icon: Package },
   { type: 'reels', ru: 'Рилс', tg: 'Рилс', icon: Film },
   { type: 'creative', ru: 'Креатив', tg: 'Креатив', icon: Palette },
-  { type: 'bonus', ru: 'Бонусные уроки', tg: 'Дарсҳои иловагӣ', icon: Gift },
-  { type: 'lesson', ru: 'Основной урок', tg: 'Дарси асосӣ', icon: GraduationCap },
+  { type: 'targeting', ru: 'Настройка таргета ADS', tg: 'Танзими таргети ADS', icon: Target },
+  { type: 'lesson', ru: 'Обязательный урок', tg: 'Дарси ҳатмӣ', icon: GraduationCap },
+  { type: 'bonus', ru: 'Бонусный урок', tg: 'Дарси иловагӣ', icon: Gift },
   { type: 'mastermind', ru: 'Мастермайнд', tg: 'Мастермайнд', icon: Users },
-  { type: 'dinner', ru: 'Бизнес-ужины', tg: 'Хӯроки корӣ', icon: Utensils },
+  { type: 'dinner', ru: 'Бизнес-ужин', tg: 'Хӯроки корӣ', icon: Utensils },
   { type: 'analysis', ru: 'Внутренний анализ бизнеса', tg: 'Таҳлили дохилии тиҷорат', icon: BarChart3 },
   { type: 'football', ru: 'Футбол', tg: 'Футбол', icon: Trophy },
+  { type: 'crm', ru: 'Создание CRM', tg: 'Сохтани CRM', icon: Database },
+  { type: 'sales_script', ru: 'Создание скриптов продаж', tg: 'Сохтани скриптҳои фурӯш', icon: ScrollText },
+  { type: 'curator_training', ru: 'Обучение куратором — скриптов продаж', tg: 'Омӯзиши куратор — скриптҳои фурӯш', icon: UserCheck },
 ]
 
 const CAT_INDEX: Record<string, number> = Object.fromEntries(

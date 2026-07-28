@@ -40,8 +40,8 @@ export const TASK_CATEGORIES: TaskCategory[] = [
   { type: 'analysis', ru: 'Внутренний анализ бизнеса', tg: 'Таҳлили дохилии тиҷорат', icon: BarChart3 },
   { type: 'football', ru: 'Футбол', tg: 'Футбол', icon: Trophy },
   { type: 'crm', ru: 'Создание CRM', tg: 'Сохтани CRM', icon: Database },
-  { type: 'sales_script', ru: 'Создание скриптов продаж', tg: 'Сохтани скриптҳои фурӯш', icon: ScrollText },
-  { type: 'curator_training', ru: 'Обучение куратором — скриптов продаж', tg: 'Омӯзиши куратор — скриптҳои фурӯш', icon: UserCheck },
+  { type: 'sales_script', ru: 'Создание скриптов', tg: 'Сохтани скриптҳо', icon: ScrollText },
+  { type: 'script_training', ru: 'Обучение скриптам', tg: 'Омӯзиши скриптҳо', icon: UserCheck },
 ]
 
 const CAT_INDEX: Record<string, number> = Object.fromEntries(

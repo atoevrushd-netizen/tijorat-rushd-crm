@@ -134,6 +134,11 @@ export function AutoTasksPage() {
         </div>
       ) : (
         <div className="space-y-4 sm:space-y-5">
+          {/* Наборы задаются программно (0053) — редактор шаблонов ниже неактивен */}
+          <div className="rounded-[14px] border border-warn/40 bg-warn-soft px-4 py-3 text-[12.5px] leading-snug text-ink-2">
+            {t('at.deadEditorNote')}
+          </div>
+
           {/* Тумблер вкл/выкл */}
           <section className="flex items-center justify-between gap-4 rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">
             <div className="flex min-w-0 items-center gap-3.5">

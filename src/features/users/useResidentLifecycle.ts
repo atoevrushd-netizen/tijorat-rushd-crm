@@ -14,6 +14,13 @@ async function regenerateMonthly(leadId: string): Promise<number> {
   return (data as number) ?? 0
 }
 
+/** Пересоздать набор по ТЕКУЩЕМУ плану: удаляет авто-задачи и создаёт заново (RPC). */
+async function rebuildMonthly(leadId: string): Promise<number> {
+  const { data, error } = await supabase.rpc('rebuild_monthly_tasks', { p_lead: leadId })
+  if (error) throw error
+  return (data as number) ?? 0
+}
+
 export function useSetResidentActive() {
   const qc = useQueryClient()
   return useMutation({
@@ -29,6 +36,14 @@ export function useRegenerateMonthly() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (leadId: string) => regenerateMonthly(leadId),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['tasks'] }),
+  })
+}
+
+export function useRebuildMonthly() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (leadId: string) => rebuildMonthly(leadId),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['tasks'] }),
   })
 }

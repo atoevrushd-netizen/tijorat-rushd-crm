@@ -11,6 +11,7 @@ import {
   MessageSquareText,
   Power,
   PowerOff,
+  RefreshCw,
   Trash2,
   Trophy,
 } from 'lucide-react'
@@ -26,7 +27,7 @@ import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
 import { useSoftDeleteUser } from '@/features/users/useUsers'
-import { useRegenerateMonthly, useSetResidentActive } from '@/features/users/useResidentLifecycle'
+import { useRebuildMonthly, useRegenerateMonthly, useSetResidentActive } from '@/features/users/useResidentLifecycle'
 import { EditUserModal } from '@/features/users/EditUserModal'
 import { SetPasswordModal } from '@/features/users/SetPasswordModal'
 import { PasswordField } from '@/features/users/PasswordField'
@@ -47,6 +48,7 @@ export function UserCardPage() {
   const del = useSoftDeleteUser()
   const setActive = useSetResidentActive()
   const regen = useRegenerateMonthly()
+  const rebuild = useRebuildMonthly()
   const [editing, setEditing] = useState(false)
   const [pwdOpen, setPwdOpen] = useState(false)
 
@@ -232,6 +234,21 @@ export function UserCardPage() {
               }
             >
               {t('usercard.generateTasks')}
+            </Button>
+            <Button
+              variant="secondary"
+              leftIcon={<RefreshCw size={16} />}
+              loading={rebuild.isPending}
+              onClick={async () => {
+                if (await confirm({ message: t('usercard.rebuildConfirm'), danger: true, confirmLabel: t('usercard.rebuildTasks') }))
+                  rebuild.mutate(user.id, {
+                    onSuccess: (n) =>
+                      toast.success(t('usercard.rebuildDone').replace('{n}', String(n))),
+                    onError: (e) => toast.error(e instanceof Error ? e.message : t('usercard.saveError')),
+                  })
+              }}
+            >
+              {t('usercard.rebuildTasks')}
             </Button>
           </div>
         )}

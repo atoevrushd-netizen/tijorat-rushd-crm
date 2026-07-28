@@ -13,13 +13,20 @@ export async function signOut() {
   if (error) throw error
 }
 
-/** Загрузить профиль пользователя по id. */
+// Профиль текущего пользователя: НЕ тянем админ-поля (admin_comment, plan_months,
+// subscription_*) — резиденту они не нужны и не должны попадать к нему на клиент.
+// (RLS позволяет резиденту читать свою строку целиком, поэтому ограничиваем на уровне
+//  выборки; полная защита — раздельная таблица админ-полей — задача на будущее.)
+const SELF_COLS =
+  'id, full_name, phone, email, photo_url, role, status, business_direction, login, registration_date, created_at, updated_at, deleted_at, deactivated_at'
+
+/** Загрузить профиль текущего пользователя по id (без админских полей). */
 export async function fetchProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select(SELF_COLS)
     .eq('id', userId)
     .maybeSingle()
   if (error) throw error
-  return data as Profile | null
+  return (data as unknown as Profile) ?? null
 }

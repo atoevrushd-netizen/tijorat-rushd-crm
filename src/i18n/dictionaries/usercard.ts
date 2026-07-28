@@ -79,6 +79,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.generateTasks': 'Задачаҳо аз рӯи обуна',
     'usercard.tasksCreated': '{n} задача сохта шуд',
     'usercard.assignTask': 'Задача таъин кардан',
+    'usercard.rebuildTasks': 'Аз рӯи план аз нав сохтан',
+    'usercard.rebuildConfirm':
+      'Маҷмӯи задачаҳоро аз рӯи плани ҷорӣ аз нав созам? Задачаҳои иҷронашудаи худкор иваз мешаванд (дастӣ таъиншуда ва иҷрошуда мемонанд).',
+    'usercard.rebuildDone': 'Маҷмӯъ аз нав сохта шуд: {n} задача',
     // Метка плана подписки (0051)
     'usercard.fieldPlan': 'Навъи обуна',
     'usercard.planNone': '— бе метка —',
@@ -167,6 +171,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.generateTasks': 'Создать задачи по подписке',
     'usercard.tasksCreated': 'Создано задач: {n}',
     'usercard.assignTask': 'Создать задачу',
+    'usercard.rebuildTasks': 'Пересоздать по плану',
+    'usercard.rebuildConfirm':
+      'Пересоздать набор задач по текущему плану? Невыполненные авто-задачи будут заменены (назначенные вручную и отмеченные — останутся).',
+    'usercard.rebuildDone': 'Набор пересоздан: {n} задач',
     // Метка плана подписки (0051)
     'usercard.fieldPlan': 'Тип подписки',
     'usercard.planNone': '— без метки —',

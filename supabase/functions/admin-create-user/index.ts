@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
       .select('role')
       .eq('id', callerData.user.id)
       .maybeSingle()
-    if (me?.role !== 'admin') {
+    if (me?.role !== 'admin' && me?.role !== 'developer') {
       return json({ error: 'Нужны права администратора' }, 403)
     }
 

@@ -46,7 +46,8 @@ export function AdminDashboard() {
   async function exportCsv() {
     setExporting(true)
     try {
-      const rows = await listAllLeads(debouncedSearch, showTrash)
+      // Экспорт учитывает активный фильтр плана (кроме «Корзины», где план не применяется).
+      const rows = await listAllLeads(debouncedSearch, showTrash, showTrash ? undefined : plan)
       const csv = toCSV<Profile>(rows, [
         { label: t('users.colName'), get: (u) => u.full_name ?? '' },
         { label: t('users.colPhone'), get: (u) => u.phone ?? '' },
@@ -107,7 +108,11 @@ export function AdminDashboard() {
       </div>
 
       {!showTrash && (
-        <div className="mb-4 inline-flex rounded-[13px] border border-line bg-surface p-1 shadow-sh1">
+        <div
+          role="group"
+          aria-label={t('usercard.fieldPlan')}
+          className="mb-4 inline-flex rounded-[13px] border border-line bg-surface p-1 shadow-sh1"
+        >
           {(
             [
               { value: undefined, label: t('usercard.planAll') },
@@ -120,6 +125,7 @@ export function AdminDashboard() {
               <button
                 key={tab.label}
                 type="button"
+                aria-pressed={active}
                 onClick={() => setPlan(tab.value)}
                 className={
                   'rounded-[10px] px-4 py-1.5 text-[13px] font-semibold transition-colors ' +

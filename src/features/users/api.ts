@@ -35,7 +35,11 @@ export async function listUsers({
 }
 
 /** Все лиды (без пагинации) для экспорта — читаем постранично до конца. */
-export async function listAllLeads(search: string, trashed = false): Promise<Profile[]> {
+export async function listAllLeads(
+  search: string,
+  trashed = false,
+  plan?: number,
+): Promise<Profile[]> {
   const CHUNK = 1000
   const rows: Profile[] = []
   const filter = buildSearchFilter(search)
@@ -44,6 +48,7 @@ export async function listAllLeads(search: string, trashed = false): Promise<Pro
     query = trashed
       ? query.not('deleted_at', 'is', null)
       : query.is('deleted_at', null)
+    if (plan) query = query.eq('plan_months', plan)
     query = query
       .order('registration_date', { ascending: false })
       .range(from, from + CHUNK - 1)

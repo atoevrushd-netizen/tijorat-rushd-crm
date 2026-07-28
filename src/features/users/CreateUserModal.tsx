@@ -210,7 +210,9 @@ export function CreateUserModal({
 
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={close}>{t('common.cancel')}</Button>
-          <Button type="submit" loading={createUser.isPending}>{t('usercard.create')}</Button>
+          <Button type="submit" loading={createUser.isPending || update.isPending}>
+            {t('usercard.create')}
+          </Button>
         </div>
       </form>
     </Modal>

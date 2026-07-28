@@ -47,13 +47,7 @@ begin
                         (case when p_idx >= 3 then 2 else 3 end);
     return query select 'dinner'::text, 'Бизнес-ужин'::text, 'Хӯроки корӣ'::text,
                         (case when p_idx >= 3 then 2 else 3 end);
-    if p_idx = 1 then
-      -- Только 1-й месяц: упаковка + настройка таргета
-      return query select * from (values
-        ('packaging'::text, 'Упаковка и анализ Inst и FB'::text, 'Бастабандӣ ва таҳлили Inst ва FB'::text, 1),
-        ('targeting',       'Настройка таргета ADS',             'Танзими таргети ADS',                    1)
-      ) as t(typ, ru, tg, cnt);
-    end if;
+    -- Упаковки/анализа и настройки таргета у 3-месячных НЕТ (они только у 6-месячных).
   end if;
 end $$;
 

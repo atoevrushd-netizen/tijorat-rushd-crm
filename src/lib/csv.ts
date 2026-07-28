@@ -6,7 +6,10 @@ const BOM = String.fromCharCode(0xfeff)
 
 /** Экранировать одно поле CSV (кавычки/запятые/переводы строк). */
 function esc(value: unknown): string {
-  const s = value == null ? '' : String(value)
+  let s = value == null ? '' : String(value)
+  // Защита от инъекции формул: значения, начинающиеся с = + - @ таб/CR, Excel и
+  // LibreOffice трактуют как формулу. Префиксуем апострофом — тогда это просто текст.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
 }
 

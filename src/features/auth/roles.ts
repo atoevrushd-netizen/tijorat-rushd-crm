@@ -8,8 +8,3 @@ import type { UserRole } from '@/types'
 export function canManage(role: UserRole | null | undefined): boolean {
   return role === 'admin' || role === 'developer'
 }
-
-/** Разработчик (супер-доступ, управление ролями). */
-export function isDeveloper(role: UserRole | null | undefined): boolean {
-  return role === 'developer'
-}

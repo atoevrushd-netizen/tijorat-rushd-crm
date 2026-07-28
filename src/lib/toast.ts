@@ -44,8 +44,22 @@ export const toast = {
   info: (message: string) => push('info', message),
 }
 
+const ERR_FALLBACK: Record<string, string> = {
+  tg: 'Хатогӣ рӯй дод',
+  ru: 'Что-то пошло не так',
+}
+
+/** Запасное сообщение об ошибке на языке интерфейса (обработчик живёт вне провайдера). */
+function defaultErrorFallback(): string {
+  try {
+    return localStorage.getItem('tijorat.lang') === 'tg' ? ERR_FALLBACK.tg : ERR_FALLBACK.ru
+  } catch {
+    return ERR_FALLBACK.ru
+  }
+}
+
 /** Достаёт человекочитаемое сообщение об ошибке. */
-export function errorMessage(err: unknown, fallback = 'Что-то пошло не так'): string {
+export function errorMessage(err: unknown, fallback = defaultErrorFallback()): string {
   if (err instanceof Error) return err.message
   if (typeof err === 'string') return err
   return fallback

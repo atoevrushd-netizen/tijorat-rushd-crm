@@ -79,13 +79,18 @@ export function EditUserModal({
   }
 
   // Выбор плана авто-заполняет период подписки; даты потом можно поправить вручную.
+  // Если у резидента уже есть старт подписки — считаем период ОТ него (иначе смена
+  // плана сдвинула бы старт на текущий месяц и сбила бы нумерацию «Месяц N»).
   function onPlanChange(e: ChangeEvent<HTMLSelectElement>) {
     const val = e.target.value
     if (!val) {
       setForm((f) => ({ ...f, plan_months: '' }))
       return
     }
-    const { start, end } = planPeriod(Number(val))
+    const from = user?.subscription_start
+      ? new Date(`${user.subscription_start}T00:00:00`)
+      : undefined
+    const { start, end } = planPeriod(Number(val), from)
     setForm((f) => ({
       ...f,
       plan_months: val,

@@ -3,6 +3,7 @@ import { Activity, CheckCircle2, ListChecks, RotateCcw } from 'lucide-react'
 import { useTasks } from './useTasks'
 import { taskCounts } from './taskCounts'
 import { RingProgress } from '@/components/ui/RingProgress'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 
@@ -51,7 +52,11 @@ function StatTile({
  */
 export function TaskStats({ userId }: { userId: string }) {
   const { t } = useT()
-  const { data } = useTasks(userId)
+  const { data, isLoading } = useTasks(userId)
+  // Пока грузим — скелетон (иначе мелькают «Всего 0» и 0%-кольцо до прихода данных).
+  if (isLoading) {
+    return <Skeleton className="h-[260px] w-full rounded-[18px]" />
+  }
   // Считаем только помесячные задачи (period_month) — ровно то, что резидент видит
   // в помесячном виде. Старые дневные задачи (period_month = null) скрыты и в сводку
   // не входят, иначе кольцо и цифры не совпадали бы с календарём.

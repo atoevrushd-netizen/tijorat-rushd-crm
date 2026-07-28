@@ -27,7 +27,9 @@ export function ChartCard({ byStatus }: { byStatus: Record<TaskStatus, number> }
       <div className="flex h-[180px] items-stretch gap-1.5 sm:h-[210px] sm:gap-3">
         {ORDER.map((s) => {
           const h = Math.max(3, Math.round((byStatus[s] / max) * 100))
-          const accent = s === 'accepted_by_user'
+          // Акцент на «done» — терминальном статусе помесячной модели (чекбокс админа),
+          // а не на устаревшем accepted_by_user (он теперь практически всегда 0).
+          const accent = s === 'done'
           return (
             <div key={s} className="flex min-w-0 flex-1 flex-col items-center gap-2">
               <span
@@ -99,7 +101,7 @@ export function DonutCard({ accepted, total }: { accepted: number; total: number
         <RingProgress value={pct} size={140} stroke={16} label={`${pct}%`} sublabel={t('dash.done')} />
       </div>
       <div className="mt-auto flex flex-col gap-2">
-        <Legend color="var(--accent)" label={t('taskStatusShort.accepted_by_user')} value={accepted} />
+        <Legend color="var(--accent)" label={t('dash.done')} value={accepted} />
         <Legend
           color="var(--surface-3)"
           label={t('dash.legendRest')}

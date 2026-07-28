@@ -72,7 +72,16 @@ export function UsersTable({
                 <tr
                   key={user.id}
                   onClick={() => onRowClick?.(user)}
-                  className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-surface-2"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={user.full_name || user.login || '—'}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onRowClick?.(user)
+                    }
+                  }}
+                  className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-surface-2 focus:outline-none focus-visible:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">

@@ -17,9 +17,11 @@ export function useAutosave(
   const debounceRef = useRef<ReturnType<typeof setTimeout>>()
   const idleRef = useRef<ReturnType<typeof setTimeout>>()
 
-  // Внешняя смена initial (сменили запись/тип) — подхватываем.
+  // Внешняя смена initial (сменили запись/тип) — подхватываем, НО не затираем
+  // несохранённые правки: если в поле есть свежий ввод (value !== savedRef), держим
+  // его. Иначе рефетч после сохранения «съедал» символы, набранные во время запроса.
   useEffect(() => {
-    setValue(initial)
+    setValue((cur) => (cur === savedRef.current ? initial : cur))
     savedRef.current = initial
     setStatus('idle')
   }, [initial])

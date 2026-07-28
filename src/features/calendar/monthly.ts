@@ -59,13 +59,6 @@ export function monthStart(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
 }
 
-/** Сдвиг месяца 'YYYY-MM-01' на delta месяцев. */
-export function shiftMonth(month: string, delta: number): string {
-  const [y, m] = month.split('-').map(Number)
-  const d = new Date(y, m - 1 + delta, 1)
-  return monthStart(d)
-}
-
 /** Ключ месяца задачи: только помесячные (period_month). Старые дневные (null) — вне вида. */
 export function taskMonth(task: Task): string | null {
   return task.period_month ? task.period_month.slice(0, 7) + '-01' : null

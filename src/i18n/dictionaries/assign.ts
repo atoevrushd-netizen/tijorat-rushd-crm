@@ -1,0 +1,45 @@
+import type { Lang } from '../types'
+
+/** Инструмент админа «Назначить задачу» (мультивыбор резидентов). */
+const bundle: Record<Lang, Record<string, string>> = {
+  tg: {
+    'assign.subtitle': 'Ба як ё якчанд резидент задача таъин кунед',
+    'assign.residents': 'Резидентҳо',
+    'assign.selectedN': 'Интихоб: {n}',
+    'assign.searchPlaceholder': 'Ҷустуҷӯ: ном, логин',
+    'assign.selectAll': 'Ҳамаро интихоб кардан',
+    'assign.clearAll': 'Интихобро бекор кардан',
+    'assign.noResidents': 'Резидент ёфт нашуд',
+    'assign.titleLabel': 'Номи задача',
+    'assign.titlePlaceholder': 'мас., Дарси махсус',
+    'assign.categoryLabel': 'Категория',
+    'assign.categoryOther': 'Дигар',
+    'assign.monthLabel': 'Моҳ',
+    'assign.preview': '{n} задача сохта мешавад — ба ҳар резиденти интихобшуда, {month}.',
+    'assign.previewEmpty': 'Резидентҳоро интихоб кунед.',
+    'assign.createBtn': 'Сохтан · {n}',
+    'assign.created': '{n} задача сохта шуд',
+    'assign.noCalendarTab': 'Бахши «Календарь» ёфт нашуд',
+  },
+  ru: {
+    'assign.subtitle': 'Назначьте задачу одному или нескольким резидентам',
+    'assign.residents': 'Резиденты',
+    'assign.selectedN': 'Выбрано: {n}',
+    'assign.searchPlaceholder': 'Поиск: имя, логин',
+    'assign.selectAll': 'Выбрать всех',
+    'assign.clearAll': 'Снять выбор',
+    'assign.noResidents': 'Резиденты не найдены',
+    'assign.titleLabel': 'Название задачи',
+    'assign.titlePlaceholder': 'напр., Особый урок',
+    'assign.categoryLabel': 'Категория',
+    'assign.categoryOther': 'Прочее',
+    'assign.monthLabel': 'Месяц',
+    'assign.preview': 'Будет создано {n} задач — по одной каждому выбранному резиденту, {month}.',
+    'assign.previewEmpty': 'Выберите резидентов.',
+    'assign.createBtn': 'Создать · {n}',
+    'assign.created': 'Создано задач: {n}',
+    'assign.noCalendarTab': 'Вкладка «Календарь» не найдена',
+  },
+}
+
+export default bundle

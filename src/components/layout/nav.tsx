@@ -4,6 +4,7 @@ import {
   FileText,
   IdCard,
   LayoutDashboard,
+  ListPlus,
   MessageCircle,
   Settings,
   Terminal,
@@ -24,6 +25,7 @@ export const devNavItem: NavItem = {
 export const adminNav: NavItem[] = [
   { to: '/admin', labelKey: 'nav.dashboard', icon: <LayoutDashboard size={15} /> },
   { to: '/admin/users', labelKey: 'nav.users', match: '/admin/users', icon: <Users size={15} /> },
+  { to: '/admin/assign-task', labelKey: 'nav.assignTask', icon: <ListPlus size={15} /> },
   { to: '/chat', labelKey: 'nav.chat', match: '/chat', icon: <MessageCircle size={15} /> },
   { to: '/answers', labelKey: 'nav.answers', match: '/answers', icon: <ClipboardList size={15} /> },
   { to: '/admin/auto-tasks', labelKey: 'nav.autotasks', icon: <CalendarClock size={15} /> },

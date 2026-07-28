@@ -78,6 +78,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.deactivatedBadge': 'Ғайрифаъол',
     'usercard.generateTasks': 'Задачаҳо аз рӯи обуна',
     'usercard.tasksCreated': '{n} задача сохта шуд',
+    'usercard.assignTask': 'Задача таъин кардан',
     // Метка плана подписки (0051)
     'usercard.fieldPlan': 'Навъи обуна',
     'usercard.planNone': '— бе метка —',
@@ -165,6 +166,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.deactivatedBadge': 'Деактивирован',
     'usercard.generateTasks': 'Создать задачи по подписке',
     'usercard.tasksCreated': 'Создано задач: {n}',
+    'usercard.assignTask': 'Создать задачу',
     // Метка плана подписки (0051)
     'usercard.fieldPlan': 'Тип подписки',
     'usercard.planNone': '— без метки —',

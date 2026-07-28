@@ -7,6 +7,7 @@ import {
   IdCard,
   KeyRound,
   ListChecks,
+  ListPlus,
   MessageSquareText,
   Power,
   PowerOff,
@@ -209,9 +210,16 @@ export function UserCardPage() {
           </div>
         </section>
 
-        {/* Создать помесячные задачи по периоду подписки (0048) */}
+        {/* Задачи: назначить вручную (инструмент) + создать помесячные по подписке (0048) */}
         {user.role === 'user' && (
-          <div className="flex justify-end">
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              variant="secondary"
+              leftIcon={<ListPlus size={16} />}
+              onClick={() => navigate(`/admin/assign-task?lead=${user.id}`)}
+            >
+              {t('usercard.assignTask')}
+            </Button>
             <Button
               variant="secondary"
               leftIcon={<CalendarPlus size={16} />}

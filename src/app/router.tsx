@@ -23,6 +23,9 @@ const UserCardPage = lazy(() =>
 const AutoTasksPage = lazy(() =>
   import('@/pages/admin/AutoTasksPage').then((m) => ({ default: m.AutoTasksPage })),
 )
+const AssignTaskPage = lazy(() =>
+  import('@/pages/admin/AssignTaskPage').then((m) => ({ default: m.AssignTaskPage })),
+)
 const DevPage = lazy(() =>
   import('@/pages/admin/DevPage').then((m) => ({ default: m.DevPage })),
 )
@@ -68,6 +71,7 @@ export function AppRouter() {
           <Route element={<RequireRole role="admin" />}>
             <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/users" element={<AdminDashboard />} />
+            <Route path="/admin/assign-task" element={<AssignTaskPage />} />
             <Route path="/admin/auto-tasks" element={<AutoTasksPage />} />
             <Route path="/admin/users/:id" element={<UserCardPage />} />
             {/* «Ответы всех» — только админ (лид видит только свои — в кабинете) */}

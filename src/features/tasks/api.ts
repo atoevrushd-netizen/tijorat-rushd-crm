@@ -18,7 +18,12 @@ export type CreateTaskInput = {
   user_id: string
   tab_id: string | null
   title: string
+  /** Двуязычные заголовки (опц.). Если не заданы — вид покажет title. */
+  title_ru?: string | null
+  title_tg?: string | null
   task_type?: string
+  /** Месяц задачи (1-е число) — для помесячного вида (0048). */
+  period_month?: string
   deadline?: string
   due_time?: string
   admin_comment?: string
@@ -31,7 +36,10 @@ function toTaskRow(input: CreateTaskInput) {
     user_id: input.user_id,
     tab_id: input.tab_id,
     title: input.title,
+    title_ru: input.title_ru ?? null,
+    title_tg: input.title_tg ?? null,
     task_type: input.task_type || null,
+    period_month: input.period_month || null,
     deadline: input.deadline || null,
     due_time: input.due_time || null,
     admin_comment: input.admin_comment || null,

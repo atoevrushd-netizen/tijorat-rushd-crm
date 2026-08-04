@@ -7,7 +7,10 @@ export async function listTasks(userId: string, tabId?: string): Promise<Task[]>
     .from('tasks')
     .select('*, task_links(*)')
     .eq('user_id', userId)
+    // id — вторичный ключ: у пачки задач одинаковый created_at, и без него
+    // Postgres возвращал их в случайном порядке (список «прыгал» между запросами).
     .order('created_at', { ascending: true })
+    .order('id', { ascending: true })
   if (tabId) query = query.eq('tab_id', tabId)
   const { data, error } = await query
   if (error) throw error

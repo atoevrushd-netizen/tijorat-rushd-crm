@@ -11,7 +11,13 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import type { Task } from '@/types'
 import { MonthsRail } from './MonthsRail'
 import { MonthHero } from './MonthHero'
-import { TASK_CATEGORIES, buildMonthSummaries, categoryIndex, isTaskDone } from './monthly'
+import {
+  TASK_CATEGORIES,
+  buildMonthSummaries,
+  categoryIndex,
+  compareTasks,
+  isTaskDone,
+} from './monthly'
 
 /**
  * Вкладка «Календарь» → путь по месяцам (0048). Без сетки дней: сверху рельс месяцев
@@ -76,6 +82,9 @@ function CategoryList({ tasks, isAdmin }: { tasks: Task[]; isAdmin: boolean }) {
       arr.push(task)
       map.set(idx, arr)
     }
+    // Внутри категории — строго №1, №2, №3… (см. compareTasks: без этого пачка
+    // задач с одинаковым created_at приходила из БД в случайном порядке).
+    for (const arr of map.values()) arr.sort(compareTasks)
     return [...map.entries()].sort((a, b) => a[0] - b[0])
   }, [tasks])
 

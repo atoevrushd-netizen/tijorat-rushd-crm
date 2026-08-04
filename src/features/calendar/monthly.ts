@@ -80,6 +80,26 @@ export function isTaskDone(task: Task): boolean {
   return task.status === 'done' || task.status === 'accepted_by_user'
 }
 
+/** Номер из названия («Рилс №7» → 7). Без номера — в конец группы. */
+export function taskNumber(task: Task): number {
+  const m = (task.title_ru ?? task.title).match(/№\s*(\d+)/)
+  return m ? Number(m[1]) : Number.MAX_SAFE_INTEGER
+}
+
+/**
+ * Жёсткий порядок задач внутри категории: №1, №2, №3… затем по названию и id.
+ * Нужен детерминизм: задачи месяца создаются пачкой с одинаковым created_at,
+ * и сортировка по времени в БД возвращала СЛУЧАЙНЫЙ порядок — список
+ * «перемешивался» при каждом обновлении (например, после клика по галочке).
+ */
+export function compareTasks(a: Task, b: Task): number {
+  return (
+    taskNumber(a) - taskNumber(b) ||
+    (a.title_ru ?? a.title).localeCompare(b.title_ru ?? b.title, 'ru') ||
+    a.id.localeCompare(b.id)
+  )
+}
+
 /** Сводка по одному месяцу программы (для визуализации «путь по месяцам»). */
 export type MonthSummary = {
   key: string // 'YYYY-MM-01'

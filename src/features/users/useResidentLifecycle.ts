@@ -21,6 +21,16 @@ async function rebuildMonthly(leadId: string): Promise<number> {
   return (data as number) ?? 0
 }
 
+/** Отметка «оплатил полностью» (0055). Пишет админ/разработчик; резиденту запрещено
+ *  guard-триггером (белый список полей). */
+async function setLeadPaid(leadId: string, paid: boolean): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ paid_at: paid ? new Date().toISOString() : null })
+    .eq('id', leadId)
+  if (error) throw error
+}
+
 export function useSetResidentActive() {
   const qc = useQueryClient()
   return useMutation({
@@ -45,5 +55,17 @@ export function useRebuildMonthly() {
   return useMutation({
     mutationFn: (leadId: string) => rebuildMonthly(leadId),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['tasks'] }),
+  })
+}
+
+export function useSetLeadPaid() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ leadId, paid }: { leadId: string; paid: boolean }) => setLeadPaid(leadId, paid),
+    onSuccess: (_d, { leadId }) => {
+      void qc.invalidateQueries({ queryKey: ['user', leadId] })
+      void qc.invalidateQueries({ queryKey: ['users'] })
+      void qc.invalidateQueries({ queryKey: ['dashboard'] })
+    },
   })
 }

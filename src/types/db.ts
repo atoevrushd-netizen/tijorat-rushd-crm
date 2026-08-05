@@ -27,6 +27,8 @@ export type Profile = {
   subscription_end: string | null
   /** Тип подписки как «метка»: 3 | 6 месяцев | null (не задан) — 0051. */
   plan_months?: number | null
+  /** «Оплатил полностью»: null — нет (серый), timestamp — да (зелёная подсветка) — 0055. */
+  paid_at?: string | null
   registration_date: string
   created_at: string
   updated_at: string

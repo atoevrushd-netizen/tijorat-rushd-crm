@@ -1,10 +1,14 @@
-import { ChevronRight, Users as UsersIcon } from 'lucide-react'
+import { BadgeCheck, ChevronRight, Users as UsersIcon } from 'lucide-react'
 import type { Profile } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import { PlanBadge } from './PlanBadge'
+
+/** Мягкая зелёная «дымка» оплатившего поверх поверхности строки/карточки. */
+const PAID_WASH =
+  'linear-gradient(0deg, var(--success-soft), var(--success-soft)), var(--surface)'
 
 /** Список пользователей: карточки на телефоне, таблица на планшете/десктопе. */
 export function UsersTable({
@@ -35,12 +39,32 @@ export function UsersTable({
             <button
               type="button"
               onClick={() => onRowClick?.(user)}
-              className="flex w-full items-center gap-3 rounded-[16px] border border-line bg-surface p-3 text-left shadow-sh1 transition-all duration-200 ease-ios hover:border-line-strong hover:bg-surface-2 active:scale-[.99]"
+              className={cn(
+                'flex w-full items-center gap-3 rounded-[16px] border bg-surface p-3 text-left shadow-sh1 transition-all duration-200 ease-ios active:scale-[.99]',
+                user.paid_at
+                  ? 'border-[rgba(52,199,89,.35)] hover:border-[rgba(52,199,89,.55)]'
+                  : 'border-line hover:border-line-strong hover:bg-surface-2',
+              )}
+              style={user.paid_at ? { background: PAID_WASH } : undefined}
             >
-              <Avatar name={user.full_name} src={user.photo_url} size={44} />
+              <Avatar
+                name={user.full_name}
+                src={user.photo_url}
+                size={44}
+                className={cn(user.paid_at && 'ring-2 ring-[rgba(52,199,89,.45)]')}
+              />
               <div className="min-w-0 flex-1">
-                <div className="truncate font-semibold text-ink">
-                  {user.full_name || '—'}
+                <div className="flex items-center gap-1.5">
+                  <span className="truncate font-semibold text-ink">
+                    {user.full_name || '—'}
+                  </span>
+                  {user.paid_at && (
+                    <BadgeCheck
+                      size={15}
+                      className="shrink-0 text-success"
+                      aria-label={t('usercard.paidBadge')}
+                    />
+                  )}
                 </div>
                 <div className="truncate font-mono text-xs text-ink-3">
                   {user.phone || '—'}
@@ -81,14 +105,33 @@ export function UsersTable({
                       onRowClick?.(user)
                     }
                   }}
-                  className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-surface-2 focus:outline-none focus-visible:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+                  className={cn(
+                    'cursor-pointer border-b border-line transition-colors last:border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent',
+                    user.paid_at
+                      ? 'bg-success-soft shadow-[inset_3px_0_0_var(--success)] hover:brightness-[1.03] focus-visible:bg-success-soft'
+                      : 'hover:bg-surface-2 focus-visible:bg-surface-2',
+                  )}
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
-                      <Avatar name={user.full_name} src={user.photo_url} size={38} />
+                      <Avatar
+                        name={user.full_name}
+                        src={user.photo_url}
+                        size={38}
+                        className={cn(user.paid_at && 'ring-2 ring-[rgba(52,199,89,.45)]')}
+                      />
                       <div className="min-w-0">
-                        <div className="truncate font-semibold text-ink">
-                          {user.full_name || '—'}
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate font-semibold text-ink">
+                            {user.full_name || '—'}
+                          </span>
+                          {user.paid_at && (
+                            <BadgeCheck
+                              size={15}
+                              className="shrink-0 text-success"
+                              aria-label={t('usercard.paidBadge')}
+                            />
+                          )}
                         </div>
                         {user.business_direction && (
                           <div className="truncate text-xs text-ink-3">

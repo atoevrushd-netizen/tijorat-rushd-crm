@@ -79,6 +79,13 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.generateTasks': 'Задачаҳо аз рӯи обуна',
     'usercard.tasksCreated': '{n} задача сохта шуд',
     'usercard.assignTask': 'Задача таъин кардан',
+    // Отметка «оплатил полностью» (0055)
+    'usercard.paidTitle': 'Пардохти пурра',
+    'usercard.paidYes': 'Пурра пардохт кардааст — кор кардан мумкин аст',
+    'usercard.paidNo': 'Ҳанӯз пурра пардохт накардааст',
+    'usercard.paidBadge': 'Пардохт шуд',
+    'usercard.paidOnToast': 'Ишора гузошта шуд: пурра пардохт кард',
+    'usercard.paidOffToast': 'Ишораи пардохт бардошта шуд',
     'usercard.rebuildTasks': 'Аз рӯи план аз нав сохтан',
     'usercard.rebuildConfirm':
       'Маҷмӯи задачаҳоро аз рӯи плани ҷорӣ аз нав созам? Задачаҳои иҷронашудаи худкор иваз мешаванд (дастӣ таъиншуда ва иҷрошуда мемонанд).',
@@ -171,6 +178,13 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.generateTasks': 'Создать задачи по подписке',
     'usercard.tasksCreated': 'Создано задач: {n}',
     'usercard.assignTask': 'Создать задачу',
+    // Отметка «оплатил полностью» (0055)
+    'usercard.paidTitle': 'Полная оплата',
+    'usercard.paidYes': 'Оплатил полностью — можно работать на 100%',
+    'usercard.paidNo': 'Ещё не оплатил подписку полностью',
+    'usercard.paidBadge': 'Оплачено',
+    'usercard.paidOnToast': 'Отмечено: оплатил полностью',
+    'usercard.paidOffToast': 'Отметка оплаты снята',
     'usercard.rebuildTasks': 'Пересоздать по плану',
     'usercard.rebuildConfirm':
       'Пересоздать набор задач по текущему плану? Невыполненные авто-задачи будут заменены (назначенные вручную и отмеченные — останутся).',

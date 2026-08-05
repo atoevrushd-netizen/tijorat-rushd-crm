@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   Activity,
+  BadgeCheck,
   CalendarPlus,
   ChevronLeft,
   IdCard,
@@ -15,10 +16,12 @@ import {
   Trash2,
   Trophy,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Button } from '@/components/ui/Button'
+import { Switch } from '@/components/ui/Switch'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { FullPageSpinner } from '@/components/ui/FullPageSpinner'
 import { formatDate } from '@/lib/utils'
@@ -27,7 +30,12 @@ import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
 import { useSoftDeleteUser } from '@/features/users/useUsers'
-import { useRebuildMonthly, useRegenerateMonthly, useSetResidentActive } from '@/features/users/useResidentLifecycle'
+import {
+  useRebuildMonthly,
+  useRegenerateMonthly,
+  useSetLeadPaid,
+  useSetResidentActive,
+} from '@/features/users/useResidentLifecycle'
 import { EditUserModal } from '@/features/users/EditUserModal'
 import { SetPasswordModal } from '@/features/users/SetPasswordModal'
 import { PasswordField } from '@/features/users/PasswordField'
@@ -49,6 +57,7 @@ export function UserCardPage() {
   const setActive = useSetResidentActive()
   const regen = useRegenerateMonthly()
   const rebuild = useRebuildMonthly()
+  const setPaid = useSetLeadPaid()
   const [editing, setEditing] = useState(false)
   const [pwdOpen, setPwdOpen] = useState(false)
 
@@ -78,16 +87,40 @@ export function UserCardPage() {
           {t('users.backToList')}
         </Link>
 
-        {/* Шапка-профиль: чистая белая карточка с акцентной деталью */}
-        <section className="overflow-hidden rounded-[20px] border border-line bg-surface shadow-sh1">
-          <div className="h-1.5 w-full bg-accent-grad" />
+        {/* Шапка-профиль: чистая карточка; у оплативших — приятная зелёная подсветка */}
+        <section
+          className={cn(
+            'overflow-hidden rounded-[20px] border bg-surface shadow-sh1 transition-colors duration-300',
+            user.paid_at ? 'border-[rgba(52,199,89,.35)]' : 'border-line',
+          )}
+          style={
+            user.paid_at
+              ? {
+                  // мягкая зелёная «дымка» поверх обычной поверхности карточки
+                  background:
+                    'linear-gradient(0deg, var(--success-soft), var(--success-soft)), var(--surface)',
+                }
+              : undefined
+          }
+        >
+          <div
+            className={cn('h-1.5 w-full', !user.paid_at && 'bg-accent-grad')}
+            style={
+              user.paid_at
+                ? { background: 'linear-gradient(90deg, var(--success), #7ee2a2)' }
+                : undefined
+            }
+          />
           <div className="p-5 sm:p-6">
             <div className="flex flex-wrap items-start gap-4">
               <Avatar
                 name={user.full_name}
                 src={user.photo_url}
                 size={72}
-                className="ring-2 ring-accent-soft"
+                className={cn(
+                  'ring-2',
+                  user.paid_at ? 'ring-[rgba(52,199,89,.45)]' : 'ring-accent-soft',
+                )}
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-3">
@@ -96,6 +129,12 @@ export function UserCardPage() {
                   </h2>
                   <StatusBadge status={user.status} />
                   <PlanBadge months={user.plan_months} />
+                  {user.paid_at && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-success px-2.5 py-0.5 text-[11.5px] font-semibold text-white shadow-[0_0_10px_rgba(52,199,89,.35)]">
+                      <BadgeCheck size={13} />
+                      {t('usercard.paidBadge')}
+                    </span>
+                  )}
                   {user.deactivated_at && (
                     <span className="rounded-full bg-danger-soft px-2.5 py-0.5 text-[11.5px] font-semibold text-danger">
                       {t('usercard.deactivatedBadge')}
@@ -209,6 +248,56 @@ export function UserCardPage() {
                 <Field label={t('usercard.fieldAdminComment')} value={user.admin_comment} />
               </div>
             </dl>
+
+            {/* «Оплатил полностью» — ставит только админ/разработчик (0055) */}
+            {user.role === 'user' && (
+              <div
+                className={cn(
+                  'mt-4 flex items-center justify-between gap-4 rounded-[14px] border px-4 py-3.5 transition-colors duration-300',
+                  user.paid_at
+                    ? 'border-[rgba(52,199,89,.35)] bg-success-soft'
+                    : 'border-line bg-surface-2',
+                )}
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <span
+                    className={cn(
+                      'flex h-10 w-10 flex-none items-center justify-center rounded-[12px] transition-colors',
+                      user.paid_at ? 'bg-success text-white' : 'bg-surface-3 text-ink-3',
+                    )}
+                  >
+                    <BadgeCheck size={20} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[13.5px] font-bold text-ink">
+                      {t('usercard.paidTitle')}
+                    </div>
+                    <div
+                      className={cn(
+                        'truncate text-[12px]',
+                        user.paid_at ? 'font-medium text-success' : 'text-ink-3',
+                      )}
+                    >
+                      {user.paid_at ? t('usercard.paidYes') : t('usercard.paidNo')}
+                    </div>
+                  </div>
+                </div>
+                <Switch
+                  checked={!!user.paid_at}
+                  disabled={setPaid.isPending}
+                  label={t('usercard.paidTitle')}
+                  onChange={(v) =>
+                    setPaid.mutate(
+                      { leadId: user.id, paid: v },
+                      {
+                        onSuccess: () =>
+                          toast.success(v ? t('usercard.paidOnToast') : t('usercard.paidOffToast')),
+                      },
+                    )
+                  }
+                />
+              </div>
+            )}
           </div>
         </section>
 

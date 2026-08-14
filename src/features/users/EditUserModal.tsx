@@ -79,17 +79,17 @@ export function EditUserModal({
   }
 
   // Выбор плана авто-заполняет период подписки; даты потом можно поправить вручную.
-  // Если у резидента уже есть старт подписки — считаем период ОТ него (иначе смена
-  // плана сдвинула бы старт на текущий месяц и сбила бы нумерацию «Месяц N»).
+  // Якорь — старт из ФОРМЫ (учитывает только что введённую дату), затем сохранённый
+  // старт резидента (иначе смена плана сдвинула бы старт на текущий месяц и сбила
+  // бы нумерацию «Месяц N»).
   function onPlanChange(e: ChangeEvent<HTMLSelectElement>) {
     const val = e.target.value
     if (!val) {
       setForm((f) => ({ ...f, plan_months: '' }))
       return
     }
-    const from = user?.subscription_start
-      ? new Date(`${user.subscription_start}T00:00:00`)
-      : undefined
+    const src = form.subscription_start || user?.subscription_start
+    const from = src ? new Date(`${src}T00:00:00`) : undefined
     const { start, end } = planPeriod(Number(val), from)
     setForm((f) => ({
       ...f,
@@ -107,6 +107,15 @@ export function EditUserModal({
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!user) return
+    // Порядок дат: «по» не может быть раньше «с» (иначе сервер отклонит сохранение).
+    if (
+      form.subscription_start &&
+      form.subscription_end &&
+      form.subscription_end < form.subscription_start
+    ) {
+      toast.error(t('usercard.subOrderError'))
+      return
+    }
     update.mutate(
       {
         id: user.id,

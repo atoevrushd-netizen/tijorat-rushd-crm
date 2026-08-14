@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Activity, CheckCircle2, UserCheck, Users } from 'lucide-react'
+import { Activity, BadgeCheck, CheckCircle2, Users } from 'lucide-react'
 import { useT } from '@/i18n/useT'
 import { weekdayDayMonth } from '@/lib/dateI18n'
 import { AppShell } from '@/components/layout/AppShell'
@@ -67,9 +67,9 @@ export function DashboardPage() {
             />
             <StatCard
               tone="success"
-              label={t('dash.kpiActive')}
-              value={data.usersActive}
-              icon={<UserCheck className="h-[18px] w-[18px]" />}
+              label={t('dash.kpiPaid')}
+              value={data.usersPaid}
+              icon={<BadgeCheck className="h-[18px] w-[18px]" />}
             />
             <StatCard
               tone="warn"

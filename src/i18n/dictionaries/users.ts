@@ -27,6 +27,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'users.colStatus': 'Вазъият',
     'users.colRegistered': 'Сабти ном',
     'users.emptyList': 'Корбарон ёфт нашуданд',
+    'users.paidFilter': 'Пардохткардаҳо',
     // Глобальный поиск
     'search.open': 'Ҷустуҷӯ',
     'search.placeholder': 'Ном, телефон, логин…',
@@ -58,6 +59,7 @@ const bundle: Record<Lang, Record<string, string>> = {
     'users.colStatus': 'Статус',
     'users.colRegistered': 'Регистрация',
     'users.emptyList': 'Пользователи не найдены',
+    'users.paidFilter': 'Оплатившие',
     // Глобальный поиск
     'search.open': 'Поиск',
     'search.placeholder': 'Имя, телефон, логин…',

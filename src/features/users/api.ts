@@ -11,6 +11,7 @@ export async function listUsers({
   pageSize,
   trashed = false,
   plan,
+  paid,
 }: UsersQuery): Promise<UsersPage> {
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
@@ -24,6 +25,7 @@ export async function listUsers({
     ? query.not('deleted_at', 'is', null)
     : query.is('deleted_at', null)
   if (plan) query = query.eq('plan_months', plan)
+  if (paid) query = query.not('paid_at', 'is', null)
   query = query.order('registration_date', { ascending: false }).range(from, to)
 
   const filter = buildSearchFilter(search)
@@ -39,6 +41,7 @@ export async function listAllLeads(
   search: string,
   trashed = false,
   plan?: number,
+  paid?: boolean,
 ): Promise<Profile[]> {
   const CHUNK = 1000
   const rows: Profile[] = []
@@ -49,6 +52,7 @@ export async function listAllLeads(
       ? query.not('deleted_at', 'is', null)
       : query.is('deleted_at', null)
     if (plan) query = query.eq('plan_months', plan)
+    if (paid) query = query.not('paid_at', 'is', null)
     query = query
       .order('registration_date', { ascending: false })
       .range(from, from + CHUNK - 1)

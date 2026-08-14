@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, RotateCcw, Search, Trash2 } from 'lucide-react'
+import { BadgeCheck, Download, RotateCcw, Search, Trash2 } from 'lucide-react'
 import type { Profile } from '@/types'
 import { AppShell } from '@/components/layout/AppShell'
 import { Avatar } from '@/components/ui/Avatar'
@@ -35,19 +35,25 @@ export function AdminDashboard() {
   const [createOpen, setCreateOpen] = useState(false)
   const [showTrash, setShowTrash] = useState(false)
   const [plan, setPlan] = useState<number | undefined>(undefined)
+  const [paidOnly, setPaidOnly] = useState(false)
   const [exporting, setExporting] = useState(false)
   const debouncedSearch = useDebouncedValue(search, 300)
 
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch, showTrash, plan])
+  }, [debouncedSearch, showTrash, plan, paidOnly])
 
   // Экспорт текущего среза лидов (с учётом поиска/«Корзины») в CSV для Excel.
   async function exportCsv() {
     setExporting(true)
     try {
-      // Экспорт учитывает активный фильтр плана (кроме «Корзины», где план не применяется).
-      const rows = await listAllLeads(debouncedSearch, showTrash, showTrash ? undefined : plan)
+      // Экспорт учитывает активные фильтры плана/оплаты (кроме «Корзины»).
+      const rows = await listAllLeads(
+        debouncedSearch,
+        showTrash,
+        showTrash ? undefined : plan,
+        showTrash ? undefined : paidOnly,
+      )
       const csv = toCSV<Profile>(rows, [
         { label: t('users.colName'), get: (u) => u.full_name ?? '' },
         { label: t('users.colPhone'), get: (u) => u.phone ?? '' },
@@ -70,8 +76,9 @@ export function AdminDashboard() {
     page,
     pageSize: PAGE_SIZE,
     trashed: showTrash,
-    // В «Корзине» фильтр по плану не применяем — показываем все удалённые.
+    // В «Корзине» фильтры плана/оплаты не применяем — показываем все удалённые.
     plan: showTrash ? undefined : plan,
+    paid: showTrash ? undefined : paidOnly || undefined,
   })
 
   return (
@@ -108,36 +115,54 @@ export function AdminDashboard() {
       </div>
 
       {!showTrash && (
-        <div
-          role="group"
-          aria-label={t('usercard.fieldPlan')}
-          className="mb-4 inline-flex rounded-[13px] border border-line bg-surface p-1 shadow-sh1"
-        >
-          {(
-            [
-              { value: undefined, label: t('usercard.planAll') },
-              { value: 3, label: t('usercard.plan3Short') },
-              { value: 6, label: t('usercard.plan6Short') },
-            ] as const
-          ).map((tab) => {
-            const active = plan === tab.value
-            return (
-              <button
-                key={tab.label}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setPlan(tab.value)}
-                className={
-                  'rounded-[10px] px-4 py-1.5 text-[13px] font-semibold transition-colors ' +
-                  (active
-                    ? 'bg-accent-soft text-accent'
-                    : 'text-ink-3 hover:bg-surface-2 hover:text-ink')
-                }
-              >
-                {tab.label}
-              </button>
-            )
-          })}
+        <div className="mb-4 flex flex-wrap items-center gap-2.5">
+          <div
+            role="group"
+            aria-label={t('usercard.fieldPlan')}
+            className="inline-flex rounded-[13px] border border-line bg-surface p-1 shadow-sh1"
+          >
+            {(
+              [
+                { value: undefined, label: t('usercard.planAll') },
+                { value: 3, label: t('usercard.plan3Short') },
+                { value: 6, label: t('usercard.plan6Short') },
+              ] as const
+            ).map((tab) => {
+              const active = plan === tab.value
+              return (
+                <button
+                  key={tab.label}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setPlan(tab.value)}
+                  className={
+                    'rounded-[10px] px-4 py-1.5 text-[13px] font-semibold transition-colors ' +
+                    (active
+                      ? 'bg-accent-soft text-accent'
+                      : 'text-ink-3 hover:bg-surface-2 hover:text-ink')
+                  }
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Фильтр «оплатившие полностью» — в цвет зелёной подсветки лидов */}
+          <button
+            type="button"
+            aria-pressed={paidOnly}
+            onClick={() => setPaidOnly((v) => !v)}
+            className={
+              'inline-flex items-center gap-1.5 rounded-[13px] border px-3.5 py-2 text-[13px] font-semibold transition-colors ' +
+              (paidOnly
+                ? 'border-[rgba(52,199,89,.45)] bg-success-soft text-success'
+                : 'border-line bg-surface text-ink-3 shadow-sh1 hover:text-ink')
+            }
+          >
+            <BadgeCheck size={15} />
+            {t('users.paidFilter')}
+          </button>
         </div>
       )}
 

@@ -23,6 +23,8 @@ export type RecentTask = {
 export type DashboardData = {
   usersTotal: number
   usersActive: number
+  /** «Оплатили полностью» (paid_at задан) — 0058. */
+  usersPaid: number
   tasksTotal: number
   tasksAccepted: number
   tasksInProgress: number
@@ -40,6 +42,7 @@ function ownerName(owner: unknown): string | null {
 type Counts = {
   users_total: number
   users_active: number
+  users_paid: number
   not_started: number
   in_progress: number
   submitted: number
@@ -99,6 +102,7 @@ export async function getDashboard(): Promise<DashboardData> {
   return {
     usersTotal: c.users_total ?? 0,
     usersActive: c.users_active ?? 0,
+    usersPaid: c.users_paid ?? 0,
     tasksTotal,
     // «Выполнено» = done (чекбокс админа, помесячная модель) + accepted_by_user (старый флоу).
     tasksAccepted: byStatus.done + byStatus.accepted_by_user,

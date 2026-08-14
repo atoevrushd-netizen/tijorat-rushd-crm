@@ -9,6 +9,8 @@ export type UsersQuery = {
   trashed?: boolean
   /** Фильтр по метке плана: 3 | 6 месяцев; undefined — все. */
   plan?: number
+  /** true — только «оплатившие полностью» (paid_at задан). */
+  paid?: boolean
 }
 
 /** Страница списка пользователей. */

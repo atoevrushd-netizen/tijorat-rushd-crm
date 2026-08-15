@@ -170,14 +170,30 @@ export type UpdateUserInput = {
   plan_months?: number | null
 }
 
+// Ошибки валидации фото бросаются вне React-дерева (нет useT) — берём язык из
+// localStorage, как делает errorMessage() в lib/toast.
+const AVATAR_ERR = {
+  tg: { type: 'Танҳо тасвирҳо: JPG, PNG, WebP', size: 'Файл хеле калон аст (ҳадди аксар 5 МБ)' },
+  ru: { type: 'Допустимы только изображения: JPG, PNG, WebP', size: 'Файл слишком большой (максимум 5 МБ)' },
+}
+function avatarErr(key: 'type' | 'size'): string {
+  let lang: 'tg' | 'ru' = 'ru'
+  try {
+    if (localStorage.getItem('tijorat.lang') === 'tg') lang = 'tg'
+  } catch {
+    /* localStorage недоступен — русский */
+  }
+  return AVATAR_ERR[lang][key]
+}
+
 /** Загрузить фото в Storage (bucket `avatars`) и вернуть публичный URL. */
 export async function uploadAvatar(userId: string, file: File): Promise<string> {
   const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
   if (!ALLOWED.includes(file.type)) {
-    throw new Error('Допустимы только изображения: JPG, PNG, WebP')
+    throw new Error(avatarErr('type'))
   }
   if (file.size > 5 * 1024 * 1024) {
-    throw new Error('Файл слишком большой (максимум 5 МБ)')
+    throw new Error(avatarErr('size'))
   }
 
   // Сжимаем на клиенте (256px WebP) — лёгкий аватар, быстрее грузится в списках.

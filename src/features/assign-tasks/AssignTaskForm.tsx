@@ -57,7 +57,13 @@ export function AssignTaskForm({
     setMonth((m) => clampMonth(m, minMonth, maxMonth))
   }, [minMonth, maxMonth])
 
-  const canSubmit = ready && selectedCount > 0 && title.trim().length > 0 && !!month
+  // Валидный 'YYYY-MM' в окне подписки. Firefox/Safari на десктопе рендерят
+  // <input type="month"> как текст — min/max там не работают, проверяем сами.
+  const monthValid =
+    /^\d{4}-(0[1-9]|1[0-2])$/.test(month) &&
+    (!minMonth || month >= minMonth) &&
+    (!maxMonth || month <= maxMonth)
+  const canSubmit = ready && selectedCount > 0 && title.trim().length > 0 && monthValid
 
   const monthLabel = useMemo(() => {
     if (!month) return ''
@@ -108,7 +114,11 @@ export function AssignTaskForm({
             max={maxMonth}
             onChange={(e) => setMonth(e.target.value)}
             required
+            aria-invalid={month !== '' && !monthValid}
           />
+          {month !== '' && !monthValid && (
+            <p className="mt-1 text-[11.5px] font-medium text-danger">{t('assign.monthInvalid')}</p>
+          )}
         </Labeled>
       </div>
 

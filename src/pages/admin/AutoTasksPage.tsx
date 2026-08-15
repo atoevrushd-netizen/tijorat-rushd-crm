@@ -1,7 +1,8 @@
-import { Gift, Package, Zap } from 'lucide-react'
+import { AlertCircle, Gift, Package, RefreshCw, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
 import { AppShell } from '@/components/layout/AppShell'
+import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Switch } from '@/components/ui/Switch'
 import { useT } from '@/i18n/useT'
@@ -24,6 +25,17 @@ export function AutoTasksPage() {
         <div className="space-y-3">
           <Skeleton className="h-20 w-full rounded-[18px]" />
           <Skeleton className="h-40 w-full rounded-[18px]" />
+        </div>
+      ) : settingsQ.isError ? (
+        // Ошибка загрузки — НЕ показываем тумблер (иначе он врал бы «выключено»).
+        <div className="flex flex-col items-center gap-3 rounded-[18px] border border-line bg-surface px-6 py-12 text-center shadow-sh1">
+          <span className="flex h-12 w-12 items-center justify-center rounded-[15px] bg-danger-soft text-danger">
+            <AlertCircle className="h-6 w-6" />
+          </span>
+          <p className="text-sm font-medium text-ink-2">{t('at.loadError')}</p>
+          <Button variant="secondary" leftIcon={<RefreshCw size={15} />} onClick={() => void settingsQ.refetch()}>
+            {t('at.retry')}
+          </Button>
         </div>
       ) : (
         <div className="space-y-4 sm:space-y-5">
@@ -49,6 +61,7 @@ export function AutoTasksPage() {
             </div>
             <Switch
               checked={!!settings?.auto_tasks_enabled}
+              disabled={updateSettings.isPending}
               label={t('at.enabled')}
               onChange={(v) =>
                 updateSettings.mutate(

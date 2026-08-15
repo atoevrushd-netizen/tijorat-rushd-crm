@@ -68,7 +68,7 @@ export function UserCardPage() {
       <AppShell title={t('page.userCard')}>
         <p className="text-center text-ink-2">
           {t('usercard.notFound')}{' '}
-          <Link to="/admin" className="text-accent underline">
+          <Link to="/admin/users" className="text-accent underline">
             {t('usercard.toList')}
           </Link>
         </p>
@@ -80,7 +80,7 @@ export function UserCardPage() {
     <AppShell title={t('page.userCard')}>
       <div className="space-y-4 sm:space-y-5">
         <Link
-          to="/admin"
+          to="/admin/users"
           className="inline-flex items-center gap-1 rounded-full border border-line bg-surface py-1.5 pl-2 pr-3.5 text-[13px] font-medium text-ink-2 shadow-card transition-all duration-150 ease-ios hover:border-line-strong hover:bg-surface-2 hover:text-ink active:scale-[.97]"
         >
           <ChevronLeft size={16} />
@@ -333,7 +333,6 @@ export function UserCardPage() {
                   rebuild.mutate(user.id, {
                     onSuccess: (n) =>
                       toast.success(t('usercard.rebuildDone').replace('{n}', String(n))),
-                    onError: (e) => toast.error(e instanceof Error ? e.message : t('usercard.saveError')),
                   })
               }}
             >

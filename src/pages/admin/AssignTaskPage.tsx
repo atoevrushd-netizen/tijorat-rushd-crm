@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { Profile } from '@/types'
 import { AppShell } from '@/components/layout/AppShell'
-import { toast, errorMessage } from '@/lib/toast'
+import { toast } from '@/lib/toast'
 import { useT } from '@/i18n/useT'
 import { useAuth } from '@/features/auth/useAuth'
 import { useCreateTasks } from '@/features/tasks/useTasks'
@@ -32,8 +32,13 @@ export function AssignTaskPage() {
   const [params] = useSearchParams()
   const preselectLead = params.get('lead')
 
-  const { data: allResidents, isLoading } = useAllResidents()
-  const { data: calendarTabId } = useCalendarTabId()
+  const {
+    data: allResidents,
+    isLoading,
+    isError: residentsError,
+    refetch: refetchResidents,
+  } = useAllResidents()
+  const { data: calendarTabId, isError: tabError, refetch: refetchTab } = useCalendarTabId()
   const create = useCreateTasks()
   // Готово, когда запрос id вкладки завершился (string — найдена, null — нет).
   // undefined = ещё грузится или ошибка → кнопку блокируем, ложного «не найдена» не показываем.
@@ -93,21 +98,36 @@ export function AssignTaskPage() {
       period_month: `${fields.month}-01`,
       created_by: profile?.id ?? null,
     }))
+    // Ошибку покажет глобальный обработчик мутаций (providers.tsx) — без дубля тоста.
     create.mutate(inputs, {
       onSuccess: () =>
         toast.success(t('assign.created').replace('{n}', String(inputs.length))),
-      onError: (e) => toast.error(errorMessage(e)),
     })
   }
 
   return (
     <AppShell title={t('page.assignTask')} subtitle={t('assign.subtitle')}>
+      {/* Сбой запроса вкладки «Календарь» — без её id создать задачу нельзя */}
+      {tabError && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-[rgba(255,69,58,.35)] bg-danger-soft px-4 py-3 text-[13px] text-danger">
+          <span>{t('assign.tabLoadError')}</span>
+          <button
+            type="button"
+            onClick={() => void refetchTab()}
+            className="font-semibold underline underline-offset-2"
+          >
+            {t('assign.retry')}
+          </button>
+        </div>
+      )}
       <div className="grid gap-4 lg:grid-cols-[minmax(280px,360px)_1fr]">
         <div className="h-[52vh] lg:h-[calc(100dvh-12rem)]">
           <ResidentMultiSelect
             residents={residents}
             selected={selected}
             loading={isLoading}
+            error={residentsError}
+            onRetry={() => void refetchResidents()}
             onToggle={toggle}
             onSetMany={setMany}
           />

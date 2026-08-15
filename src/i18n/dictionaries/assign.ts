@@ -20,6 +20,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'assign.createBtn': 'Сохтан · {n}',
     'assign.created': '{n} задача сохта шуд',
     'assign.noCalendarTab': 'Бахши «Календарь» ёфт нашуд',
+    'assign.loadError': 'Рӯйхати резидентҳо бор нашуд',
+    'assign.tabLoadError': 'Бахши «Календарь» бор нашуд — сохтани задача муваққатан ғайриимкон аст',
+    'assign.retry': 'Аз нав кӯшиш кардан',
+    'assign.monthInvalid': 'Моҳро дар формати ГГГГ-ММ дар доираи давраи обуна ворид кунед',
   },
   ru: {
     'assign.subtitle': 'Назначьте задачу одному или нескольким резидентам',
@@ -39,6 +43,10 @@ const bundle: Record<Lang, Record<string, string>> = {
     'assign.createBtn': 'Создать · {n}',
     'assign.created': 'Создано задач: {n}',
     'assign.noCalendarTab': 'Вкладка «Календарь» не найдена',
+    'assign.loadError': 'Не удалось загрузить список резидентов',
+    'assign.tabLoadError': 'Не удалось загрузить вкладку «Календарь» — создание задачи временно недоступно',
+    'assign.retry': 'Повторить',
+    'assign.monthInvalid': 'Укажите месяц в формате ГГГГ-ММ в пределах периода подписки',
   },
 }
 

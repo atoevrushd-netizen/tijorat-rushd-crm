@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Check, Search, Users as UsersIcon } from 'lucide-react'
+import { AlertCircle, Check, RefreshCw, Search, Users as UsersIcon } from 'lucide-react'
 import type { Profile } from '@/types'
 import { cn } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
@@ -12,12 +12,17 @@ export function ResidentMultiSelect({
   residents,
   selected,
   loading,
+  error,
+  onRetry,
   onToggle,
   onSetMany,
 }: {
   residents: Profile[]
   selected: Set<string>
   loading?: boolean
+  /** Список не загрузился (сеть/доступ) — показываем ошибку с «Повторить», а не «не найдены». */
+  error?: boolean
+  onRetry?: () => void
   onToggle: (id: string) => void
   /** Заменить выбор для набора id (выбрать/снять всех отфильтрованных). */
   onSetMany: (ids: string[], value: boolean) => void
@@ -70,6 +75,23 @@ export function ResidentMultiSelect({
             {[0, 1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-12 w-full rounded-[12px]" />
             ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-danger-soft text-danger">
+              <AlertCircle className="h-5 w-5" />
+            </span>
+            <p className="text-[13px] font-medium text-ink-2">{t('assign.loadError')}</p>
+            {onRetry && (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-accent"
+              >
+                <RefreshCw size={13} />
+                {t('assign.retry')}
+              </button>
+            )}
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">

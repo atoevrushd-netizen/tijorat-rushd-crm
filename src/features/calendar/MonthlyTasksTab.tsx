@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { taskTitle } from '@/lib/taskI18n'
 import { useT } from '@/i18n/useT'
 import { useAuth } from '@/features/auth/useAuth'
 import { canManage } from '@/features/auth/roles'
-import { useTasks, useSetTaskStatus } from '@/features/tasks/useTasks'
+import { useDeleteTask, useSetTaskStatus, useTasks } from '@/features/tasks/useTasks'
 import { Skeleton } from '@/components/ui/Skeleton'
 import type { Task } from '@/types'
 import { MonthsRail } from './MonthsRail'
@@ -124,23 +125,42 @@ function CategoryList({ tasks, isAdmin }: { tasks: Task[]; isAdmin: boolean }) {
 function TaskRow({ task, isAdmin, label }: { task: Task; isAdmin: boolean; label: string }) {
   const { t } = useT()
   const setStatus = useSetTaskStatus()
+  const del = useDeleteTask()
   const done = isTaskDone(task)
+  // Ручная задача (назначена админом через инструмент) — её можно удалить; авто-набор нет.
+  const manual = !!task.created_by
 
   const box = 'flex h-7 w-7 flex-none items-center justify-center rounded-[8px] border-2 transition-all duration-150 ease-ios'
   return (
     <li className="flex items-center gap-3 px-4 py-2.5">
       <span className={cn('min-w-0 flex-1 break-words text-[13.5px]', done ? 'text-ink-3 line-through' : 'text-ink')}>
         {label}
+        {manual && (
+          <span className="ml-2 rounded-full bg-accent-soft px-1.5 py-px align-middle text-[10px] font-semibold text-accent">
+            {t('cal.manualBadge')}
+          </span>
+        )}
       </span>
+      {isAdmin && manual && (
+        <button
+          type="button"
+          disabled={del.isPending}
+          aria-label={t('cal.deleteTask')}
+          title={t('cal.deleteTask')}
+          onClick={async () => {
+            if (await confirm({ message: t('cal.deleteTaskConfirm'), danger: true, confirmLabel: t('cal.deleteTask') }))
+              del.mutate(task.id, { onSuccess: () => toast.success(t('common.deleted')) })
+          }}
+          className="flex h-7 w-7 flex-none items-center justify-center rounded-[8px] text-ink-3 transition-colors hover:bg-danger-soft hover:text-danger"
+        >
+          <Trash2 size={14} />
+        </button>
+      )}
       {isAdmin ? (
         <button
           type="button"
-          onClick={() =>
-            setStatus.mutate(
-              { id: task.id, status: done ? 'not_started' : 'done' },
-              { onSuccess: () => toast.success(t('common.saved')) },
-            )
-          }
+          // Без тоста: сама галочка — достаточная обратная связь (иначе экран заливало «Сохранено»).
+          onClick={() => setStatus.mutate({ id: task.id, status: done ? 'not_started' : 'done' })}
           disabled={setStatus.isPending}
           aria-label={done ? t('cal.unmarkDone') : t('cal.markDone')}
           title={done ? t('cal.unmarkDone') : t('cal.markDone')}

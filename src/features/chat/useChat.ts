@@ -288,7 +288,13 @@ export function useSetLeadStatus(leadId: string) {
   return useMutation({
     mutationFn: (status: UserStatus) => setLeadStatus(leadId, status),
     onMutate: (status: UserStatus) => {
+      const prev = qc.getQueryData<Profile>(['user', leadId])
       qc.setQueryData<Profile>(['user', leadId], (old) => (old ? { ...old, status } : old))
+      return { prev }
+    },
+    // При ошибке возвращаем прежний статус (иначе точка в UI врала бы).
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) qc.setQueryData<Profile>(['user', leadId], ctx.prev)
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['chat', 'leads'] })

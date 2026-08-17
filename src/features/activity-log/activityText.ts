@@ -28,6 +28,12 @@ export function activityText(
         : ''
 
   if (event.entity_type === 'task') {
+    if (event.action === 'tasks_provisioned') {
+      // Агрегат авто-выдачи (0062): одна строка на месяц вместо десятков «создана задача».
+      return t('activity.tasksProvisioned')
+        .replace('{n}', String(details.n ?? ''))
+        .replace('{month}', String(details.month ?? ''))
+    }
     if (event.action === 'created') {
       return t('activity.taskCreated').replace('{title}', title)
     }

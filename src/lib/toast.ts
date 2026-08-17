@@ -22,9 +22,15 @@ export function dismissToast(id: number) {
   emit()
 }
 
+const MAX_STACK = 3
+
 function push(kind: ToastKind, message: string, ms = 3500) {
+  // Дедуп: тот же текст уже на экране — не плодим копию (например, серия одинаковых ошибок).
+  const dup = items.find((t) => t.kind === kind && t.message === message)
+  if (dup) return dup.id
   const id = nextId++
-  items = [...items, { id, kind, message }]
+  // Кап стека: держим только последние MAX_STACK, старые снимаем сразу.
+  items = [...items, { id, kind, message }].slice(-MAX_STACK)
   emit()
   setTimeout(() => dismissToast(id), ms)
   return id

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { Activity, FilePlus2, RefreshCw } from 'lucide-react'
+import { Activity, CalendarPlus, FilePlus2, RefreshCw } from 'lucide-react'
 import { cn, formatDateTime } from '@/lib/utils'
 import { useT } from '@/i18n/useT'
 import type { ActivityEvent } from '@/types'
@@ -8,6 +8,9 @@ import { activityText } from './activityText'
 
 /** Иконка + цвет чипа события по его типу/действию. */
 function eventVisual(event: ActivityEvent): { icon: ReactNode; chip: string } {
+  if (event.entity_type === 'task' && event.action === 'tasks_provisioned') {
+    return { icon: <CalendarPlus size={15} />, chip: 'bg-accent-soft text-accent' }
+  }
   if (event.entity_type === 'task' && event.action === 'created') {
     return { icon: <FilePlus2 size={15} />, chip: 'bg-success-soft text-success' }
   }

@@ -150,9 +150,10 @@ export function Composer({
         onClear()
         resetHeight()
       } catch (e) {
-        if (!(e instanceof DOMException && e.name === 'AbortError')) {
-          toast.error(t('chat.uploadError'))
-        }
+        // Ошибку самой мутации (sendFile) уже показал глобальный обработчик — здесь тостим
+        // только сбой ЗАГРУЗКИ файла (до мутации), иначе выходило два тоста подряд.
+        const isAbort = e instanceof DOMException && e.name === 'AbortError'
+        if (!isAbort && !sendFile.isError) toast.error(t('chat.uploadError'))
       } finally {
         setUploading(false)
         setProgress(0)

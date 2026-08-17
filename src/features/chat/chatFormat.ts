@@ -14,19 +14,17 @@ export function timeHM(iso: string): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-/** Ключ дня YYYY-MM-DD (для разделителей по датам). */
+/** Ключ дня YYYY-MM-DD в ЛОКАЛЬНОМ времени (iso.slice(0,10) дал бы UTC-день: сообщения
+ *  ночью 00:00–05:00 по Душанбе уезжали бы во «вчера»). */
 export function dayKey(iso: string): string {
-  return iso.slice(0, 10)
+  const d = new Date(iso)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-/** Короткое «время назад» для списка диалогов (иначе — дата). */
+/** Короткое «когда» для списка диалогов: сегодня — ЧЧ:ММ, иначе — ДД.ММ (вчера тоже датой). */
 export function shortWhen(iso: string | null): string {
   if (!iso) return ''
   const d = new Date(iso)
-  const now = new Date()
-  if (dayKey(iso) === dayKey(now.toISOString())) return timeHM(iso)
-  const y = new Date(now)
-  y.setDate(now.getDate() - 1)
-  if (dayKey(iso) === dayKey(y.toISOString())) return '—'
+  if (dayKey(iso) === dayKey(new Date().toISOString())) return timeHM(iso)
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`
 }

@@ -1,7 +1,8 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { useT } from '@/i18n/useT'
+import { useFocusTrap } from '@/lib/useFocusTrap'
 
 type ModalProps = {
   open: boolean
@@ -17,6 +18,10 @@ type ModalProps = {
  */
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const { t } = useT()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  // a11y: фокус внутрь при открытии, Tab не выходит наружу, возврат фокуса при закрытии.
+  useFocusTrap(panelRef, open)
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -38,15 +43,17 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       onClick={onClose}
     >
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
         className="w-full max-h-[92vh] animate-sheet-up overflow-y-auto rounded-t-[22px] border-t border-line bg-elevated px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 shadow-sh2 sm:max-w-md sm:animate-pop sm:rounded-[22px] sm:border sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* «Грабер» — как у iOS-шторок (только на телефоне) */}
         <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-line-strong sm:hidden" />
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-[17px] font-bold text-ink">{title}</h2>
+          <h2 id={titleId} className="text-[17px] font-bold text-ink">{title}</h2>
           <button
             type="button"
             onClick={onClose}

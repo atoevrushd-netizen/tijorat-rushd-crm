@@ -5,6 +5,9 @@ const bundle: Record<Lang, Record<string, string>> = {
   tg: {
     'cal.markDone': 'Иҷрошуда қайд кардан',
     'cal.unmarkDone': 'Аз «иҷрошуда» гирифтан',
+    'cal.deleteTask': 'Задачаро нест кардан',
+    'cal.deleteTaskConfirm': 'Задачаро нест кунам? Амал бебозгашт аст.',
+    'cal.manualBadge': 'дастӣ',
     'cal.otherCategory': 'Дигар',
     'cal.doneLabel': 'Иҷро шуд',
     'cal.notDoneLabel': 'Ҳанӯз иҷро нашуд',
@@ -21,6 +24,9 @@ const bundle: Record<Lang, Record<string, string>> = {
   ru: {
     'cal.markDone': 'Отметить выполненной',
     'cal.unmarkDone': 'Снять «выполнено»',
+    'cal.deleteTask': 'Удалить задачу',
+    'cal.deleteTaskConfirm': 'Удалить задачу? Действие необратимо.',
+    'cal.manualBadge': 'вручную',
     'cal.otherCategory': 'Прочее',
     'cal.doneLabel': 'Выполнено',
     'cal.notDoneLabel': 'Ещё не выполнено',

@@ -71,13 +71,20 @@ Deno.serve(async (req) => {
     })
     if (updErr) return json({ error: updErr.message }, 400)
 
-    const { error: credErr } = await admin.from('user_credentials').upsert({
-      user_id: callerData.user.id,
-      password: newPassword,
-      updated_by: callerData.user.id,
-    })
-    if (credErr) {
-      console.error('[self-change-password] пароль не синхронизирован:', credErr.message)
+    // Открытый пароль храним ТОЛЬКО для резидентов (role='user'): пароли админов/
+    // разработчика в user_credentials не пишем — иначе любой админ прочитал бы их
+    // и вошёл под разработчиком (аудит v3, миграция 0060 + триггер-страховка).
+    const { data: meRow } = await admin
+      .from('profiles').select('role').eq('id', callerData.user.id).maybeSingle()
+    if (meRow?.role === 'user') {
+      const { error: credErr } = await admin.from('user_credentials').upsert({
+        user_id: callerData.user.id,
+        password: newPassword,
+        updated_by: callerData.user.id,
+      })
+      if (credErr) {
+        console.error('[self-change-password] пароль не синхронизирован:', credErr.message)
+      }
     }
 
     return json({ ok: true }, 200)

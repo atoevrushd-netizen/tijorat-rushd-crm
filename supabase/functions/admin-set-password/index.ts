@@ -97,14 +97,17 @@ Deno.serve(async (req) => {
       return json({ error: updErr.message }, 400, req)
     }
 
-    // Сохраняем новый пароль открыто (для просмотра администратором).
-    const { error: credErr } = await admin.from('user_credentials').upsert({
-      user_id: userId,
-      password,
-      updated_by: callerData.user.id,
-    })
-    if (credErr) {
-      console.error('[admin-set-password] пароль не сохранён:', credErr.message)
+    // Сохраняем новый пароль открыто — ТОЛЬКО для резидентов (role='user').
+    // Пароли админов/разработчика открыто не храним (аудит v3, миграция 0060).
+    if (target?.role === 'user') {
+      const { error: credErr } = await admin.from('user_credentials').upsert({
+        user_id: userId,
+        password,
+        updated_by: callerData.user.id,
+      })
+      if (credErr) {
+        console.error('[admin-set-password] пароль не сохранён:', credErr.message)
+      }
     }
 
     return json({ ok: true }, 200, req)

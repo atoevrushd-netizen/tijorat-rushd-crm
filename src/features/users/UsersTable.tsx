@@ -72,6 +72,11 @@ export function UsersTable({
               </div>
               <PlanBadge months={user.plan_months} />
               <StatusBadge status={user.status} />
+              {user.deactivated_at && (
+                <span className="rounded-full bg-danger-soft px-2 py-px text-[11px] font-semibold text-danger">
+                  {t('usercard.deactivatedBadge')}
+                </span>
+              )}
               <ChevronRight className="h-4 w-4 shrink-0 text-ink-3" />
             </button>
           </li>
@@ -98,7 +103,6 @@ export function UsersTable({
                   onClick={() => onRowClick?.(user)}
                   role="button"
                   tabIndex={0}
-                  aria-label={user.full_name || user.login || '—'}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -148,7 +152,14 @@ export function UsersTable({
                     <PlanBadge months={user.plan_months} />
                   </td>
                   <td className="px-5 py-3.5">
-                    <StatusBadge status={user.status} />
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <StatusBadge status={user.status} />
+                      {user.deactivated_at && (
+                        <span className="rounded-full bg-danger-soft px-2 py-px text-[11px] font-semibold text-danger">
+                          {t('usercard.deactivatedBadge')}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-5 py-3.5 font-mono text-ink-3">
                     {formatDate(user.registration_date)}

@@ -38,6 +38,9 @@ export function useSetResidentActive() {
     onSuccess: (_d, { leadId }) => {
       void qc.invalidateQueries({ queryKey: ['user', leadId] })
       void qc.invalidateQueries({ queryKey: ['users'] })
+      // список для «Назначить задачу» и чат-контакты — тоже зависят от деактивации
+      void qc.invalidateQueries({ queryKey: ['residents-all'] })
+      void qc.invalidateQueries({ queryKey: ['chat', 'leads'] })
     },
   })
 }
@@ -46,7 +49,11 @@ export function useRegenerateMonthly() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (leadId: string) => regenerateMonthly(leadId),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['tasks'] })
+      void qc.invalidateQueries({ queryKey: ['dashboard'] })
+      void qc.invalidateQueries({ queryKey: ['activity'] })
+    },
   })
 }
 
@@ -54,7 +61,11 @@ export function useRebuildMonthly() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (leadId: string) => rebuildMonthly(leadId),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['tasks'] })
+      void qc.invalidateQueries({ queryKey: ['dashboard'] })
+      void qc.invalidateQueries({ queryKey: ['activity'] })
+    },
   })
 }
 

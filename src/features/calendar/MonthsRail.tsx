@@ -18,7 +18,13 @@ export function MonthsRail({
   const activeRef = useRef<HTMLButtonElement | null>(null)
   // Прокручиваем выбранный месяц в зону видимости рельса (в т.ч. при авто-выборе).
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
+    const el = activeRef.current
+    const box = el?.parentElement?.parentElement // кнопка → flex-ряд → overflow-контейнер
+    if (!el || !box) return
+    // Скроллим ТОЛЬКО горизонтальный контейнер рельса: scrollIntoView прокручивал бы и
+    // всю страницу до рельса при монтировании (прыжок при открытии карточки).
+    const left = el.offsetLeft - (box.clientWidth - el.clientWidth) / 2
+    box.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
   }, [selectedKey])
 
   // py-2 + px-1 — чтобы кольцо и подсветка выбранного не обрезались краями прокрутки.
@@ -35,6 +41,8 @@ export function MonthsRail({
                 type="button"
                 ref={selected ? activeRef : undefined}
                 onClick={() => onSelect(mo.key)}
+                aria-current={selected ? 'true' : undefined}
+                aria-label={`${t('cal.monthShort')} ${mo.index}`}
                 className="flex flex-none flex-col items-center gap-1.5 px-0.5"
               >
                 <span className={cn('rounded-full p-0.5 transition-all', selected ? 'ring-2 ring-accent' : 'ring-0')}>

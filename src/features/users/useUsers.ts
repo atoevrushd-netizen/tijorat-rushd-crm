@@ -38,6 +38,8 @@ function useUsersInvalidator() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: ['users'] })
     void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+    void queryClient.invalidateQueries({ queryKey: ['residents-all'] })
+    void queryClient.invalidateQueries({ queryKey: ['chat', 'leads'] })
   }
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { ListPlus } from 'lucide-react'
 import { useT } from '@/i18n/useT'
+import { monthYear } from '@/lib/dateI18n'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Button } from '@/components/ui/Button'
@@ -68,9 +69,9 @@ export function AssignTaskForm({
   const monthLabel = useMemo(() => {
     if (!month) return ''
     const [y, m] = month.split('-').map(Number)
-    // ru-RU надёжно даёт кириллические названия месяцев (tg-TJ поддержан не везде).
-    return new Date(y, m - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
-  }, [month])
+    // Название месяца на языке интерфейса (tg — вручную, ru — Intl).
+    return monthYear(new Date(y, m - 1, 1), lang)
+  }, [month, lang])
 
   function submit(e: FormEvent) {
     e.preventDefault()

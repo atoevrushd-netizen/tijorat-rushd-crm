@@ -13,6 +13,7 @@ import {
   Power,
   PowerOff,
   RefreshCw,
+  RotateCcw,
   Trash2,
   Trophy,
 } from 'lucide-react'
@@ -29,7 +30,7 @@ import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUser } from '@/features/users/useUser'
-import { useSoftDeleteUser } from '@/features/users/useUsers'
+import { useRestoreUser, useSoftDeleteUser } from '@/features/users/useUsers'
 import {
   useRebuildMonthly,
   useRegenerateMonthly,
@@ -52,8 +53,9 @@ export function UserCardPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { t } = useT()
-  const { data: user, isLoading } = useUser(id)
+  const { data: user, isLoading, isError, refetch } = useUser(id)
   const del = useSoftDeleteUser()
+  const restoreUser = useRestoreUser()
   const setActive = useSetResidentActive()
   const regen = useRegenerateMonthly()
   const rebuild = useRebuildMonthly()
@@ -62,6 +64,20 @@ export function UserCardPage() {
   const [pwdOpen, setPwdOpen] = useState(false)
 
   if (isLoading) return <FullPageSpinner />
+
+  // Сбой сети/доступа — НЕ «не найден»: отдельное состояние с повтором.
+  if (isError) {
+    return (
+      <AppShell title={t('page.userCard')}>
+        <div className="flex flex-col items-center gap-3 rounded-[18px] border border-line bg-surface px-6 py-12 text-center shadow-sh1">
+          <p className="text-sm font-medium text-ink-2">{t('usercard.loadError')}</p>
+          <Button variant="secondary" leftIcon={<RefreshCw size={15} />} onClick={() => void refetch()}>
+            {t('usercard.retry')}
+          </Button>
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!user) {
     return (
@@ -86,6 +102,27 @@ export function UserCardPage() {
           <ChevronLeft size={16} />
           {t('users.backToList')}
         </Link>
+
+        {/* Лид в «Корзине»: явно показываем и даём восстановить прямо отсюда */}
+        {user.deleted_at && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-[rgba(255,69,58,.35)] bg-danger-soft px-4 py-3">
+            <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-danger">
+              <Trash2 size={15} />
+              {t('usercard.inTrash')}
+            </span>
+            <Button
+              size="sm"
+              variant="secondary"
+              leftIcon={<RotateCcw size={14} />}
+              loading={restoreUser.isPending}
+              onClick={() =>
+                restoreUser.mutate(user.id, { onSuccess: () => toast.success(t('common.saved')) })
+              }
+            >
+              {t('users.restore')}
+            </Button>
+          </div>
+        )}
 
         {/* Шапка-профиль: чистая карточка; у оплативших — приятная зелёная подсветка */}
         <section

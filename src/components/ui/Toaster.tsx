@@ -27,7 +27,7 @@ export function Toaster() {
         return (
           <div
             key={item.id}
-            className="pointer-events-auto flex w-full max-w-sm animate-sheet-up items-center gap-3 rounded-[16px] border border-line bg-[rgba(255,255,255,.92)] px-4 py-3 shadow-sh2 backdrop-blur-xl"
+            className="pointer-events-auto flex w-full max-w-sm animate-sheet-up items-center gap-3 rounded-[16px] border border-line bg-elevated px-4 py-3 shadow-sh2"
           >
             <span className={cn('flex h-6 w-6 shrink-0 items-center justify-center', COLOR[item.kind])}>
               <Icon size={18} strokeWidth={2.5} />

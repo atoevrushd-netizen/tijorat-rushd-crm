@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { useT } from '@/i18n/useT'
 import { useUpdateUser } from './useUpdateUser'
 import { planPeriod } from './planPeriod'
@@ -104,7 +105,7 @@ export function EditUserModal({
     onClose()
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!user) return
     // Порядок дат: «по» не может быть раньше «с» (иначе сервер отклонит сохранение).
@@ -115,6 +116,24 @@ export function EditUserModal({
     ) {
       toast.error(t('usercard.subOrderError'))
       return
+    }
+    // Смена эффективного плана (null == 3) или МЕСЯЦА старта → сервер пересоберёт все
+    // авто-задачи и сбросит отметки выполнения. Предупреждаем, как и кнопка «Пересоздать».
+    const effPlan = (v: number | null | undefined) => v ?? 3
+    const newPlan = form.plan_months ? Number(form.plan_months) : null
+    const monthOf = (d: string | null | undefined) => (d ? d.slice(0, 7) : null)
+    const rebuilds =
+      effPlan(newPlan) !== effPlan(user.plan_months) ||
+      (form.subscription_start &&
+        user.subscription_start &&
+        monthOf(form.subscription_start) !== monthOf(user.subscription_start))
+    if (rebuilds) {
+      const ok = await confirm({
+        message: t('usercard.rebuildConfirm'),
+        danger: true,
+        confirmLabel: t('common.save'),
+      })
+      if (!ok) return
     }
     update.mutate(
       {

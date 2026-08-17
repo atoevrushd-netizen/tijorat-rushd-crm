@@ -48,6 +48,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.passwordEmpty': '— (тавассути «Иваз кардани парол» таъин кунед)',
     // Сообщения и ошибки
     'usercard.notFound': 'Корбар ёфт нашуд.',
+    'usercard.loadError': 'Корт бор нашуд',
+    'usercard.retry': 'Аз нав кӯшиш кардан',
+    'usercard.inTrash': 'Лид дар «Сабад» аст',
     'usercard.toList': 'Ба рӯйхат',
     'usercard.noDirection': 'Самт нишон дода нашудааст',
     'usercard.deleteConfirm':
@@ -148,6 +151,9 @@ const bundle: Record<Lang, Record<string, string>> = {
     'usercard.passwordEmpty': '— (задайте через «Сменить пароль»)',
     // Сообщения и ошибки
     'usercard.notFound': 'Пользователь не найден.',
+    'usercard.loadError': 'Не удалось загрузить карточку',
+    'usercard.retry': 'Повторить',
+    'usercard.inTrash': 'Лид в «Корзине»',
     'usercard.toList': 'К списку',
     'usercard.noDirection': 'Направление не указано',
     'usercard.deleteConfirm':

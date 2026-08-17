@@ -69,7 +69,9 @@ export function CreateUserModal({
     e.preventDefault()
     setClientError(null)
     if (!form.full_name.trim()) return
-    if (!/^\+992\s?\d{6,}/.test(form.phone.trim())) {
+    // Валидируем по цифрам: формат из плейсхолдера («+992 90 123 45 67») содержит пробелы.
+    const digits = form.phone.replace(/\D/g, '')
+    if (!form.phone.trim().startsWith('+992') || digits.length < 12) {
       setClientError(t('usercard.phoneError'))
       return
     }
@@ -119,7 +121,12 @@ export function CreateUserModal({
   }
 
   return (
-    <Modal open={open} onClose={close} title={t('usercard.createTitle')}>
+    <Modal
+      open={open}
+      // Пока идёт создание/дозапись плана — закрыть нельзя (иначе патч плана терялся).
+      onClose={createUser.isPending || update.isPending ? () => {} : close}
+      title={t('usercard.createTitle')}
+    >
       <form className="space-y-3.5" onSubmit={handleSubmit}>
         <Labeled label={t('usercard.fieldFullNameReq')}>
           <Input value={form.full_name} onChange={field('full_name')} required placeholder={t('usercard.fullNamePlaceholder')} />

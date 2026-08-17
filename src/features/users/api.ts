@@ -26,7 +26,11 @@ export async function listUsers({
     : query.is('deleted_at', null)
   if (plan) query = query.eq('plan_months', plan)
   if (paid) query = query.not('paid_at', 'is', null)
-  query = query.order('registration_date', { ascending: false }).range(from, to)
+  // id — вторичный ключ: без него одинаковые registration_date дают дубли/пропуски между страницами
+  query = query
+    .order('registration_date', { ascending: false })
+    .order('id', { ascending: true })
+    .range(from, to)
 
   const filter = buildSearchFilter(search)
   if (filter) query = query.or(filter)
@@ -55,6 +59,7 @@ export async function listAllLeads(
     if (paid) query = query.not('paid_at', 'is', null)
     query = query
       .order('registration_date', { ascending: false })
+      .order('id', { ascending: true })
       .range(from, from + CHUNK - 1)
     if (filter) query = query.or(filter)
     const { data, error } = await query
@@ -77,6 +82,7 @@ export async function searchUsers(term: string, limit = 8): Promise<Profile[]> {
     .is('deleted_at', null)
     .or(filter)
     .order('registration_date', { ascending: false })
+    .order('id', { ascending: true })
     .limit(limit)
   if (error) throw error
   return (data ?? []) as Profile[]

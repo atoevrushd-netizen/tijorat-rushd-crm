@@ -81,6 +81,14 @@ export function AdminDashboard() {
     paid: showTrash ? undefined : paidOnly || undefined,
   })
 
+  // Если текущая страница опустела (восстановили/удалили последний элемент), а записи ещё
+  // есть — прыгаем на последнюю существующую, иначе показывалось бы «пусто» при total > 0.
+  useEffect(() => {
+    if (data && page > 1 && data.items.length === 0 && data.total > 0) {
+      setPage(Math.max(1, Math.ceil(data.total / PAGE_SIZE)))
+    }
+  }, [data, page])
+
   return (
     <AppShell
       title={t('page.users')}

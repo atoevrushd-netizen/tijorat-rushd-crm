@@ -13,12 +13,11 @@ export async function signOut() {
   if (error) throw error
 }
 
-// Профиль текущего пользователя: НЕ тянем админ-поля (admin_comment, plan_months,
-// subscription_*) — резиденту они не нужны и не должны попадать к нему на клиент.
-// (RLS позволяет резиденту читать свою строку целиком, поэтому ограничиваем на уровне
-//  выборки; полная защита — раздельная таблица админ-полей — задача на будущее.)
+// Профиль текущего пользователя. Админ-поля (admin_comment, plan_months, paid_at)
+// резиденту НЕДОСТУПНЫ на уровне БД (колоночные привилегии, миграция 0061) — их и не
+// запрашиваем (select * упал бы). Период подписки — можно: резидент видит его в настройках.
 const SELF_COLS =
-  'id, full_name, phone, email, photo_url, role, status, business_direction, login, registration_date, created_at, updated_at, deleted_at, deactivated_at'
+  'id, full_name, phone, email, photo_url, role, status, business_direction, login, subscription_start, subscription_end, registration_date, created_at, updated_at, deleted_at, deactivated_at'
 
 /** Загрузить профиль текущего пользователя по id (без админских полей). */
 export async function fetchProfile(userId: string): Promise<Profile | null> {

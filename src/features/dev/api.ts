@@ -4,7 +4,7 @@ import type { Profile, UserRole } from '@/types'
 /** Все профили (разработчик видит всех: лидов, админов, разработчиков). */
 export async function listAllProfiles(): Promise<Profile[]> {
   const { data, error } = await supabase
-    .from('profiles')
+    .from('profiles_admin')
     .select('*')
     .order('role', { ascending: true })
     .order('full_name', { ascending: true })

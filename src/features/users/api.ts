@@ -18,7 +18,7 @@ export async function listUsers({
 
   // Только лиды: администратор управляет лидами и в их списке не показывается.
   let query = supabase
-    .from('profiles')
+    .from('profiles_admin')
     .select('*', { count: 'exact' })
     .eq('role', 'user')
   query = trashed
@@ -47,7 +47,7 @@ export async function listAllLeads(
   const rows: Profile[] = []
   const filter = buildSearchFilter(search)
   for (let from = 0; ; from += CHUNK) {
-    let query = supabase.from('profiles').select('*').eq('role', 'user')
+    let query = supabase.from('profiles_admin').select('*').eq('role', 'user')
     query = trashed
       ? query.not('deleted_at', 'is', null)
       : query.is('deleted_at', null)
@@ -71,7 +71,7 @@ export async function searchUsers(term: string, limit = 8): Promise<Profile[]> {
   const filter = buildSearchFilter(term)
   if (!filter) return []
   const { data, error } = await supabase
-    .from('profiles')
+    .from('profiles_admin')
     .select('*')
     .eq('role', 'user')
     .is('deleted_at', null)
@@ -85,7 +85,7 @@ export async function searchUsers(term: string, limit = 8): Promise<Profile[]> {
 /** Загрузить один профиль по id (для карточки пользователя). */
 export async function getUser(id: string): Promise<Profile | null> {
   const { data, error } = await supabase
-    .from('profiles')
+    .from('profiles_admin')
     .select('*')
     .eq('id', id)
     .maybeSingle()

@@ -61,7 +61,7 @@ export async function getDashboard(): Promise<DashboardData> {
   const [countsRes, recentUsersRes, recentTasksRes] = await Promise.all([
     supabase.rpc('dashboard_counts'),
     supabase
-      .from('profiles')
+      .from('profiles_admin')
       .select('*')
       .eq('role', 'user')
       .is('deleted_at', null)

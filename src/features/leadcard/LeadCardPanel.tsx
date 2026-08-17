@@ -59,11 +59,25 @@ export function LeadCardPanel({
   editable?: boolean
 }) {
   const { t } = useT()
-  const { data, isLoading, isError } = useLeadCard(userId)
+  const { data, isLoading, isError, refetch } = useLeadCard(userId)
   const upsert = useUpsertLeadCard(userId)
 
-  // Таблицы ещё нет / нет доступа — тихо скрываем блок (не ломаем кабинет).
-  if (isError) return null
+  // Сбой загрузки — говорим об этом и даём повторить (раньше блок молча исчезал,
+  // и страница «Мои данные» выглядела пустой).
+  if (isError) {
+    return (
+      <section className="animate-rise flex flex-col items-center gap-3 rounded-[18px] border border-line bg-surface px-6 py-10 text-center shadow-sh1">
+        <p className="text-sm font-medium text-ink-2">{t('leadcard.loadError')}</p>
+        <button
+          type="button"
+          onClick={() => void refetch()}
+          className="text-[13px] font-semibold text-accent underline underline-offset-2"
+        >
+          {t('leadcard.retry')}
+        </button>
+      </section>
+    )
+  }
 
   return (
     <section className="animate-rise rounded-[18px] border border-line bg-surface p-5 shadow-sh1 sm:p-6">

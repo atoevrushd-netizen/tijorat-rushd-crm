@@ -4,6 +4,8 @@ import type { Lang } from '../types'
 const bundle: Record<Lang, Record<string, string>> = {
   tg: {
     'leadcard.title': 'Маълумоти ман',
+    'leadcard.loadError': 'Маълумот бор нашуд',
+    'leadcard.retry': 'Аз нав кӯшиш кардан',
     'leadcard.subtitle': 'Кортаи худро пур кунед — сабт худкор аст',
     'leadcard.name': 'Ном ва насаб',
     'leadcard.entryHint': 'Кортаи бизнеси шумо — кушоед ва пур кунед',
@@ -31,6 +33,8 @@ const bundle: Record<Lang, Record<string, string>> = {
   },
   ru: {
     'leadcard.title': 'Мои данные',
+    'leadcard.loadError': 'Не удалось загрузить данные',
+    'leadcard.retry': 'Повторить',
     'leadcard.subtitle': 'Заполните свою карточку — сохраняется автоматически',
     'leadcard.name': 'Имя и фамилия',
     'leadcard.entryHint': 'Ваша бизнес-карта — открыть и заполнить',

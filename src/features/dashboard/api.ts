@@ -69,7 +69,11 @@ export async function getDashboard(): Promise<DashboardData> {
       .limit(5),
     supabase
       .from('tasks')
-      .select('id,title,title_ru,title_tg,status,owner:user_id(full_name)')
+      // Те же фильтры, что и в dashboard_counts: только помесячные задачи и владелец не в «Корзине»
+      // (!inner — чтобы фильтр по владельцу отсекал строки, а не занулял owner).
+      .select('id,title,title_ru,title_tg,status,owner:user_id!inner(full_name,deleted_at)')
+      .not('period_month', 'is', null)
+      .is('owner.deleted_at', null)
       .order('updated_at', { ascending: false })
       .limit(6),
   ])

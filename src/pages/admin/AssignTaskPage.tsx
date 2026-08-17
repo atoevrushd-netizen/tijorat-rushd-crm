@@ -11,15 +11,20 @@ import { useAllResidents, useCalendarTabId } from '@/features/assign-tasks/useAs
 import { ResidentMultiSelect } from '@/features/assign-tasks/ResidentMultiSelect'
 import { AssignTaskForm, type NewTaskFields } from '@/features/assign-tasks/AssignTaskForm'
 
-/** Пересечение окон подписки выбранных резидентов в месяцах 'YYYY-MM' (или пусто). */
-function subscriptionWindow(rs: Profile[]): { min?: string; max?: string } {
-  const starts = rs.map((r) => r.subscription_start).filter(Boolean).map((d) => d!.slice(0, 7))
-  const ends = rs.map((r) => r.subscription_end).filter(Boolean).map((d) => d!.slice(0, 7))
-  if (!starts.length || !ends.length) return {}
-  const min = starts.sort().at(-1) // самый поздний старт
+/**
+ * Пересечение окон подписки выбранных резидентов в месяцах 'YYYY-MM'.
+ * blocked=true — задачу создавать НЕЛЬЗЯ: у кого-то нет подписки или окна не пересекаются
+ * (иначе задача создала бы у одного из них «фантомный» месяц вне его программы).
+ */
+function subscriptionWindow(rs: Profile[]): { min?: string; max?: string; blocked: boolean } {
+  if (rs.length === 0) return { blocked: false }
+  if (rs.some((r) => !r.subscription_start || !r.subscription_end)) return { blocked: true }
+  const starts = rs.map((r) => r.subscription_start!.slice(0, 7))
+  const ends = rs.map((r) => r.subscription_end!.slice(0, 7))
+  const min = [...starts].sort().at(-1) // самый поздний старт
   const max = [...ends].sort()[0] // самый ранний конец
-  if (min && max && min > max) return {} // окна не пересекаются — не ограничиваем
-  return { min, max }
+  if (min && max && min > max) return { blocked: true } // окна не пересекаются
+  return { min, max, blocked: false }
 }
 
 /**
@@ -132,14 +137,21 @@ export function AssignTaskPage() {
             onSetMany={setMany}
           />
         </div>
-        <AssignTaskForm
-          selectedCount={selected.size}
-          pending={create.isPending}
-          ready={calendarReady}
-          minMonth={monthWindow.min}
-          maxMonth={monthWindow.max}
-          onCreate={onCreate}
-        />
+        <div className="space-y-3">
+          {monthWindow.blocked && (
+            <div className="rounded-[14px] border border-[rgba(255,159,10,.4)] bg-warn-soft px-4 py-3 text-[13px] text-ink-2">
+              {t('assign.windowBlocked')}
+            </div>
+          )}
+          <AssignTaskForm
+            selectedCount={selected.size}
+            pending={create.isPending}
+            ready={calendarReady && !monthWindow.blocked}
+            minMonth={monthWindow.min}
+            maxMonth={monthWindow.max}
+            onCreate={onCreate}
+          />
+        </div>
       </div>
     </AppShell>
   )

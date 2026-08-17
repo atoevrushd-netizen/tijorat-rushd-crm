@@ -38,7 +38,14 @@ export function DevPage() {
       <div className="space-y-4 sm:space-y-5">
         {/* Обзор */}
         <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {overviewQ.isLoading || !overviewQ.data ? (
+          {overviewQ.isError ? (
+            <div className="col-span-2 flex flex-col items-center gap-2 rounded-[18px] border border-line bg-surface px-6 py-8 text-center shadow-sh1 lg:col-span-4">
+              <p className="text-sm font-medium text-ink-2">{t('dev.loadError')}</p>
+              <button type="button" onClick={() => void overviewQ.refetch()} className="text-[13px] font-semibold text-accent underline underline-offset-2">
+                {t('dev.retry')}
+              </button>
+            </div>
+          ) : overviewQ.isLoading || !overviewQ.data ? (
             [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[128px] rounded-[18px]" />)
           ) : (
             <>
